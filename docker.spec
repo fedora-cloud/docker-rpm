@@ -1,10 +1,10 @@
 Name:           docker
 Version:        1.5
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        KDE and GNOME2 system tray replacement docking application
 
 Group:          User Interface/X
-License:        GPL
+License:        GPL+
 URL:            http://icculus.org/openbox/2/docker/
 Source0:        http://icculus.org/openbox/2/docker/docker-1.5.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -44,6 +44,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Oct 15 2007 Andreas Bierfert <andreas.bierfert[AT]lowlatency.de>
+- 1.5-2
+- add new license tag
+
 * Sat Jun 02 2007 Andreas Bierfert <andreas.bierfert[AT]lowlatency.de>
-1.5-1
+- 1.5-1
 - initial version
