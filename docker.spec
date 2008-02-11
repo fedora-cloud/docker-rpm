@@ -1,6 +1,6 @@
 Name:           docker
 Version:        1.5
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        KDE and GNOME2 system tray replacement docking application
 
 Group:          User Interface/X
@@ -44,6 +44,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Feb 11 2008 Andreas Bierfert <andreas.bierfert[AT]lowlatency.de> - 1.5-3
+- Rebuilt for gcc43
+
 * Mon Oct 15 2007 Andreas Bierfert <andreas.bierfert[AT]lowlatency.de>
 - 1.5-2
 - add new license tag
