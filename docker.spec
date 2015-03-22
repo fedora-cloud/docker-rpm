@@ -17,6 +17,7 @@
 
 %global tar_import_path code.google.com/p/go/src/pkg/archive/tar
 
+%if 0%{?fedora} >= 23
 # docker-selinux stuff (prefix with ds_ for version/release etc.)
 # Some bits borrowed from the openstack-selinux package
 %global ds_commit 4421e0d80866b4b03f6a16c5b6bfabdf4c8bfa7c
@@ -48,6 +49,7 @@
 
 # Version of SELinux we were using
 %global selinux_policyver 3.13.1-119
+%endif
 
 Name: %{repo}
 Version: 1.5.0
@@ -80,13 +82,12 @@ Requires: device-mapper-libs >= 1.02.90-1
 # RE: rhbz#1195804 - ensure min NVR for selinux-policy
 %if 0%{?fedora} >= 23
 Requires: selinux-policy >= 3.13.1-114
+Requires: %{name}-selinux >= %{ds_version}-%{release}
 %endif
 
 # Resolves: rhbz#1045220
 Requires: xz
 Provides: lxc-%{name} = %{version}-%{release}
-
-Requires: %{name}-selinux >= %{ds_version}-%{release}
 
 # permitted by https://fedorahosted.org/fpc/ticket/341#comment:7
 # In F22, the whole package should be renamed to be just "docker" and
@@ -227,6 +228,7 @@ Provides: %{name}-io-logrotate = %{version}-%{release}
 This package installs %{summary}. logrotate is assumed to be installed on
 containers for this to work, failures are silently ignored.
 
+%if 0%{?fedora} >= 23
 %package selinux
 Summary: SELinux policies for Docker
 Release: 22.git%{ds_shortcommit}%{?dist}
@@ -242,6 +244,7 @@ Provides: %{name}-io-selinux
 
 %description selinux
 SELinux policy modules for use with Docker.
+%endif
 
 %package vim
 Summary: vim syntax highlighting files for Docker
@@ -265,8 +268,10 @@ This package installs %{summary}.
 %setup -q -n %{name}-%{d_commit}
 cp %{SOURCE5} .
 
+%if 0%{?fedora} >= 23
 # unpack %{name}-selinux
 tar zxf %{SOURCE7}
+%endif
 
 %build
 # set up temporary build gopath, and put our directory there
@@ -282,10 +287,12 @@ docs/man/md2man-all.sh
 cp contrib/syntax/vim/LICENSE LICENSE-vim-syntax
 cp contrib/syntax/vim/README.md README-vim-syntax.md
 
+%if 0%{?fedora} >= 23
 # build %{name}-selinux
 pushd %{name}-selinux-%{ds_commit}
 make SHARE=%{_datadir} TARGETS=%{modulenames}
 popd
+%endif
 
 %install
 # install binary
@@ -346,6 +353,7 @@ install -p -m 644 %{SOURCE2} %{buildroot}%{_sysconfdir}/sysconfig/%{name}
 install -p -m 644 %{SOURCE6} %{buildroot}%{_sysconfdir}/sysconfig/%{name}-network
 install -p -m 644 %{SOURCE3} %{buildroot}%{_sysconfdir}/sysconfig/%{name}-storage
 
+%if 0%{?fedora} >= 23
 # install SELinux interfaces
 %_format INTERFACES $x.if
 install -d %{buildroot}%{_datadir}/selinux/devel/include/%{moduletype}
@@ -355,6 +363,7 @@ install -p -m 644 %{name}-selinux-%{ds_commit}/$INTERFACES %{buildroot}%{_datadi
 %_format MODULES $x.pp.bz2
 install -d %{buildroot}%{_datadir}/selinux/packages
 install -m 0644 %{name}-selinux-%{ds_commit}/$MODULES %{buildroot}%{_datadir}/selinux/packages
+%endif
 
 # sources
 install -d -p %{buildroot}%{gopath}/src/%{import_path}
@@ -398,6 +407,7 @@ exit 0
 %post
 %systemd_post %{name}
 
+%if 0%{?fedora} >= 23
 %post selinux
 # Install all modules in a single transaction
 %_format MODULES %{_datadir}/selinux/packages/$x.pp.bz2
@@ -405,6 +415,7 @@ exit 0
 if %{_sbindir}/selinuxenabled ; then
 %{_sbindir}/load_policy
 %relabel_files
+%endif
 
 %preun
 %systemd_preun %{name}
@@ -412,6 +423,7 @@ if %{_sbindir}/selinuxenabled ; then
 %postun
 %systemd_postun_with_restart %{name}
 
+%if 0%{?fedora} >= 23
 %postun selinux
 if [ $1 -eq 0 ]; then
 %{_sbindir}/semodule -n -r %{modulenames} &> /dev/null || :
@@ -420,6 +432,7 @@ if %{_sbindir}/selinuxenabled ; then
 %relabel_files
 fi
 fi
+%endif
 
 %files
 %doc AUTHORS CHANGELOG.md CONTRIBUTING.md LICENSE MAINTAINERS NOTICE README.md 
@@ -450,9 +463,11 @@ fi
 %doc README.%{name}-logrotate
 %{_sysconfdir}/cron.daily/%{name}-logrotate
 
+%if 0%{?fedora} >= 23
 %files selinux
 %doc %{name}-selinux-%{ds_commit}/README.md
 %{_datadir}/selinux/*
+%endif
 
 %files vim
 %{_datadir}/vim/vimfiles/doc/%{name}file.txt
@@ -467,6 +482,7 @@ fi
 - Rename package to 'docker', metaprovide: docker-io*
 - Obsolete docker-io release 21
 - no separate version tag for docker-selinux
+- docker-selinux only for f23+
 
 * Fri Mar 20 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.5.0-21.git5ebfacd
 - selinux specific rpm code from Lukas Vrabec <lvrabec@redhat.com>
