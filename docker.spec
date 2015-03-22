@@ -53,7 +53,7 @@
 
 Name: %{repo}
 Version: 1.5.0
-Release: 22.git%{d_shortcommit}%{?dist}
+Release: 23.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{name}.com
@@ -231,7 +231,7 @@ containers for this to work, failures are silently ignored.
 %if 0%{?fedora} >= 23
 %package selinux
 Summary: SELinux policies for Docker
-Release: 22.git%{ds_shortcommit}%{?dist}
+Release: 23.git%{ds_shortcommit}%{?dist}
 BuildRequires: selinux-policy
 BuildRequires: selinux-policy-devel
 Requires: %{name} >= %{version}-%{release}
@@ -478,6 +478,10 @@ fi
 %{_datadir}/zsh/site-functions/_%{name}
 
 %changelog
+* Sun Mar 22 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.5.0-23.git5ebfacd
+- increment release tag as -22 was already built without conditionals for f23
+and docker-selinux
+
 * Sun Mar 22 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.5.0-22.git5ebfacd
 - Rename package to 'docker', metaprovide: docker-io*
 - Obsolete docker-io release 21
