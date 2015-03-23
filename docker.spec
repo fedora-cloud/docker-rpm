@@ -66,7 +66,7 @@ Source3: %{name}-storage.sysconfig
 Source4: %{name}-logrotate.sh
 Source5: README.%{name}-logrotate
 Source6: %{name}-network.sysconfig
-Source7: https://github.com/wrabcak/%{name}-selinux/archive/%{ds_commit}/%{name}-selinux-%{ds_shortcommit}.tar.gz
+Source7: https://github.com/fedora-cloud/%{name}-selinux/archive/%{ds_commit}/%{name}-selinux-%{ds_shortcommit}.tar.gz
 BuildRequires: glibc-static
 BuildRequires: golang >= 1.3.3
 BuildRequires: go-md2man
