@@ -66,7 +66,9 @@ Source3: %{name}-storage.sysconfig
 Source4: %{name}-logrotate.sh
 Source5: README.%{name}-logrotate
 Source6: %{name}-network.sysconfig
+%if 0%{?fedora} >= 23
 Source7: https://github.com/fedora-cloud/%{name}-selinux/archive/%{ds_commit}/%{name}-selinux-%{ds_shortcommit}.tar.gz
+%endif
 BuildRequires: glibc-static
 BuildRequires: golang >= 1.3.3
 BuildRequires: go-md2man
@@ -481,6 +483,7 @@ fi
 * Sun Mar 22 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.5.0-23.git5ebfacd
 - increment release tag as -22 was already built without conditionals for f23
 and docker-selinux
+- Source7 only for f23+
 
 * Sun Mar 22 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.5.0-22.git5ebfacd
 - Rename package to 'docker', metaprovide: docker-io*
