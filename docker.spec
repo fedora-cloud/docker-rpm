@@ -32,20 +32,7 @@
 %global _format() export %1=""; for x in %{modulenames}; do %1+=%2; %1+=" "; done;
 
 # Relabel files
-%global relabel_files() \
-    /sbin/restorecon -R \
-    %{_bindir}/%{name} \
-    %{_localstatedir}/run/%{name}.sock \
-    %{_localstatedir}/run/%{name}.pid \
-    %{_sharedstatedir}/%{name} \
-    %{_sysconfdir}/%{name} \
-    %{_localstatedir}/log/%{name} \
-    %{_localstatedir}/log/lxc \
-    %{_localstatedir}/lock/lxc \
-    %{_unitdir}/%{name}.service \
-    %{_sysconfdir}/%{name} \
-    &> /dev/null || : \
-
+%global relabel_files() %{_sbindir}/restorecon -R %{_bindir}/%{name} %{_localstatedir}/run/%{name}.sock %{_localstatedir}/run/%{name}.pid %{_sharedstatedir}/%{name} %{_sysconfdir}/%{name} %{_localstatedir}/log/%{name} %{_localstatedir}/log/lxc %{_localstatedir}/lock/lxc %{_unitdir}/%{name}.service %{_sysconfdir}/%{name} &> /dev/null || :
 
 # Version of SELinux we were using
 %global selinux_policyver 3.13.1-119
@@ -53,7 +40,7 @@
 
 Name: %{repo}
 Version: 1.5.0
-Release: 23.git%{d_shortcommit}%{?dist}
+Release: 24.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{name}.com
@@ -84,7 +71,7 @@ Requires: device-mapper-libs >= 1.02.90-1
 # RE: rhbz#1195804 - ensure min NVR for selinux-policy
 %if 0%{?fedora} >= 23
 Requires: selinux-policy >= 3.13.1-114
-Requires: %{name}-selinux >= %{ds_version}-%{release}
+Requires(pre): %{name}-selinux >= %{ds_version}-%{release}
 %endif
 
 # Resolves: rhbz#1045220
@@ -233,10 +220,8 @@ containers for this to work, failures are silently ignored.
 %if 0%{?fedora} >= 23
 %package selinux
 Summary: SELinux policies for Docker
-Release: 23.git%{ds_shortcommit}%{?dist}
 BuildRequires: selinux-policy
 BuildRequires: selinux-policy-devel
-Requires: %{name} >= %{version}-%{release}
 Requires(post): selinux-policy-base >= %{selinux_policyver}
 Requires(post): selinux-policy-targeted >= %{selinux_policyver}
 Requires(post): policycoreutils
@@ -292,7 +277,7 @@ cp contrib/syntax/vim/README.md README-vim-syntax.md
 %if 0%{?fedora} >= 23
 # build %{name}-selinux
 pushd %{name}-selinux-%{ds_commit}
-make SHARE=%{_datadir} TARGETS=%{modulenames}
+make SHARE="%{_datadir}" TARGETS="%{modulenames}"
 popd
 %endif
 
@@ -408,25 +393,21 @@ exit 0
 
 %post
 %systemd_post %{name}
-
 %if 0%{?fedora} >= 23
-%post selinux
 # Install all modules in a single transaction
 %_format MODULES %{_datadir}/selinux/packages/$x.pp.bz2
 %{_sbindir}/semodule -n -s %{selinuxtype} -i $MODULES
 if %{_sbindir}/selinuxenabled ; then
 %{_sbindir}/load_policy
 %relabel_files
+fi
 %endif
 
 %preun
 %systemd_preun %{name}
 
 %postun
-%systemd_postun_with_restart %{name}
-
 %if 0%{?fedora} >= 23
-%postun selinux
 if [ $1 -eq 0 ]; then
 %{_sbindir}/semodule -n -r %{modulenames} &> /dev/null || :
 if %{_sbindir}/selinuxenabled ; then
@@ -435,6 +416,7 @@ if %{_sbindir}/selinuxenabled ; then
 fi
 fi
 %endif
+%systemd_postun_with_restart %{name}
 
 %files
 %doc AUTHORS CHANGELOG.md CONTRIBUTING.md LICENSE MAINTAINERS NOTICE README.md 
@@ -480,6 +462,10 @@ fi
 %{_datadir}/zsh/site-functions/_%{name}
 
 %changelog
+* Tue Mar 24 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.5.0-24.git5ebfacd
+- docker-selinux shouldn't require docker
+- move docker-selinux's post and postun to docker's
+
 * Sun Mar 22 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.5.0-23.git5ebfacd
 - increment release tag as -22 was already built without conditionals for f23
 and docker-selinux
