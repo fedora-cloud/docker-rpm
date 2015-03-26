@@ -394,8 +394,8 @@ exit 0
 %post
 %systemd_post %{name}
 
-%post selinux
 %if 0%{?fedora} >= 23
+%post selinux
 # Install all modules in a single transaction
 %_format MODULES %{_datadir}/selinux/packages/$x.pp.bz2
 %{_sbindir}/semodule -n -s %{selinuxtype} -i $MODULES
@@ -411,8 +411,8 @@ fi
 %postun
 %systemd_postun_with_restart %{name}
 
-%postun selinux
 %if 0%{?fedora} >= 23
+%postun selinux
 if [ $1 -eq 0 ]; then
 %{_sbindir}/semodule -n -r %{modulenames} &> /dev/null || :
 if %{_sbindir}/selinuxenabled ; then
