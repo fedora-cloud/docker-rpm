@@ -40,7 +40,7 @@
 
 Name: %{repo}
 Version: 1.5.0
-Release: 24.git%{d_shortcommit}%{?dist}
+Release: 25.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{name}.com
@@ -71,7 +71,7 @@ Requires: device-mapper-libs >= 1.02.90-1
 # RE: rhbz#1195804 - ensure min NVR for selinux-policy
 %if 0%{?fedora} >= 23
 Requires: selinux-policy >= 3.13.1-114
-Requires(pre): %{name}-selinux >= %{ds_version}-%{release}
+Requires(pre): %{name}-selinux >= %{version}-%{release}
 %endif
 
 # Resolves: rhbz#1045220
@@ -393,6 +393,8 @@ exit 0
 
 %post
 %systemd_post %{name}
+
+%post selinux
 %if 0%{?fedora} >= 23
 # Install all modules in a single transaction
 %_format MODULES %{_datadir}/selinux/packages/$x.pp.bz2
@@ -407,6 +409,9 @@ fi
 %systemd_preun %{name}
 
 %postun
+%systemd_postun_with_restart %{name}
+
+%postun selinux
 %if 0%{?fedora} >= 23
 if [ $1 -eq 0 ]; then
 %{_sbindir}/semodule -n -r %{modulenames} &> /dev/null || :
@@ -416,7 +421,6 @@ if %{_sbindir}/selinuxenabled ; then
 fi
 fi
 %endif
-%systemd_postun_with_restart %{name}
 
 %files
 %doc AUTHORS CHANGELOG.md CONTRIBUTING.md LICENSE MAINTAINERS NOTICE README.md 
@@ -462,6 +466,10 @@ fi
 %{_datadir}/zsh/site-functions/_%{name}
 
 %changelog
+* Tue Mar 24 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.5.0-25.git5ebfacd
+- move selinux post/postun to its own subpackage
+- correct docker-selinux min nvr for docker main package
+
 * Tue Mar 24 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.5.0-24.git5ebfacd
 - docker-selinux shouldn't require docker
 - move docker-selinux's post and postun to docker's
