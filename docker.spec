@@ -266,7 +266,7 @@ mkdir -p ./_build/src/github.com/%{repo}
 ln -s $(pwd) ./_build/src/%{import_path}
 
 export DOCKER_GITCOMMIT="%{d_shortcommit}/%{version}"
-export DOCKER_BUILDTAGS="selinux btrfs_noversion"
+export DOCKER_BUILDTAGS="selinux"
 export GOPATH=$(pwd)/_build:$(pwd)/vendor:%{gopath}
 
 DEBUG=1 hack/make.sh dynbinary
