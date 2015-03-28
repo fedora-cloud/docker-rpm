@@ -12,7 +12,7 @@
 %global import_path %{provider}.%{provider_tld}/%{project}/%{repo}
 
 # docker stuff (prefix with d_)
-%global d_commit 5ebfacda4747fb0b2473841dff9b9b771b3bcb53
+%global d_commit bbc21e450c165cf8c69a657eb764967a44d1d944
 %global d_shortcommit %(c=%{d_commit}; echo ${c:0:7})
 
 %global tar_import_path code.google.com/p/go/src/pkg/archive/tar
@@ -40,7 +40,7 @@
 
 Name: %{repo}
 Version: 1.5.0
-Release: 25.git%{d_shortcommit}%{?dist}
+Release: 26.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
@@ -466,6 +466,9 @@ fi
 %{_datadir}/zsh/site-functions/_%{repo}
 
 %changelog
+* Sat Mar 28 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.5.0-26.gitbbc21e4
+- built docker @lsm5/fedora commit#bbc21e4
+
 * Tue Mar 24 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.5.0-25.git5ebfacd
 - move selinux post/postun to its own subpackage
 - correct docker-selinux min nvr for docker main package
