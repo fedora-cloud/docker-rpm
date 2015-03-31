@@ -12,7 +12,7 @@
 %global import_path %{provider}.%{provider_tld}/%{project}/%{repo}
 
 # docker stuff (prefix with d_)
-%global d_commit 5ebfacda4747fb0b2473841dff9b9b771b3bcb53
+%global d_commit 8150fb6a9c98c173be8464fb5d969f722a4fefca
 %global d_shortcommit %(c=%{d_commit}; echo ${c:0:7})
 
 %global tar_import_path code.google.com/p/go/src/pkg/archive/tar
@@ -40,13 +40,13 @@
 
 Name: %{repo}
 Version: 1.5.0
-Release: 25.git%{d_shortcommit}%{?dist}
+Release: 26.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
 ExclusiveArch: x86_64 %{arm}
 #Source0: https://%{import_path}/archive/%{commit}/%{repo}-%{shortcommit}.tar.gz
-Source0: https://github.com/lsm5/%{repo}/archive/%{d_commit}/%{repo}-%{d_shortcommit}.tar.gz
+Source0: https://github.com/rhatdan/%{repo}/archive/%{d_commit}/%{repo}-%{d_shortcommit}.tar.gz
 Source1: %{repo}.service
 Source2: %{repo}.sysconfig
 Source3: %{repo}-storage.sysconfig
@@ -466,6 +466,9 @@ fi
 %{_datadir}/zsh/site-functions/_%{repo}
 
 %changelog
+* Tue Mar 31 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.5.0-26.git8150fb6
+- use docker rhatdan/1.6 branch (1.6.0 rc with fedora patches)
+
 * Tue Mar 24 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.5.0-25.git5ebfacd
 - move selinux post/postun to its own subpackage
 - correct docker-selinux min nvr for docker main package
