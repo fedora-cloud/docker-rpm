@@ -12,7 +12,7 @@
 %global import_path %{provider}.%{provider_tld}/%{project}/%{repo}
 
 # docker stuff (prefix with d_)
-%global d_commit c9c16a34cf7517353f31d1787f8c7127291e4119
+%global d_commit ece2f2db5c8adbbb18e668ace0391bf0aa47e976
 %global d_shortcommit %(c=%{d_commit}; echo ${c:0:7})
 
 %global tar_import_path code.google.com/p/go/src/pkg/archive/tar
@@ -40,7 +40,7 @@
 
 Name: %{repo}
 Version: 1.5.0
-Release: 29.git%{d_shortcommit}%{?dist}
+Release: 30.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
@@ -466,6 +466,9 @@ fi
 %{_datadir}/zsh/site-functions/_%{repo}
 
 %changelog
+* Wed Apr 01 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.5.0-30.gitece2f2d
+- built docker @lsm5/fedora commit#ece2f2d
+
 * Mon Mar 30 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.5.0-29.gitc9c16a3
 - built docker @lsm5/fedora commit#c9c16a3
 
