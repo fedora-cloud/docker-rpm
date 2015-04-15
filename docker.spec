@@ -56,6 +56,7 @@ Source6: %{repo}-network.sysconfig
 %if 0%{?fedora} >= 23
 Source7: https://github.com/fedora-cloud/%{repo}-selinux/archive/%{ds_commit}/%{repo}-selinux-%{ds_shortcommit}.tar.gz
 %endif
+BuildRequires: git
 BuildRequires: glibc-static
 BuildRequires: golang >= 1.3.3
 BuildRequires: go-md2man
@@ -252,7 +253,7 @@ Provides: %{repo}-io-zsh-completion = %{version}-%{release}
 This package installs %{summary}.
 
 %prep
-%setup -q -n %{repo}-%{d_commit}
+%autosetup -Sgit -n %{repo}-%{d_commit}
 cp %{SOURCE5} .
 
 %if 0%{?fedora} >= 23
