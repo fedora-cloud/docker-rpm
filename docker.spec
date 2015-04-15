@@ -12,7 +12,7 @@
 %global import_path %{provider}.%{provider_tld}/%{project}/%{repo}
 
 # docker stuff (prefix with d_)
-%global d_commit fc4825d5ef5e0e1af74904208f9b925c22f0b6f8
+%global d_commit b27feb4ff804f335c80861b17a4e2bfc29fbbf45
 %global d_shortcommit %(c=%{d_commit}; echo ${c:0:7})
 
 %global tar_import_path code.google.com/p/go/src/pkg/archive/tar
@@ -40,13 +40,13 @@
 
 Name: %{repo}
 Version: 1.6.0
-Release: 0.1.rc5%{?dist}
+Release: 0.2.rc6%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
 ExclusiveArch: x86_64 %{arm}
-#Source0: https://%{import_path}/archive/%{commit}/%{repo}-%{shortcommit}.tar.gz
-Source0: https://github.com/jfrazelle/%{repo}/archive/%{d_commit}/%{repo}-%{d_shortcommit}.tar.gz
+# Branch used: https://github.com/rhatdan/docker/commits/fedora-1.6
+Source0: https://github.com/rhatdan/%{repo}/archive/%{d_commit}/%{repo}-%{d_shortcommit}.tar.gz
 Source1: %{repo}.service
 Source2: %{repo}.sysconfig
 Source3: %{repo}-storage.sysconfig
@@ -296,9 +296,9 @@ install -d %{buildroot}%{_bindir}
 install -d %{buildroot}%{_libexecdir}/%{repo}
 
 # Grab the first thing from -dev
-for x in bundles/%{version}-rc5; do \
-  install -p -m 755 $x/dynbinary/%{repo}-%{version}-rc5 %{buildroot}%{_bindir}/%{repo}
-  install -p -m 755 $x/dynbinary/%{repo}init-%{version}-rc5 %{buildroot}%{_libexecdir}/%{repo}/%{repo}init
+for x in bundles/%{version}-rc6; do \
+  install -p -m 755 $x/dynbinary/%{repo}-%{version}-rc6 %{buildroot}%{_bindir}/%{repo}
+  install -p -m 755 $x/dynbinary/%{repo}init-%{version}-rc6 %{buildroot}%{_libexecdir}/%{repo}/%{repo}init
   break
 done
 
@@ -475,6 +475,10 @@ fi
 %{_datadir}/zsh/site-functions/_%{repo}
 
 %changelog
+* Tue Apr 14 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.6.0-0.2.rc6
+- build @rhatdan/fedora-1.6 commit#b27feb4
+- moved GOTRACEBACK=crash to unitfile
+
 * Mon Apr 06 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.6.0-0.1.rc5
 - use 1.6.0-rc5
 
