@@ -12,7 +12,7 @@
 %global import_path %{provider}.%{provider_tld}/%{project}/%{repo}
 
 # docker stuff (prefix with d_)
-%global d_commit b27feb4ff804f335c80861b17a4e2bfc29fbbf45
+%global d_commit bc7360423534cb5dfb161a9458f5f2d6e3078f8f
 %global d_shortcommit %(c=%{d_commit}; echo ${c:0:7})
 
 %global tar_import_path code.google.com/p/go/src/pkg/archive/tar
@@ -40,7 +40,7 @@
 
 Name: %{repo}
 Version: 1.6.0
-Release: 0.2.rc6%{?dist}
+Release: 0.3.rc7%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
@@ -299,9 +299,9 @@ install -d %{buildroot}%{_bindir}
 install -d %{buildroot}%{_libexecdir}/%{repo}
 
 # Grab the first thing from -dev
-for x in bundles/%{version}-rc6; do \
-  install -p -m 755 $x/dynbinary/%{repo}-%{version}-rc6 %{buildroot}%{_bindir}/%{repo}
-  install -p -m 755 $x/dynbinary/%{repo}init-%{version}-rc6 %{buildroot}%{_libexecdir}/%{repo}/%{repo}init
+for x in bundles/%{version}-rc7; do \
+  install -p -m 755 $x/dynbinary/%{repo}-%{version}-rc7 %{buildroot}%{_bindir}/%{repo}
+  install -p -m 755 $x/dynbinary/%{repo}init-%{version}-rc7 %{buildroot}%{_libexecdir}/%{repo}/%{repo}init
   break
 done
 
@@ -478,6 +478,9 @@ fi
 %{_datadir}/zsh/site-functions/_%{repo}
 
 %changelog
+* Thu Apr 16 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.6.0-0.3.rc7
+- build @rhatdan/fedora-1.6 commit#bc73604
+
 * Tue Apr 14 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.6.0-0.2.rc6
 - build @rhatdan/fedora-1.6 commit#b27feb4
 - moved GOTRACEBACK=crash to unitfile
