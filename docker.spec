@@ -12,7 +12,7 @@
 %global import_path %{provider}.%{provider_tld}/%{project}/%{repo}
 
 # docker stuff (prefix with d_)
-%global d_commit bc7360423534cb5dfb161a9458f5f2d6e3078f8f
+%global d_commit 0591dce9c366f01c11bbed09ecfcfe243a311d06
 %global d_shortcommit %(c=%{d_commit}; echo ${c:0:7})
 
 %global tar_import_path code.google.com/p/go/src/pkg/archive/tar
@@ -20,7 +20,7 @@
 %if 0%{?fedora} >= 23
 # docker-selinux stuff (prefix with ds_ for version/release etc.)
 # Some bits borrowed from the openstack-selinux package
-%global ds_commit 4421e0d80866b4b03f6a16c5b6bfabdf4c8bfa7c
+%global ds_commit d74079c1a67f17051c9bc12ee7df0ec361509fb6
 %global ds_shortcommit %(c=%{ds_commit}; echo ${c:0:7})
 %global selinuxtype targeted
 %global moduletype services
@@ -40,7 +40,7 @@
 
 Name: %{repo}
 Version: 1.6.0
-Release: 0.3.rc7%{?dist}
+Release: 1.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
@@ -299,9 +299,9 @@ install -d %{buildroot}%{_bindir}
 install -d %{buildroot}%{_libexecdir}/%{repo}
 
 # Grab the first thing from -dev
-for x in bundles/%{version}-rc7; do \
-  install -p -m 755 $x/dynbinary/%{repo}-%{version}-rc7 %{buildroot}%{_bindir}/%{repo}
-  install -p -m 755 $x/dynbinary/%{repo}init-%{version}-rc7 %{buildroot}%{_libexecdir}/%{repo}/%{repo}init
+for x in bundles/%{version}; do \
+  install -p -m 755 $x/dynbinary/%{repo}-%{version} %{buildroot}%{_bindir}/%{repo}
+  install -p -m 755 $x/dynbinary/%{repo}init-%{version} %{buildroot}%{_libexecdir}/%{repo}/%{repo}init
   break
 done
 
@@ -478,6 +478,9 @@ fi
 %{_datadir}/zsh/site-functions/_%{repo}
 
 %changelog
+* Thu Apr 16 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.6.0-1.git0591dce
+- build @rhatdan/fedora-1.6 commit#0591dce (1.6.0 + rh patches)
+
 * Thu Apr 16 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.6.0-0.3.rc7
 - build @rhatdan/fedora-1.6 commit#bc73604
 
