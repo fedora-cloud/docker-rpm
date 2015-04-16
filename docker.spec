@@ -78,6 +78,9 @@ Requires(pre): %{repo}-selinux >= %{version}-%{release}
 Requires: xz
 Provides: lxc-%{repo} = %{version}-%{release}
 
+# needs tar to be able to run containers
+Requires: tar
+
 # permitted by https://fedorahosted.org/fpc/ticket/341#comment:7
 # In F22, the whole package should be renamed to be just "docker" and
 # this changed to "Provides: docker-io".
