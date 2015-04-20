@@ -12,7 +12,7 @@
 %global import_path %{provider}.%{provider_tld}/%{project}/%{repo}
 
 # docker stuff (prefix with d_)
-%global d_commit 1dcc59a0b40f7d29ab2e0b8fdeb0adf537dbcbaf
+%global d_commit 50ef6918debccce0d2dce9e9f3f1bba91bdab7ea
 %global d_shortcommit %(c=%{d_commit}; echo ${c:0:7})
 
 %global tar_import_path code.google.com/p/go/src/pkg/archive/tar
@@ -44,8 +44,8 @@
 %endif # with_selinux
 
 Name: %{repo}
-Version: 1.5.0
-Release: 33.git%{d_shortcommit}%{?dist}
+Version: 1.7.0
+Release: 1.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
@@ -92,7 +92,7 @@ Requires: tar
 # this changed to "Provides: docker-io".
 %if 0%{?fedora} >= 22
 Provides: %{repo}-io = %{version}-%{release}
-Obsoletes: %{repo}-io < %{version}-21
+Obsoletes: %{repo}-io <= 1.5.0-19
 %endif
 
 %description
@@ -475,6 +475,9 @@ fi
 %{_datadir}/zsh/site-functions/_%{repo}
 
 %changelog
+* Mon Apr 20 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.0-1
+- New version: 1.7.0, built docker         @lsm5/commit#50ef691
+
 * Sat Apr 11 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.5.0-33.git1dcc59a
 - built docker @lsm5/fedora commit#1dcc59a
 
