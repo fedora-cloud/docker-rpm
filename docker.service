@@ -8,6 +8,7 @@ Type=notify
 EnvironmentFile=-/etc/sysconfig/docker
 EnvironmentFile=-/etc/sysconfig/docker-storage
 EnvironmentFile=-/etc/sysconfig/docker-network
+Environment=GOTRACEBACK=crash
 ExecStart=/usr/bin/docker -d \
           $OPTIONS \
           $DOCKER_STORAGE_OPTIONS \
