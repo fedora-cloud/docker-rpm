@@ -18,7 +18,7 @@
 %global tar_import_path code.google.com/p/go/src/pkg/archive/tar
 
 # docker-selinux conditional
-%if 0%{?fedora} >= 22 || 0%{?centos} >= 7
+%if 0%{?fedora} >= 22 || 0%{?centos} >= 7 || 0%{?rhel} >= 7
 %global with_selinux 1
 %endif
 
@@ -476,7 +476,7 @@ fi
 
 %changelog
 * Thu Apr 30 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.0-5.git56481a3
-- include docker-selinux for centos7
+- include docker-selinux for centos7 and rhel7
 
 * Thu Apr 30 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.0-4.git56481a3
 - increment release tag to sync with docker-master on centos7
