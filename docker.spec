@@ -475,6 +475,9 @@ fi
 %{_datadir}/zsh/site-functions/_%{repo}
 
 %changelog
+* Thu Apr 30 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.0-4.git56481a3
+- increment release tag to sync with docker-master on centos7
+
 * Thu Apr 30 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.0-3.git56481a3
 - built docker @lsm5/fedora commit#56481a3
 
