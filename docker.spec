@@ -18,7 +18,7 @@
 %global tar_import_path code.google.com/p/go/src/pkg/archive/tar
 
 # docker-selinux conditional
-%if 0%{?fedora} >= 22
+%if 0%{?fedora} >= 22 || 0%{?centos} >= 7
 %global with_selinux 1
 %endif
 
@@ -45,7 +45,7 @@
 
 Name: %{repo}
 Version: 1.7.0
-Release: 4.git%{d_shortcommit}%{?dist}
+Release: 5.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
@@ -475,6 +475,9 @@ fi
 %{_datadir}/zsh/site-functions/_%{repo}
 
 %changelog
+* Thu Apr 30 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.0-5.git56481a3
+- include docker-selinux for centos7
+
 * Thu Apr 30 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.0-4.git56481a3
 - increment release tag to sync with docker-master on centos7
 
