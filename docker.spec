@@ -40,7 +40,7 @@
 
 Name: %{repo}
 Version: 1.6.0
-Release: 2.git%{d_shortcommit}%{?dist}
+Release: 3.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
@@ -56,6 +56,7 @@ Source6: %{repo}-network.sysconfig
 %if 0%{?fedora} >= 23
 Source7: https://github.com/fedora-cloud/%{repo}-selinux/archive/%{ds_commit}/%{repo}-selinux-%{ds_shortcommit}.tar.gz
 %endif
+Patch0: Fixed-push-of-unqualified-registry.patch
 BuildRequires: glibc-static
 BuildRequires: golang >= 1.3.3
 BuildRequires: go-md2man
@@ -265,6 +266,7 @@ This package installs %{summary}.
 
 %prep
 %setup -q -n %{repo}-%{d_commit}
+%patch0 -p1 -b unqualified-push
 cp %{SOURCE5} .
 
 %if 0%{?fedora} >= 23
@@ -478,6 +480,9 @@ fi
 %{_datadir}/zsh/site-functions/_%{repo}
 
 %changelog
+* Tue May 05 2015 Michal Minar <miminar@redhat.com> - 1.6.0-3.git9d26a07
+- Resolves: bz#1217987 - fix unqualified push
+
 * Wed Apr 22 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.6.0-2.git9d26a07
 - build @rhatdan/fedora-1.6 commit#9d26a07 with registry patch fixes
 
