@@ -45,7 +45,7 @@
 
 Name: %{repo}
 Version: 1.7.0
-Release: 5.git%{d_shortcommit}%{?dist}
+Release: 6.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
@@ -263,6 +263,7 @@ This package installs %{summary}.
 %prep
 %autosetup -Sgit -n %{repo}-%{d_commit}
 cp %{SOURCE5} .
+sed -i 's/$/%{?dist}/' VERSION
 
 %if 0%{?with_selinux}
 # unpack %{repo}-selinux
@@ -296,9 +297,9 @@ install -d %{buildroot}%{_bindir}
 install -d %{buildroot}%{_libexecdir}/%{repo}
 
 # Grab the first thing from -dev
-for x in bundles/*-dev; do \
-  install -p -m 755 $x/dynbinary/%{repo}-*-dev %{buildroot}%{_bindir}/%{repo}
-  install -p -m 755 $x/dynbinary/%{repo}init-*-dev %{buildroot}%{_libexecdir}/%{repo}/%{repo}init
+for x in bundles/*-dev%{?dist}; do \
+  install -p -m 755 $x/dynbinary/%{repo}-*-dev%{?dist} %{buildroot}%{_bindir}/%{repo}
+  install -p -m 755 $x/dynbinary/%{repo}init-*-dev%{?dist} %{buildroot}%{_libexecdir}/%{repo}/%{repo}init
   break
 done
 
@@ -475,6 +476,9 @@ fi
 %{_datadir}/zsh/site-functions/_%{repo}
 
 %changelog
+* Fri May 08 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.0-6.git56481a3
+- include distro tag in VERSION
+
 * Thu Apr 30 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.0-5.git56481a3
 - include docker-selinux for centos7 and rhel7
 
