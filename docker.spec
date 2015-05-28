@@ -12,10 +12,10 @@
 %global import_path %{provider}.%{provider_tld}/%{project}/%{repo}
 
 # docker stuff (prefix with d_)
-%global d_commit 56481a348b2900f9bb911448fe05bb762b886481
+%global d_commit 6d76e4cecab0362fddbafd16724c4b9a6912424c
 %global d_shortcommit %(c=%{d_commit}; echo ${c:0:7})
 
-%global tar_import_path code.google.com/p/go/src/pkg/archive/tar
+#%global tar_import_path code.google.com/p/go/src/pkg/archive/tar
 
 # docker-selinux conditional
 %if 0%{?fedora} >= 22 || 0%{?centos} >= 7 || 0%{?rhel} >= 7
@@ -45,7 +45,7 @@
 
 Name: %{repo}
 Version: 1.7.0
-Release: 6.git%{d_shortcommit}%{?dist}
+Release: 7.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
@@ -111,7 +111,7 @@ Requires: golang >= 1.2.1-3
 Provides: %{repo}-io-devel = %{version}-%{release}
 Provides: %{repo}-pkg-devel = %{version}-%{release}
 Provides: %{repo}-io-pkg-devel = %{version}-%{release}
-Provides: golang(%{import_path}/vendor/src/%{tar_import_path}) = %{version}-%{release}
+#Provides: golang(%{import_path}/vendor/src/%{tar_import_path}) = %{version}-%{release}
 Summary:  A golang registry for global request variables (source libraries)
 Provides: golang(%{import_path}) = %{version}-%{release}
 Provides: golang(%{import_path}/builder) = %{version}-%{release}
@@ -367,8 +367,8 @@ install -d -p %{buildroot}%{gopath}/src/%{import_path}
 rm -rf pkg/symlink/testdata
 
 # install tar_import_path to devel package
-install -d -p %{buildroot}%{gopath}/src/%{import_path}/vendor/src/%{tar_import_path}
-cp -rpav vendor/src/%{tar_import_path}/* %{buildroot}%{gopath}/src/%{import_path}/vendor/src/%{tar_import_path}
+#install -d -p %{buildroot}%{gopath}/src/%{import_path}/vendor/src/%{tar_import_path}
+#cp -rpav vendor/src/%{tar_import_path}/* %{buildroot}%{gopath}/src/%{import_path}/vendor/src/%{tar_import_path}
 
 # remove dirs that won't be installed in devel
 rm -rf vendor docs _build bundles contrib/init hack project
@@ -476,6 +476,10 @@ fi
 %{_datadir}/zsh/site-functions/_%{repo}
 
 %changelog
+* Thu May 28 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.0-7.git6d76e4c
+- built docker @rhatdan/fedora-1.7 commit#6d76e4c
+- built docker-selinux master commit#e86b2bc
+
 * Fri May 08 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.0-6.git56481a3
 - include distro tag in VERSION
 
