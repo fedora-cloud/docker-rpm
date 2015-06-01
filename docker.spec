@@ -334,8 +334,8 @@ install -d %{buildroot}%{_datadir}/zsh/site-functions
 install -p -m 644 contrib/completion/zsh/_%{repo} %{buildroot}%{_datadir}/zsh/site-functions
 
 # install udev rules
-install -d %{buildroot}%{_sysconfdir}/udev/rules.d
-install -p contrib/udev/80-%{repo}.rules %{buildroot}%{_sysconfdir}/udev/rules.d
+install -d %{buildroot}%{_udevrulesdir}
+install -p contrib/udev/80-%{repo}.rules %{buildroot}%{_udevrulesdir}
 
 # install storage dir
 install -d %{buildroot}%{_sharedstatedir}/%{repo}
@@ -445,7 +445,7 @@ fi
 %{_unitdir}/%{repo}.service
 %{_datadir}/bash-completion/completions/%{repo}
 %dir %{_sharedstatedir}/%{repo}
-%{_sysconfdir}/udev/rules.d/80-%{repo}.rules
+%{_udevrulesdir}/80-%{repo}.rules
 %{_sysconfdir}/%{repo}
 
 %files devel
