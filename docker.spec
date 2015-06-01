@@ -12,15 +12,20 @@
 %global import_path %{provider}.%{provider_tld}/%{project}/%{repo}
 
 # docker stuff (prefix with d_)
-%global d_commit 9d26a0759b0724947c8c3a0859ac6a7919b6ab6b
+%global d_commit a53a6e6a7828e74554c7fd57673bf4e4b06c396f
 %global d_shortcommit %(c=%{d_commit}; echo ${c:0:7})
 
-%global tar_import_path code.google.com/p/go/src/pkg/archive/tar
+#%global tar_import_path code.google.com/p/go/src/pkg/archive/tar
 
-%if 0%{?fedora} >= 23
+# docker-selinux conditional
+%if 0%{?fedora} >= 22 || 0%{?centos} >= 7 || 0%{?rhel} >= 7
+%global with_selinux 1
+%endif
+
+%if 0%{?with_selinux}
 # docker-selinux stuff (prefix with ds_ for version/release etc.)
 # Some bits borrowed from the openstack-selinux package
-%global ds_commit d74079c1a67f17051c9bc12ee7df0ec361509fb6
+%global ds_commit 4421e0d80866b4b03f6a16c5b6bfabdf4c8bfa7c
 %global ds_shortcommit %(c=%{ds_commit}; echo ${c:0:7})
 %global selinuxtype targeted
 %global moduletype services
@@ -36,27 +41,26 @@
 
 # Version of SELinux we were using
 %global selinux_policyver 3.13.1-119
-%endif
+%endif # with_selinux
 
 Name: %{repo}
-Version: 1.6.0
-Release: 3.git%{d_shortcommit}%{?dist}
+Version: 1.7.0
+Release: 1.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
 ExclusiveArch: x86_64 %{arm}
-# Branch used: https://github.com/rhatdan/docker/commits/fedora-1.6
-Source0: https://github.com/rhatdan/%{repo}/archive/%{d_commit}/%{repo}-%{d_shortcommit}.tar.gz
+# Branch used: https://github.com/lsm5/docker/commits/fedora-1.7
+Source0: https://github.com/lsm5/%{repo}/archive/%{d_commit}/%{repo}-%{d_shortcommit}.tar.gz
 Source1: %{repo}.service
 Source2: %{repo}.sysconfig
 Source3: %{repo}-storage.sysconfig
 Source4: %{repo}-logrotate.sh
 Source5: README.%{repo}-logrotate
 Source6: %{repo}-network.sysconfig
-%if 0%{?fedora} >= 23
+%if 0%{?with_selinux}
 Source7: https://github.com/fedora-cloud/%{repo}-selinux/archive/%{ds_commit}/%{repo}-selinux-%{ds_shortcommit}.tar.gz
-%endif
-Patch0: Fixed-push-of-unqualified-registry.patch
+%endif # with_selinux
 BuildRequires: glibc-static
 BuildRequires: golang >= 1.3.3
 BuildRequires: go-md2man
@@ -70,10 +74,10 @@ Requires: device-mapper-libs >= 1.02.90-1
 %endif
 
 # RE: rhbz#1195804 - ensure min NVR for selinux-policy
-%if 0%{?fedora} >= 23
+%if 0%{?with_selinux}
 Requires: selinux-policy >= 3.13.1-114
 Requires(pre): %{repo}-selinux >= %{version}-%{release}
-%endif
+%endif # with_selinux
 
 # Resolves: rhbz#1045220
 Requires: xz
@@ -106,7 +110,7 @@ Requires: golang >= 1.2.1-3
 Provides: %{repo}-io-devel = %{version}-%{release}
 Provides: %{repo}-pkg-devel = %{version}-%{release}
 Provides: %{repo}-io-pkg-devel = %{version}-%{release}
-Provides: golang(%{import_path}/vendor/src/%{tar_import_path}) = %{version}-%{release}
+#Provides: golang(%{import_path}/vendor/src/%{tar_import_path}) = %{version}-%{release}
 Summary:  A golang registry for global request variables (source libraries)
 Provides: golang(%{import_path}/contrib/docker-device-tool) = %{version}-%{release}
 Provides: golang(%{import_path}/contrib/httpserver) = %{version}-%{release}
@@ -230,7 +234,7 @@ Provides: %{repo}-io-logrotate = %{version}-%{release}
 This package installs %{summary}. logrotate is assumed to be installed on
 containers for this to work, failures are silently ignored.
 
-%if 0%{?fedora} >= 23
+%if 0%{?with_selinux}
 %package selinux
 Summary: SELinux policies for Docker
 BuildRequires: selinux-policy
@@ -244,7 +248,7 @@ Provides: %{repo}-io-selinux
 
 %description selinux
 SELinux policy modules for use with Docker.
-%endif
+%endif # with_selinux
 
 %package vim
 Summary: vim syntax highlighting files for Docker
@@ -266,13 +270,13 @@ This package installs %{summary}.
 
 %prep
 %setup -q -n %{repo}-%{d_commit}
-%patch0 -p1 -b unqualified-push
 cp %{SOURCE5} .
+sed -i 's/$/%{?dist}/' VERSION
 
-%if 0%{?fedora} >= 23
+%if 0%{?with_selinux}
 # unpack %{repo}-selinux
 tar zxf %{SOURCE7}
-%endif
+%endif # with_selinux
 
 %build
 # set up temporary build gopath, and put our directory there
@@ -288,12 +292,12 @@ docs/man/md2man-all.sh
 cp contrib/syntax/vim/LICENSE LICENSE-vim-syntax
 cp contrib/syntax/vim/README.md README-vim-syntax.md
 
-%if 0%{?fedora} >= 23
+%if 0%{?with_selinux}
 # build %{repo}-selinux
 pushd %{repo}-selinux-%{ds_commit}
 make SHARE="%{_datadir}" TARGETS="%{modulenames}"
 popd
-%endif
+%endif # with_selinux
 
 %install
 # install binary
@@ -301,9 +305,9 @@ install -d %{buildroot}%{_bindir}
 install -d %{buildroot}%{_libexecdir}/%{repo}
 
 # Grab the first thing from -dev
-for x in bundles/%{version}; do \
-  install -p -m 755 $x/dynbinary/%{repo}-%{version} %{buildroot}%{_bindir}/%{repo}
-  install -p -m 755 $x/dynbinary/%{repo}init-%{version} %{buildroot}%{_libexecdir}/%{repo}/%{repo}init
+for x in bundles/*-dev%{?dist}; do \
+  install -p -m 755 $x/dynbinary/%{repo}-*-dev%{?dist} %{buildroot}%{_bindir}/%{repo}
+  install -p -m 755 $x/dynbinary/%{repo}init-*-dev%{?dist} %{buildroot}%{_libexecdir}/%{repo}/%{repo}init
   break
 done
 
@@ -354,7 +358,7 @@ install -p -m 644 %{SOURCE2} %{buildroot}%{_sysconfdir}/sysconfig/%{repo}
 install -p -m 644 %{SOURCE6} %{buildroot}%{_sysconfdir}/sysconfig/%{repo}-network
 install -p -m 644 %{SOURCE3} %{buildroot}%{_sysconfdir}/sysconfig/%{repo}-storage
 
-%if 0%{?fedora} >= 23
+%if 0%{?with_selinux}
 # install SELinux interfaces
 %_format INTERFACES $x.if
 install -d %{buildroot}%{_datadir}/selinux/devel/include/%{moduletype}
@@ -364,15 +368,15 @@ install -p -m 644 %{repo}-selinux-%{ds_commit}/$INTERFACES %{buildroot}%{_datadi
 %_format MODULES $x.pp.bz2
 install -d %{buildroot}%{_datadir}/selinux/packages
 install -m 0644 %{repo}-selinux-%{ds_commit}/$MODULES %{buildroot}%{_datadir}/selinux/packages
-%endif
+%endif # with_selinux
 
 # sources
 install -d -p %{buildroot}%{gopath}/src/%{import_path}
 rm -rf pkg/symlink/testdata
 
 # install tar_import_path to devel package
-install -d -p %{buildroot}%{gopath}/src/%{import_path}/vendor/src/%{tar_import_path}
-cp -rpav vendor/src/%{tar_import_path}/* %{buildroot}%{gopath}/src/%{import_path}/vendor/src/%{tar_import_path}
+#install -d -p %{buildroot}%{gopath}/src/%{import_path}/vendor/src/%{tar_import_path}
+#cp -rpav vendor/src/%{tar_import_path}/* %{buildroot}%{gopath}/src/%{import_path}/vendor/src/%{tar_import_path}
 
 # remove dirs that won't be installed in devel
 rm -rf vendor docs _build bundles contrib/init hack project
@@ -408,7 +412,7 @@ exit 0
 %post
 %systemd_post %{repo}
 
-%if 0%{?fedora} >= 23
+%if 0%{?with_selinux}
 %post selinux
 # Install all modules in a single transaction
 %_format MODULES %{_datadir}/selinux/packages/$x.pp.bz2
@@ -417,7 +421,7 @@ if %{_sbindir}/selinuxenabled ; then
 %{_sbindir}/load_policy
 %relabel_files
 fi
-%endif
+%endif # with_selinux
 
 %preun
 %systemd_preun %{repo}
@@ -425,7 +429,7 @@ fi
 %postun
 %systemd_postun_with_restart %{repo}
 
-%if 0%{?fedora} >= 23
+%if 0%{?with_selinux}
 %postun selinux
 if [ $1 -eq 0 ]; then
 %{_sbindir}/semodule -n -r %{modulenames} &> /dev/null || :
@@ -434,7 +438,7 @@ if %{_sbindir}/selinuxenabled ; then
 %relabel_files
 fi
 fi
-%endif
+%endif # with_selinux
 
 %files
 %doc AUTHORS CHANGELOG.md CONTRIBUTING.md LICENSE MAINTAINERS NOTICE README.md 
@@ -465,11 +469,11 @@ fi
 %doc README.%{repo}-logrotate
 %{_sysconfdir}/cron.daily/%{repo}-logrotate
 
-%if 0%{?fedora} >= 23
+%if 0%{?with_selinux}
 %files selinux
 %doc %{repo}-selinux-%{ds_commit}/README.md
 %{_datadir}/selinux/*
-%endif
+%endif # with_selinux
 
 %files vim
 %{_datadir}/vim/vimfiles/doc/%{repo}file.txt
@@ -480,6 +484,10 @@ fi
 %{_datadir}/zsh/site-functions/_%{repo}
 
 %changelog
+* Mon Jun 01 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.0-1.gita53a6e6
+- built docker @lsm5/fedora commit#a53a6e6
+- modify docker-selinux condition
+
 * Tue May 05 2015 Michal Minar <miminar@redhat.com> - 1.6.0-3.git9d26a07
 - Resolves: bz#1217987 - fix unqualified push
 
