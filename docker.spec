@@ -61,6 +61,7 @@ Source6: %{repo}-network.sysconfig
 %if 0%{?with_selinux}
 Source7: https://github.com/fedora-cloud/%{repo}-selinux/archive/%{ds_commit}/%{repo}-selinux-%{ds_shortcommit}.tar.gz
 %endif # with_selinux
+Patch0: 0001-Add-Build-Flags.patch
 BuildRequires: git
 BuildRequires: glibc-static
 BuildRequires: golang >= 1.3.3
@@ -264,6 +265,7 @@ This package installs %{summary}.
 %autosetup -Sgit -n %{repo}-%{d_commit}
 cp %{SOURCE5} .
 sed -i 's/$/%{?dist}/' VERSION
+%patch0 -p1
 
 %if 0%{?with_selinux}
 # unpack %{repo}-selinux
@@ -334,8 +336,8 @@ install -d %{buildroot}%{_datadir}/zsh/site-functions
 install -p -m 644 contrib/completion/zsh/_%{repo} %{buildroot}%{_datadir}/zsh/site-functions
 
 # install udev rules
-install -d %{buildroot}%{_sysconfdir}/udev/rules.d
-install -p contrib/udev/80-%{repo}.rules %{buildroot}%{_sysconfdir}/udev/rules.d
+install -d %{buildroot}%{_udevrulesdir}
+install -p contrib/udev/80-%{repo}.rules %{buildroot}%{_udevrulesdir}
 
 # install storage dir
 install -d %{buildroot}%{_sharedstatedir}/%{repo}
@@ -445,7 +447,7 @@ fi
 %{_unitdir}/%{repo}.service
 %{_datadir}/bash-completion/completions/%{repo}
 %dir %{_sharedstatedir}/%{repo}
-%{_sysconfdir}/udev/rules.d/80-%{repo}.rules
+%{_udevrulesdir}/80-%{repo}.rules
 %{_sysconfdir}/%{repo}
 
 %files devel
