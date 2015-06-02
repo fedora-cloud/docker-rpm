@@ -433,7 +433,7 @@ install -p -m 644 docker-storage-setup.1 %{buildroot}%{_mandir}/man1
 popd
 
 %check
-[ ! -e /run/%{repo}.sock ] || {
+[ ! -w /run/%{repo}.sock ] || {
     mkdir test_dir
     pushd test_dir
     git clone https://%{import_path}
