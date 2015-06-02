@@ -3,7 +3,10 @@
 
 # docker builds in a checksum of dockerinit into docker,
 # so stripping the binaries breaks docker
+%if 0%{?fedora}
+%else
 %global debug_package %{nil}
+%endif
 %global provider github
 %global provider_tld com
 %global project docker
@@ -45,7 +48,7 @@
 
 Name: %{repo}
 Version: 1.7.0
-Release: 10.git%{d_shortcommit}%{?dist}
+Release: 11.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
@@ -58,6 +61,11 @@ Source3: %{repo}-storage.sysconfig
 Source4: %{repo}-logrotate.sh
 Source5: README.%{repo}-logrotate
 Source6: %{repo}-network.sysconfig
+
+%if 0%{?fedora}
+Patch0: add-debug-info.patch
+%endif
+
 %if 0%{?with_selinux}
 Source7: https://github.com/fedora-cloud/%{repo}-selinux/archive/%{ds_commit}/%{repo}-selinux-%{ds_shortcommit}.tar.gz
 %endif # with_selinux
@@ -262,6 +270,8 @@ This package installs %{summary}.
 
 %prep
 %autosetup -Sgit -n %{repo}-%{d_commit}
+
+# here keep the new line above otherwise autosetup fails when applying patch
 cp %{SOURCE5} .
 sed -i 's/$/%{?dist}/' VERSION
 
@@ -269,6 +279,10 @@ sed -i 's/$/%{?dist}/' VERSION
 # unpack %{repo}-selinux
 tar zxf %{SOURCE7}
 %endif # with_selinux
+
+%ifarch %{arm}
+rm vendor/src/github.com/vishvananda/netns/netns_linux_amd.go
+%endif
 
 %build
 # set up temporary build gopath, and put our directory there
@@ -476,6 +490,10 @@ fi
 %{_datadir}/zsh/site-functions/_%{repo}
 
 %changelog
+* Tue Jun 02 2015 jchaloup <jchaloup@redhat.com> - 1.7.0-11.gita53a6e6
+- remove vishvananda/netns/netns_linux_amd.go file if arm architecture is used
+- add debug info
+
 * Mon Jun 01 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.0-10.gita53a6e6
 - built docker @lsm5/fedora commit#a53a6e6
 
