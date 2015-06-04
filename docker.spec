@@ -15,7 +15,7 @@
 %global import_path %{provider}.%{provider_tld}/%{project}/%{repo}
 
 # docker stuff (prefix with d_)
-%global d_commit a53a6e6a7828e74554c7fd57673bf4e4b06c396f
+%global d_commit 9910a0c30165022e2d8ffe931927416f0b304248
 %global d_shortcommit %(c=%{d_commit}; echo ${c:0:7})
 
 #%global tar_import_path code.google.com/p/go/src/pkg/archive/tar
@@ -48,7 +48,7 @@
 
 Name: %{repo}
 Version: 1.7.0
-Release: 11.git%{d_shortcommit}%{?dist}
+Release: 12.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
@@ -490,6 +490,9 @@ fi
 %{_datadir}/zsh/site-functions/_%{repo}
 
 %changelog
+* Thu Jun 04 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.0-12.git9910a0c
+- built docker @lsm5/fedora commit#9910a0c
+
 * Tue Jun 02 2015 jchaloup <jchaloup@redhat.com> - 1.7.0-11.gita53a6e6
 - remove vishvananda/netns/netns_linux_amd.go file if arm architecture is used
 - add debug info
