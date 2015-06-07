@@ -48,11 +48,11 @@
 
 Name: %{repo}
 Version: 1.7.0
-Release: 13.git%{d_shortcommit}%{?dist}
+Release: 14.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
-ExclusiveArch: x86_64 %{arm}
+ExclusiveArch: x86_64 %{arm} %{ix86}
 #Source0: https://%{import_path}/archive/%{commit}/%{repo}-%{shortcommit}.tar.gz
 Source0: https://github.com/lsm5/%{repo}/archive/%{d_commit}/%{repo}-%{d_shortcommit}.tar.gz
 Source1: %{repo}.service
@@ -280,7 +280,7 @@ sed -i 's/$/%{?dist}/' VERSION
 tar zxf %{SOURCE7}
 %endif # with_selinux
 
-%ifarch %{arm}
+%ifarch %{ix86} %{arm}
 rm vendor/src/github.com/vishvananda/netns/netns_linux_amd.go
 %endif
 
@@ -490,6 +490,10 @@ fi
 %{_datadir}/zsh/site-functions/_%{repo}
 
 %changelog
+* Sun Jun 07 2015 Dennis Gilmore <dennis@ausil.us> - 1.7.0-14.gitdcff4e1
+- enable %%{ix86}
+- remove vishvananda/netns/netns_linux_amd.go file if %%{ix86} architecture is used
+
 * Fri Jun 05 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.0-13.gitdcff4e1
 - built docker @lsm5/fedora commit#dcff4e1
 
