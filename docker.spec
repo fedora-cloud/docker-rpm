@@ -280,7 +280,7 @@ sed -i 's/$/%{?dist}/' VERSION
 tar zxf %{SOURCE7}
 %endif # with_selinux
 
-%ifarch %{ix86} %{arm}
+%ifnarch x86_64
 rm vendor/src/github.com/vishvananda/netns/netns_linux_amd.go
 %endif
 
