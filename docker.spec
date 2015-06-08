@@ -62,7 +62,7 @@ Source6: %{repo}-network.sysconfig
 Source7: https://github.com/fedora-cloud/%{repo}-selinux/archive/%{ds_commit}/%{repo}-selinux-%{ds_shortcommit}.tar.gz
 %endif # with_selinux
 BuildRequires: glibc-static
-BuildRequires: golang >= 1.3.3
+BuildRequires: golang >= 1.4.2
 BuildRequires: go-md2man
 BuildRequires: device-mapper-devel
 BuildRequires: btrfs-progs-devel
@@ -278,6 +278,10 @@ sed -i 's/$/%{?dist}/' VERSION
 tar zxf %{SOURCE7}
 %endif # with_selinux
 
+%ifnarch x86_64
+rm vendor/src/github.com/vishvananda/netns/netns_linux_amd.go
+%endif
+
 %build
 # set up temporary build gopath, and put our directory there
 mkdir -p ./_build/src/github.com/%{repo}
@@ -484,6 +488,10 @@ fi
 %{_datadir}/zsh/site-functions/_%{repo}
 
 %changelog
+* Mon Jun 08 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.0-3.git5b82e1d
+- BR golang-1.4.2 or greater
+- remove netns_linux_amd.go for x86_64
+
 * Tue Jun 02 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.0-2.git5b82e1d
 - build docker rhatdan/fedora-1.7 commit#5b82e1d
 - build docker-selinux commit#99c4c77
