@@ -71,7 +71,7 @@ Source7: https://github.com/fedora-cloud/%{repo}-selinux/archive/%{ds_commit}/%{
 %endif # with_selinux
 BuildRequires: git
 BuildRequires: glibc-static
-BuildRequires: golang >= 1.3.3
+BuildRequires: golang >= 1.4.2
 BuildRequires: go-md2man
 BuildRequires: device-mapper-devel
 BuildRequires: btrfs-progs-devel
