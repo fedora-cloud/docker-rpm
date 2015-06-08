@@ -25,7 +25,7 @@
 %if 0%{?with_selinux}
 # docker-selinux stuff (prefix with ds_ for version/release etc.)
 # Some bits borrowed from the openstack-selinux package
-%global ds_commit 4421e0d80866b4b03f6a16c5b6bfabdf4c8bfa7c
+%global ds_commit 99c4c77fd8a3d28e93d7a1d6b8af2db09bdf5989
 %global ds_shortcommit %(c=%{ds_commit}; echo ${c:0:7})
 %global selinuxtype targeted
 %global moduletype services
@@ -45,7 +45,7 @@
 
 Name: %{repo}
 Version: 1.7.0
-Release: 15.git%{d_shortcommit}%{?dist}
+Release: 16.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
@@ -487,6 +487,9 @@ fi
 %{_datadir}/zsh/site-functions/_%{repo}
 
 %changelog
+* Mon Jun 08 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.0-16.gitdcff4e1
+- Resolves: rhbz#1229433 - update docker-selinux to commit#99c4c7
+
 * Mon Jun 08 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.0-15.gitdcff4e1
 - disable debuginfo because it breaks docker
 
