@@ -3,10 +3,7 @@
 
 # docker builds in a checksum of dockerinit into docker,
 # so stripping the binaries breaks docker
-%if 0%{?fedora}
-%else
 %global debug_package %{nil}
-%endif
 %global provider github
 %global provider_tld com
 %global project docker
@@ -48,7 +45,7 @@
 
 Name: %{repo}
 Version: 1.7.0
-Release: 14.git%{d_shortcommit}%{?dist}
+Release: 15.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
@@ -490,6 +487,9 @@ fi
 %{_datadir}/zsh/site-functions/_%{repo}
 
 %changelog
+* Mon Jun 08 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.0-15.gitdcff4e1
+- disable debuginfo because it breaks docker
+
 * Sun Jun 07 2015 Dennis Gilmore <dennis@ausil.us> - 1.7.0-14.gitdcff4e1
 - enable %%{ix86}
 - remove vishvananda/netns/netns_linux_amd.go file if %%{ix86} architecture is used
