@@ -63,8 +63,6 @@ Source3: %{repo}-storage.sysconfig
 Source4: %{repo}-logrotate.sh
 Source5: README.%{repo}-logrotate
 Source6: %{repo}-network.sysconfig
-# Source7 is the source tarball for docker-storage-setup
-Source7: https://github.com/projectatomic/%{repo}-storage-setup/archive/%{dss_commit}/%{repo}-storage-setup-%{dss_shortcommit}.tar.gz
 
 %if 0%{?fedora}
 Patch0: add-debug-info.patch
@@ -73,6 +71,9 @@ Patch0: add-debug-info.patch
 %if 0%{?with_selinux}
 Source7: https://github.com/fedora-cloud/%{repo}-selinux/archive/%{ds_commit}/%{repo}-selinux-%{ds_shortcommit}.tar.gz
 %endif # with_selinux
+# Source8 is the source tarball for docker-storage-setup
+Source8: https://github.com/projectatomic/%{repo}-storage-setup/archive/%{dss_commit}/%{repo}-storage-setup-%{dss_shortcommit}.tar.gz
+BuildRequires: git
 BuildRequires: glibc-static
 BuildRequires: golang >= 1.4.2
 BuildRequires: go-md2man
@@ -292,7 +293,7 @@ cp %{SOURCE5} .
 sed -i 's/$/%{?dist}/' VERSION
 
 # untar d-s-s
-tar zxf %{SOURCE7}
+tar zxf %{SOURCE8}
 
 %if 0%{?with_selinux}
 # unpack %{repo}-selinux
