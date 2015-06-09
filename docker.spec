@@ -50,7 +50,7 @@
 
 Name: %{repo}
 Version: 1.7.0
-Release: 16.git%{d_shortcommit}%{?dist}
+Release: 17.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
