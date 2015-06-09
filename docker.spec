@@ -15,6 +15,11 @@
 %global d_commit dcff4e1353468530b9cbdc11d75a6f5266bafa0d
 %global d_shortcommit %(c=%{d_commit}; echo ${c:0:7})
 
+# d-s-s stuff (prefix with dss_)
+%global dss_libdir %{_prefix}/lib/docker-storage-setup
+%global dss_commit 2cdf16f3b50456d9f21f370b26bab5dc2acb0caa
+%global dss_shortcommit %(c=%{dss_commit}; echo ${c:0:7})
+
 #%global tar_import_path code.google.com/p/go/src/pkg/archive/tar
 
 # docker-selinux conditional
@@ -58,6 +63,9 @@ Source3: %{repo}-storage.sysconfig
 Source4: %{repo}-logrotate.sh
 Source5: README.%{repo}-logrotate
 Source6: %{repo}-network.sysconfig
+# Source7 is the source tarball for docker-storage-setup
+Source7:
+https://github.com/projectatomic/%{repo}-storage-setup/archive/%{dss_commit}/%{repo}-storage-setup-%{dss_shortcommit}.tar.gz
 
 %if 0%{?fedora}
 Patch0: add-debug-info.patch
@@ -99,6 +107,12 @@ Requires: tar
 Provides: %{repo}-io = %{version}-%{release}
 Obsoletes: %{repo}-io <= 1.5.0-19
 %endif
+
+# include d-s-s into main docker package and obsolete existing d-s-s rpm
+# also update BRs and Rs
+Requires: lvm2
+Requires: xfsprogs
+Obsoletes: %{repo}-storage-setup <= 0.5-3
 
 %description
 Docker is an open-source engine that automates the deployment of any
@@ -272,6 +286,9 @@ This package installs %{summary}.
 cp %{SOURCE5} .
 sed -i 's/$/%{?dist}/' VERSION
 
+# untar d-s-s
+tar zxf %{SOURCE7}
+
 %if 0%{?with_selinux}
 # unpack %{repo}-selinux
 tar zxf %{SOURCE7}
@@ -395,6 +412,20 @@ done
 # install %{repo} config directory
 install -dp %{buildroot}%{_sysconfdir}/%{repo}
 
+# install d-s-s
+pushd %{repo}-storage-setup-%{dss_commit}
+install -d %{buildroot}%{_bindir}
+install -p -m 755 docker-storage-setup.sh
+%{buildroot}%{_bindir}/docker-storage-setup
+install -d %{buildroot}%{_unitdir}
+install -p -m 644 docker-storage-setup.service %{buildroot}%{_unitdir}
+install -d %{buildroot}%{dss_libdir}
+install -p -m 644 docker-storage-setup.conf
+%{buildroot}%{dss_libdir}/docker-storage-setup
+install -d %{buildroot}%{_mandir}/man1
+install -p -m 644 docker-storage-setup.1 %{buildroot}%{_mandir}/man1
+popd
+
 %check
 [ ! -e /run/%{repo}.sock ] || {
     mkdir test_dir
@@ -458,6 +489,10 @@ fi
 %dir %{_sharedstatedir}/%{repo}
 %{_udevrulesdir}/80-%{repo}.rules
 %{_sysconfdir}/%{repo}
+# d-s-s specific
+%{_unitdir}/%{repo}-storage-setup.service
+%{_bindir}/%{repo}-storage-setup
+%{dss_libdir}/%{repo}-storage-setup
 
 %files devel
 %doc AUTHORS CHANGELOG.md CONTRIBUTING.md LICENSE MAINTAINERS NOTICE README.md 
@@ -487,6 +522,10 @@ fi
 %{_datadir}/zsh/site-functions/_%{repo}
 
 %changelog
+* Tue Jun 09 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.0-17.gitdcff4e1
+- Include d-s-s into the main docker package
+- Obsolete docker-storage-setup <= 0.5-3
+
 * Mon Jun 08 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.0-16.gitdcff4e1
 - Resolves: rhbz#1229433 - update docker-selinux to commit#99c4c7
 
