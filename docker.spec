@@ -64,10 +64,6 @@ Source4: %{repo}-logrotate.sh
 Source5: README.%{repo}-logrotate
 Source6: %{repo}-network.sysconfig
 
-%if 0%{?fedora}
-Patch0: add-debug-info.patch
-%endif
-
 %if 0%{?with_selinux}
 Source7: https://github.com/fedora-cloud/%{repo}-selinux/archive/%{ds_commit}/%{repo}-selinux-%{ds_shortcommit}.tar.gz
 %endif # with_selinux
@@ -529,6 +525,7 @@ fi
 * Tue Jun 09 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.0-4.gitdcff4e1
 - Include d-s-s into the main docker package
 - Obsolete docker-storage-setup <= 0.5-3
+- Resolves: rhbz#1229828
 
 * Mon Jun 08 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.0-3.git5b82e1d
 - BR golang-1.4.2 or greater
