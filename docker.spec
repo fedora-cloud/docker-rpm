@@ -307,7 +307,7 @@ export DOCKER_BUILDTAGS="selinux"
 export GOPATH=$(pwd)/_build:$(pwd)/vendor:%{gopath}
 
 DEBUG=1 hack/make.sh dynbinary
-docs/man/md2man-all.sh
+man/md2man-all.sh
 cp contrib/syntax/vim/LICENSE LICENSE-vim-syntax
 cp contrib/syntax/vim/README.md README-vim-syntax.md
 
