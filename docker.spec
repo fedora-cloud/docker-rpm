@@ -1,3 +1,11 @@
+%if 0%{?fedora}
+%global with_devel 1
+%global with_unit_test 1
+%else
+%global with_devel 0
+%global with_unit_test 0
+%endif
+
 # modifying the dockerinit binary breaks the SHA1 sum check by docker
 %global __os_install_post %{_rpmconfigdir}/brp-compress
 
@@ -50,7 +58,7 @@
 
 Name: %{repo}
 Version: 1.7.0
-Release: 17.git%{d_shortcommit}%{?dist}
+Release: 18.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
@@ -123,9 +131,9 @@ and between virtually any server. The same container that a developer builds
 and tests on a laptop will run at scale, in production*, on VMs, bare-metal
 servers, OpenStack clusters, public instances, or combinations of the above.
 
+%if 0%{?with_devel}
 %package devel
 BuildRequires: golang >= 1.2.1-3
-Requires: golang >= 1.2.1-3
 Provides: %{repo}-io-devel = %{version}-%{release}
 Provides: %{repo}-pkg-devel = %{version}-%{release}
 Provides: %{repo}-io-pkg-devel = %{version}-%{release}
@@ -225,6 +233,15 @@ Provides: golang(%{import_path}/graph) = %{version}-%{release}
 %{summary}
 
 This package provides the source libraries for Docker.
+%endif
+
+%if 0%{?with_unit_test}
+%package unit-test
+Summary: %{summary} - for running unit tests
+
+%description unit-test
+%{summary} - for running unit tests
+%endif
 
 %package fish-completion
 Summary: fish completion files for Docker
@@ -307,7 +324,7 @@ export DOCKER_BUILDTAGS="selinux"
 export GOPATH=$(pwd)/_build:$(pwd)/vendor:%{gopath}
 
 DEBUG=1 hack/make.sh dynbinary
-man/md2man-all.sh
+docs/man/md2man-all.sh
 cp contrib/syntax/vim/LICENSE LICENSE-vim-syntax
 cp contrib/syntax/vim/README.md README-vim-syntax.md
 
@@ -389,6 +406,15 @@ install -d %{buildroot}%{_datadir}/selinux/packages
 install -m 0644 %{repo}-selinux-%{ds_commit}/$MODULES %{buildroot}%{_datadir}/selinux/packages
 %endif # with_selinux
 
+%if 0%{?with_unit_test}
+install -d -m 0755 %{buildroot}%{_sharedstatedir}/docker-unit-test/
+cp -pav VERSION Dockerfile %{buildroot}%{_sharedstatedir}/docker-unit-test/.
+for d in api builder cliconfig contrib daemon graph hack image integration-cli links nat opts pkg registry runconfig trust utils vendor volume; do
+  cp -a $d %{buildroot}%{_sharedstatedir}/docker-unit-test/
+done
+%endif
+
+%if 0%{?with_devel}
 # sources
 install -d -p %{buildroot}%{gopath}/src/%{import_path}
 rm -rf pkg/symlink/testdata
@@ -400,13 +426,14 @@ rm -rf pkg/symlink/testdata
 # remove dirs that won't be installed in devel
 rm -rf vendor docs _build bundles contrib/init hack project
 
-# remove %{repo}-selinux rpm spec file
-rm -rf %{repo}-selinux-%{ds_commit}/%{repo}-selinux.spec
-
 # install sources to devel
 for dir in */ ; do
     cp -rpav $dir %{buildroot}/%{gopath}/src/%{import_path}/
 done
+%endif
+
+# remove %{repo}-selinux rpm spec file
+rm -rf %{repo}-selinux-%{ds_commit}/%{repo}-selinux.spec
 
 # install %{repo} config directory
 install -dp %{buildroot}%{_sysconfdir}/%{repo}
@@ -491,10 +518,17 @@ fi
 %{_bindir}/%{repo}-storage-setup
 %{dss_libdir}/%{repo}-storage-setup
 
+%if 0%{?with_devel}
 %files devel
 %doc AUTHORS CHANGELOG.md CONTRIBUTING.md LICENSE MAINTAINERS NOTICE README.md 
 %dir %{gopath}/src/%{provider}.%{provider_tld}/%{project}
 %{gopath}/src/%{import_path}
+%endif
+
+%if 0%{?with_unit_test}
+%files unit-test
+%{_sharedstatedir}/docker-unit-test/
+%endif
 
 %files fish-completion
 %dir %{_datadir}/fish/vendor_completions.d/
@@ -519,6 +553,11 @@ fi
 %{_datadir}/zsh/site-functions/_%{repo}
 
 %changelog
+* Fri Jun 12 2015 jchaloup <jchaloup@redhat.com> - 1.7.0-18.gitdcff4e1
+- Add docker-unit-test subpackage for CI testing
+- Add with_devel and with_unit_test macros
+- Remove devel's runtime deps on golang
+
 * Tue Jun 09 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.0-17.gitdcff4e1
 - Include d-s-s into the main docker package
 - Obsolete docker-storage-setup <= 0.5-3
