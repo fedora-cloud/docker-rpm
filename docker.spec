@@ -58,7 +58,7 @@
 
 Name: %{repo}
 Version: 1.7.0
-Release: 18.git%{d_shortcommit}%{?dist}
+Release: 19.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
@@ -412,6 +412,8 @@ cp -pav VERSION Dockerfile %{buildroot}%{_sharedstatedir}/docker-unit-test/.
 for d in api builder cliconfig contrib daemon graph hack image integration-cli links nat opts pkg registry runconfig trust utils vendor volume; do
   cp -a $d %{buildroot}%{_sharedstatedir}/docker-unit-test/
 done
+# remove docker.initd as it requires /sbin/runtime no packages in Fedora
+rm -rf %{buildroot}%{_sharedstatedir}/docker-unit-test/contrib/init/openrc/docker.initd
 %endif
 
 %if 0%{?with_devel}
@@ -553,6 +555,9 @@ fi
 %{_datadir}/zsh/site-functions/_%{repo}
 
 %changelog
+* Mon Jun 15 2015 jchaloup <jchaloup@redhat.com> - 1.7.0-19.gitdcff4e1
+- Remove docker.initd as it requires /sbin/runtime no packages in Fedora
+
 * Fri Jun 12 2015 jchaloup <jchaloup@redhat.com> - 1.7.0-18.gitdcff4e1
 - Add docker-unit-test subpackage for CI testing
 - Add with_devel and with_unit_test macros
