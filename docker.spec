@@ -58,7 +58,7 @@
 
 Name: %{repo}
 Version: 1.7.0
-Release: 19.git%{d_shortcommit}%{?dist}
+Release: 20.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
@@ -555,6 +555,9 @@ fi
 %{_datadir}/zsh/site-functions/_%{repo}
 
 %changelog
+* Wed Jun 17 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.7.0-20.gitdcff4e1
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
+
 * Mon Jun 15 2015 jchaloup <jchaloup@redhat.com> - 1.7.0-19.gitdcff4e1
 - Remove docker.initd as it requires /sbin/runtime no packages in Fedora
 
