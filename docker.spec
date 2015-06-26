@@ -20,7 +20,7 @@
 %global import_path %{provider}.%{provider_tld}/%{project}/%{repo}
 
 # docker stuff (prefix with d_)
-%global d_commit dcff4e1353468530b9cbdc11d75a6f5266bafa0d
+%global d_commit 96ebfd26cd23ade9e7c238521cfca8d818df0647
 %global d_shortcommit %(c=%{d_commit}; echo ${c:0:7})
 
 # d-s-s stuff (prefix with dss_)
@@ -57,8 +57,8 @@
 %endif # with_selinux
 
 Name: %{repo}
-Version: 1.7.0
-Release: 21.git%{d_shortcommit}%{?dist}
+Version: 1.8.0
+Release: 1.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
@@ -555,6 +555,9 @@ fi
 %{_datadir}/zsh/site-functions/_%{repo}
 
 %changelog
+* Fri Jun 26 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.8.0-1
+- New version: 1.8.0, built docker         @lsm5/commit#96ebfd2
+
 * Fri Jun 26 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.0-21.gitdcff4e1
 - build dss master commit#90f4a5f
 - build docker-selinux master commit#bebf349
