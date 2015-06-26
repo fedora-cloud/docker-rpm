@@ -25,7 +25,7 @@
 
 # d-s-s stuff (prefix with dss_)
 %global dss_libdir %{_prefix}/lib/docker-storage-setup
-%global dss_commit 2cdf16f3b50456d9f21f370b26bab5dc2acb0caa
+%global dss_commit 90f4a5f516ad396817ed5068ad6f7cb4b2665341
 %global dss_shortcommit %(c=%{dss_commit}; echo ${c:0:7})
 
 #%global tar_import_path code.google.com/p/go/src/pkg/archive/tar
@@ -38,7 +38,7 @@
 %if 0%{?with_selinux}
 # docker-selinux stuff (prefix with ds_ for version/release etc.)
 # Some bits borrowed from the openstack-selinux package
-%global ds_commit 99c4c77fd8a3d28e93d7a1d6b8af2db09bdf5989
+%global ds_commit bebf349f6e66c10f8010446a6b3440e43311a8ff
 %global ds_shortcommit %(c=%{ds_commit}; echo ${c:0:7})
 %global selinuxtype targeted
 %global moduletype services
@@ -58,7 +58,7 @@
 
 Name: %{repo}
 Version: 1.7.0
-Release: 20.git%{d_shortcommit}%{?dist}
+Release: 21.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
@@ -555,6 +555,10 @@ fi
 %{_datadir}/zsh/site-functions/_%{repo}
 
 %changelog
+* Fri Jun 26 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.0-21.gitdcff4e1
+- build dss master commit#90f4a5f
+- build docker-selinux master commit#bebf349
+
 * Wed Jun 17 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.7.0-20.gitdcff4e1
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
 
