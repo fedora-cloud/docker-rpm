@@ -20,7 +20,7 @@
 %global import_path %{provider}.%{provider_tld}/%{project}/%{repo}
 
 # docker stuff (prefix with d_)
-%global d_commit a2f1a81335644242995b381e9d81e4a301e870a6
+%global d_commit 0d8fd7ceb94992c04aba683b6acf5debc02cda6d
 %global d_shortcommit %(c=%{d_commit}; echo ${c:0:7})
 
 # d-s-s stuff (prefix with dss_)
@@ -58,11 +58,11 @@
 
 Name: %{repo}
 Version: 1.8.0
-Release: 3.git%{d_shortcommit}%{?dist}
+Release: 4.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
-ExclusiveArch: x86_64 %{arm} %{ix86}
+ExclusiveArch: x86_64
 #Source0: https://%{import_path}/archive/%{commit}/%{repo}-%{shortcommit}.tar.gz
 Source0: https://github.com/lsm5/%{repo}/archive/%{d_commit}/%{repo}-%{d_shortcommit}.tar.gz
 Source1: %{repo}.service
@@ -456,7 +456,7 @@ popd
 [ ! -w /run/%{repo}.sock ] || {
     mkdir test_dir
     pushd test_dir
-    git clone https://%{import_path}
+    git clone https://github.com/lsm5/docker.git -b fedora-1.8
     pushd %{repo}
     make test
     popd
@@ -555,6 +555,12 @@ fi
 %{_datadir}/zsh/site-functions/_%{repo}
 
 %changelog
+* Mon Jun 29 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.8.0-4.git0d8fd7c
+- build docker @lsm5/fedora-1.8 commit#0d8fd7c
+- disable non-x86_64 for this build
+- use same distro as host for running tests
+- docker.service Wants docker-storage-setup.service
+
 * Mon Jun 29 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.8.0-3.gita2f1a81
 - built docker @lsm5/fedora commit#a2f1a81
 
