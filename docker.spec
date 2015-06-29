@@ -1,3 +1,6 @@
+%global with_devel 1
+%global with_unit_test 1
+
 # modifying the dockerinit binary breaks the SHA1 sum check by docker
 %global __os_install_post %{_rpmconfigdir}/brp-compress
 
@@ -12,12 +15,12 @@
 %global import_path %{provider}.%{provider_tld}/%{project}/%{repo}
 
 # docker stuff (prefix with d_)
-%global d_commit 5b82e1d3e552cca642ff3cacc8ad31589eb6e206
+%global d_commit 0d8fd7ceb94992c04aba683b6acf5debc02cda6d
 %global d_shortcommit %(c=%{d_commit}; echo ${c:0:7})
 
 # d-s-s stuff (prefix with dss_)
 %global dss_libdir %{_prefix}/lib/docker-storage-setup
-%global dss_commit 2cdf16f3b50456d9f21f370b26bab5dc2acb0caa
+%global dss_commit 90f4a5f516ad396817ed5068ad6f7cb4b2665341
 %global dss_shortcommit %(c=%{dss_commit}; echo ${c:0:7})
 
 #%global tar_import_path code.google.com/p/go/src/pkg/archive/tar
@@ -30,7 +33,7 @@
 %if 0%{?with_selinux}
 # docker-selinux stuff (prefix with ds_ for version/release etc.)
 # Some bits borrowed from the openstack-selinux package
-%global ds_commit 99c4c77fd8a3d28e93d7a1d6b8af2db09bdf5989
+%global ds_commit bebf349f6e66c10f8010446a6b3440e43311a8ff
 %global ds_shortcommit %(c=%{ds_commit}; echo ${c:0:7})
 %global selinuxtype targeted
 %global moduletype services
@@ -49,13 +52,13 @@
 %endif # with_selinux
 
 Name: %{repo}
-Version: 1.7.0
-Release: 4.git%{d_shortcommit}%{?dist}
+Version: 1.8.0
+Release: 1.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
-ExclusiveArch: x86_64 %{arm}
-# Branch used: https://github.com/lsm5/docker/commits/fedora-1.7
+ExclusiveArch: x86_64
+# Branch used: https://github.com/lsm5/docker/commits/fedora-1.8
 Source0: https://github.com/lsm5/%{repo}/archive/%{d_commit}/%{repo}-%{d_shortcommit}.tar.gz
 Source1: %{repo}.service
 Source2: %{repo}.sysconfig
@@ -119,6 +122,7 @@ and between virtually any server. The same container that a developer builds
 and tests on a laptop will run at scale, in production*, on VMs, bare-metal
 servers, OpenStack clusters, public instances, or combinations of the above.
 
+%if 0%{?with_devel}
 %package devel
 BuildRequires: golang >= 1.2.1-3
 Requires: golang >= 1.2.1-3
@@ -230,6 +234,15 @@ Provides: golang(%{import_path}/opts) = %{version}-%{release}
 %{summary}
 
 This package provides the source libraries for Docker.
+%endif # with_devel
+
+%if 0%{?with_unit_test}
+%package unit-test
+Summary: %{summary} - for running unit tests
+
+%description unit-test
+%{summary} - for running unit tests
+%endif # with_unit_test
 
 %package fish-completion
 Summary: fish completion files for Docker
@@ -335,9 +348,9 @@ done
 
 # install manpages
 install -d %{buildroot}%{_mandir}/man1
-install -p -m 644 docs/man/man1/%{repo}*.1 %{buildroot}%{_mandir}/man1
+install -p -m 644 man/man1/%{repo}*.1 %{buildroot}%{_mandir}/man1
 install -d %{buildroot}%{_mandir}/man5
-install -p -m 644 docs/man/man5/Dockerfile.5 %{buildroot}%{_mandir}/man5
+install -p -m 644 man/man5/Dockerfile.5 %{buildroot}%{_mandir}/man5
 
 # install bash completion
 install -dp %{buildroot}%{_datadir}/bash-completion/completions
@@ -392,6 +405,17 @@ install -d %{buildroot}%{_datadir}/selinux/packages
 install -m 0644 %{repo}-selinux-%{ds_commit}/$MODULES %{buildroot}%{_datadir}/selinux/packages
 %endif # with_selinux
 
+%if 0%{?with_unit_test}
+install -d -m 0755 %{buildroot}%{_sharedstatedir}/docker-unit-test/
+cp -pav VERSION Dockerfile %{buildroot}%{_sharedstatedir}/docker-unit-test/.
+for d in api builder cliconfig contrib daemon graph hack image integration-cli links nat opts pkg registry runconfig trust utils vendor volume; do
+  cp -a $d %{buildroot}%{_sharedstatedir}/docker-unit-test/
+done
+# remove docker.initd as it requires /sbin/runtime no packages in Fedora
+rm -rf %{buildroot}%{_sharedstatedir}/docker-unit-test/contrib/init/openrc/docker.initd
+%endif # with_unit_test
+
+%if 0%{?with_devel}
 # sources
 install -d -p %{buildroot}%{gopath}/src/%{import_path}
 rm -rf pkg/symlink/testdata
@@ -403,13 +427,14 @@ rm -rf pkg/symlink/testdata
 # remove dirs that won't be installed in devel
 rm -rf vendor docs _build bundles contrib/init hack project
 
-# remove %{repo}-selinux rpm spec file
-rm -rf %{repo}-selinux-%{ds_commit}/%{repo}-selinux.spec
-
 # install sources to devel
 for dir in */ ; do
     cp -rpav $dir %{buildroot}/%{gopath}/src/%{import_path}/
 done
+%endif # with_devel
+
+# remove %{repo}-selinux rpm spec file
+rm -rf %{repo}-selinux-%{ds_commit}/%{repo}-selinux.spec
 
 # install %{repo} config directory
 install -dp %{buildroot}%{_sysconfdir}/%{repo}
@@ -430,7 +455,7 @@ popd
 [ ! -w /run/%{repo}.sock ] || {
     mkdir test_dir
     pushd test_dir
-    git clone https://%{import_path}
+    git clone https://github.com/lsm5/docker.git -b fedora-1.8
     pushd %{repo}
     make test
     popd
@@ -494,10 +519,17 @@ fi
 %{_bindir}/%{repo}-storage-setup
 %{dss_libdir}/%{repo}-storage-setup
 
+%if 0%{?with_devel}
 %files devel
 %doc AUTHORS CHANGELOG.md CONTRIBUTING.md LICENSE MAINTAINERS NOTICE README.md 
 %dir %{gopath}/src/%{provider}.%{provider_tld}/%{project}
 %{gopath}/src/%{import_path}
+%endif # with_devel
+
+%if 0%{?with_unit_test}
+%files unit-test
+%{_sharedstatedir}/docker-unit-test/
+%endif # with_unit_test
 
 %files fish-completion
 %dir %{_datadir}/fish/vendor_completions.d/
@@ -522,6 +554,12 @@ fi
 %{_datadir}/zsh/site-functions/_%{repo}
 
 %changelog
+* Mon Jun 29 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.8.0-1.git0d8fd7c
+- built @lsm5/fedora-1.8 commit#0d8fd7c
+- update docker-selinux and dss to latest master commits
+- include with_unit_test and with_devel macros from rawhide spec
+- disable non-x86_64 for this build (failures with seccomp patches)
+
 * Tue Jun 09 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.0-4.gitdcff4e1
 - Include d-s-s into the main docker package
 - Obsolete docker-storage-setup <= 0.5-3
