@@ -20,7 +20,7 @@
 %global import_path %{provider}.%{provider_tld}/%{project}/%{repo}
 
 # docker stuff (prefix with d_)
-%global d_commit 0d8fd7ceb94992c04aba683b6acf5debc02cda6d
+%global d_commit 6d5bfe53fb8544238c03953a8363047e2cac65c4
 %global d_shortcommit %(c=%{d_commit}; echo ${c:0:7})
 
 # d-s-s stuff (prefix with dss_)
@@ -58,7 +58,7 @@
 
 Name: %{repo}
 Version: 1.8.0
-Release: 4.git%{d_shortcommit}%{?dist}
+Release: 5.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
@@ -555,6 +555,10 @@ fi
 %{_datadir}/zsh/site-functions/_%{repo}
 
 %changelog
+* Tue Jun 30 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.8.0-5.git6d5bfe5
+- built docker @lsm5/fedora-1.8 commit#6d5bfe5
+- make test-unit and make test-docker-py successful
+
 * Mon Jun 29 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.8.0-4.git0d8fd7c
 - build docker @lsm5/fedora-1.8 commit#0d8fd7c
 - disable non-x86_64 for this build
