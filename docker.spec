@@ -15,7 +15,7 @@
 %global import_path %{provider}.%{provider_tld}/%{project}/%{repo}
 
 # docker stuff (prefix with d_)
-%global d_commit 04d5c0c4a2087cc1bb37febca5e4f1b9d42fa9c3
+%global d_commit 74e7a7a284889a3b703ce35c84f86cbfbb218167
 %global d_shortcommit %(c=%{d_commit}; echo ${c:0:7})
 
 # d-s-s stuff (prefix with dss_)
@@ -550,6 +550,10 @@ fi
 %{_datadir}/zsh/site-functions/_%{repo}
 
 %changelog
+* Thu Jul 02 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.0-5.git74e7a7a
+- build docker @lsm5/fedora-1.7 commit#74e7a7a
+- Resolves: upstream gh#13649
+
 * Wed Jul 01 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.0-5.git04d5c0c
 - revert to 1.7.0 from 1.8.0
 - built docker @lsm5/fedora-1.7 commit#04d5c0c
