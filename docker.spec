@@ -53,7 +53,7 @@
 
 Name: %{repo}
 Version: 1.7.0
-Release: 5.git%{d_shortcommit}%{?dist}
+Release: 6.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
@@ -550,7 +550,7 @@ fi
 %{_datadir}/zsh/site-functions/_%{repo}
 
 %changelog
-* Thu Jul 02 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.0-5.git74e7a7a
+* Thu Jul 02 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.0-6.git74e7a7a
 - build docker @lsm5/fedora-1.7 commit#74e7a7a
 - Resolves: upstream gh#13649
 
