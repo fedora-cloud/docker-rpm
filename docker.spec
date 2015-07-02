@@ -15,12 +15,12 @@
 %global import_path %{provider}.%{provider_tld}/%{project}/%{repo}
 
 # docker stuff (prefix with d_)
-%global d_commit 0d8fd7ceb94992c04aba683b6acf5debc02cda6d
+%global d_commit 04d5c0c4a2087cc1bb37febca5e4f1b9d42fa9c3
 %global d_shortcommit %(c=%{d_commit}; echo ${c:0:7})
 
 # d-s-s stuff (prefix with dss_)
-%global dss_libdir %{_prefix}/lib/docker-storage-setup
-%global dss_commit 90f4a5f516ad396817ed5068ad6f7cb4b2665341
+%global dss_libdir %{_prefix}/lib/%{repo}-storage-setup
+%global dss_commit e9c3a4cf5cc0982319263570804e142fe036c1a0
 %global dss_shortcommit %(c=%{dss_commit}; echo ${c:0:7})
 
 #%global tar_import_path code.google.com/p/go/src/pkg/archive/tar
@@ -52,12 +52,12 @@
 %endif # with_selinux
 
 Name: %{repo}
-Version: 1.8.0
-Release: 1.git%{d_shortcommit}%{?dist}
+Version: 1.7.0
+Release: 5.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
-ExclusiveArch: x86_64
+ExclusiveArch: %{arm} %{ix86} x86_64
 # Branch used: https://github.com/lsm5/docker/commits/fedora-1.8
 Source0: https://github.com/lsm5/%{repo}/archive/%{d_commit}/%{repo}-%{d_shortcommit}.tar.gz
 Source1: %{repo}.service
@@ -309,10 +309,6 @@ tar zxf %{SOURCE8}
 tar zxf %{SOURCE7}
 %endif # with_selinux
 
-%ifnarch x86_64
-rm vendor/src/github.com/vishvananda/netns/netns_linux_amd.go
-%endif
-
 %build
 # set up temporary build gopath, and put our directory there
 mkdir -p ./_build/src/github.com/%{repo}
@@ -340,9 +336,9 @@ install -d %{buildroot}%{_bindir}
 install -d %{buildroot}%{_libexecdir}/%{repo}
 
 # Grab the first thing from -dev
-for x in bundles/*-dev%{?dist}; do \
-  install -p -m 755 $x/dynbinary/%{repo}-*-dev%{?dist} %{buildroot}%{_bindir}/%{repo}
-  install -p -m 755 $x/dynbinary/%{repo}init-*-dev%{?dist} %{buildroot}%{_libexecdir}/%{repo}/%{repo}init
+for x in bundles/%{version}%{?dist}; do \
+  install -p -m 755 $x/dynbinary/%{repo}-%{version}%{?dist} %{buildroot}%{_bindir}/%{repo}
+  install -p -m 755 $x/dynbinary/%{repo}init-%{version}%{?dist} %{buildroot}%{_libexecdir}/%{repo}/%{repo}init
   break
 done
 
@@ -554,6 +550,11 @@ fi
 %{_datadir}/zsh/site-functions/_%{repo}
 
 %changelog
+* Wed Jul 01 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.0-5.git04d5c0c
+- revert to 1.7.0 from 1.8.0
+- built docker @lsm5/fedora-1.7 commit#04d5c0c
+- build d-s-s master commit#e9c3a4c
+
 * Mon Jun 29 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.8.0-1.git0d8fd7c
 - built @lsm5/fedora-1.8 commit#0d8fd7c
 - update docker-selinux and dss to latest master commits
