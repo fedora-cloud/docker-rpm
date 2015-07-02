@@ -20,7 +20,7 @@
 %global import_path %{provider}.%{provider_tld}/%{project}/%{repo}
 
 # docker stuff (prefix with d_)
-%global d_commit 6d5bfe53fb8544238c03953a8363047e2cac65c4
+%global d_commit 5062080f189fa8e7b6a06f379d1b215479dcd343
 %global d_shortcommit %(c=%{d_commit}; echo ${c:0:7})
 
 # d-s-s stuff (prefix with dss_)
@@ -58,11 +58,11 @@
 
 Name: %{repo}
 Version: 1.8.0
-Release: 5.git%{d_shortcommit}%{?dist}
+Release: 6.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
-ExclusiveArch: x86_64
+ExclusiveArch: %{arm} %{ix86} x86_64
 #Source0: https://%{import_path}/archive/%{commit}/%{repo}-%{shortcommit}.tar.gz
 Source0: https://github.com/lsm5/%{repo}/archive/%{d_commit}/%{repo}-%{d_shortcommit}.tar.gz
 Source1: %{repo}.service
@@ -310,10 +310,6 @@ tar zxf %{SOURCE8}
 tar zxf %{SOURCE7}
 %endif # with_selinux
 
-%ifnarch x86_64
-rm vendor/src/github.com/vishvananda/netns/netns_linux_amd.go
-%endif
-
 %build
 # set up temporary build gopath, and put our directory there
 mkdir -p ./_build/src/github.com/%{repo}
@@ -555,6 +551,10 @@ fi
 %{_datadir}/zsh/site-functions/_%{repo}
 
 %changelog
+* Thu Jul 02 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.8.0-6.git5062080
+- built docker @lsm5/fedora-1.8 commit#6c23e87
+- enable non-x86_64 builds again
+
 * Tue Jun 30 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.8.0-5.git6d5bfe5
 - built docker @lsm5/fedora-1.8 commit#6d5bfe5
 - make test-unit and make test-docker-py successful
