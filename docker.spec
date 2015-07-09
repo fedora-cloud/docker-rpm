@@ -15,7 +15,7 @@
 %global import_path %{provider}.%{provider_tld}/%{project}/%{repo}
 
 # docker stuff (prefix with d_)
-%global d_commit 74e7a7a284889a3b703ce35c84f86cbfbb218167
+%global d_commit a2cd872f82e0321eba4f41207883780ef2cc8ef0
 %global d_shortcommit %(c=%{d_commit}; echo ${c:0:7})
 
 # d-s-s stuff (prefix with dss_)
@@ -53,13 +53,13 @@
 
 Name: %{repo}
 Version: 1.7.0
-Release: 6.git%{d_shortcommit}%{?dist}
+Release: 7.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
 ExclusiveArch: %{arm} %{ix86} x86_64
-# Branch used: https://github.com/lsm5/docker/commits/fedora-1.8
-Source0: https://github.com/lsm5/%{repo}/archive/%{d_commit}/%{repo}-%{d_shortcommit}.tar.gz
+# Branch used: https://github.com/lsm5/docker/commits/fedora-1.7
+Source0: https://github.com/rhatdan/%{repo}/archive/%{d_commit}/%{repo}-%{d_shortcommit}.tar.gz
 Source1: %{repo}.service
 Source2: %{repo}.sysconfig
 Source3: %{repo}-storage.sysconfig
@@ -550,6 +550,9 @@ fi
 %{_datadir}/zsh/site-functions/_%{repo}
 
 %changelog
+* Thu Jul 09 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.0-7.gita2cd872
+- built docker @rhatdan/fedora-1.7 commit#a2cd872
+
 * Thu Jul 02 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.0-6.git74e7a7a
 - build docker @lsm5/fedora-1.7 commit#74e7a7a
 - Resolves: upstream gh#13649
