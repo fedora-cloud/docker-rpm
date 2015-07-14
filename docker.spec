@@ -20,7 +20,7 @@
 
 # d-s-s stuff (prefix with dss_)
 %global dss_libdir %{_prefix}/lib/%{repo}-storage-setup
-%global dss_commit e9c3a4cf5cc0982319263570804e142fe036c1a0
+%global dss_commit 7cf73ddeebff0e93ffebf4e31dbde3907db6d958
 %global dss_shortcommit %(c=%{dss_commit}; echo ${c:0:7})
 
 #%global tar_import_path code.google.com/p/go/src/pkg/archive/tar
@@ -53,7 +53,7 @@
 
 Name: %{repo}
 Version: 1.7.0
-Release: 7.git%{d_shortcommit}%{?dist}
+Release: 8.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
@@ -550,6 +550,11 @@ fi
 %{_datadir}/zsh/site-functions/_%{repo}
 
 %changelog
+* Tue Jul 14 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.0-8.git7461f04
+- built docker @rhatdan/fedora-1.7 commit#7461f04
+- built docker-selinux master commit#bebf349
+- built d-s-s master commit#7cf73dd
+
 * Thu Jul 09 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.0-7.gita2cd872
 - built docker @rhatdan/fedora-1.7 commit#a2cd872
 
