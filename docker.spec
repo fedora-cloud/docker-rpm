@@ -1,3 +1,22 @@
+# Define arches for PA and SA
+%global golang_arches   %{ix86} x86_64 %{arm}
+%global gccgo_arches    %{power64} s390x aarch64
+%global go_arches       %{golang_arches} %{gccgo_arches}
+
+# Where to set GOPATH for builds
+%global gopath          %{_datadir}/gocode
+
+# Minimal version of gcc providing gcc-go
+%global gccgo_min_vers  5.0.0
+
+# Define commands for building
+%global golang_build    go build -compiler gc
+%global gcc_go_build    go build -compiler gccgo -gccgoflags "$RPM_OPT_FLAGS"
+
+# Define commands for testing
+%global golang_test     go test -compiler gc
+%global gcc_go_test     go test -compiler gccgo -gccgoflags "$RPM_OPT_FLAGS"
+
 %if 0%{?fedora}
 %global with_devel 1
 %global with_unit_test 1
@@ -62,7 +81,10 @@ Release: 6.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
-ExclusiveArch: %{arm} %{ix86} x86_64
+# keeping expansion of golang_arches instead of the macro as 
+# non-x86_64 architectures can be removed/added based on available
+# arch specific files in seccomp and vishvananda/netns projects
+ExclusiveArch: %{gccgo_arches} %{arm} %{ix86} x86_64
 #Source0: https://%{import_path}/archive/%{commit}/%{repo}-%{shortcommit}.tar.gz
 Source0: https://github.com/lsm5/%{repo}/archive/%{d_commit}/%{repo}-%{d_shortcommit}.tar.gz
 Source1: %{repo}.service
@@ -83,12 +105,16 @@ Source7: https://github.com/fedora-cloud/%{repo}-selinux/archive/%{ds_commit}/%{
 Source8: https://github.com/projectatomic/%{repo}-storage-setup/archive/%{dss_commit}/%{repo}-storage-setup-%{dss_shortcommit}.tar.gz
 BuildRequires: git
 BuildRequires: glibc-static
-BuildRequires: golang >= 1.4.2
 BuildRequires: go-md2man
 BuildRequires: device-mapper-devel
 BuildRequires: btrfs-progs-devel
 BuildRequires: sqlite-devel
 BuildRequires: pkgconfig(systemd)
+%ifarch %{golang_arches}
+BuildRequires: golang >= 1.4.2
+%else
+BuildRequires: gcc-go >= %{gccgo_min_vers}
+%endif
 %if 0%{?fedora} >= 21
 # Resolves: rhbz#1165615
 Requires: device-mapper-libs >= 1.02.90-1
@@ -133,7 +159,11 @@ servers, OpenStack clusters, public instances, or combinations of the above.
 
 %if 0%{?with_devel}
 %package devel
+%ifarch %{golang_arches}
 BuildRequires: golang >= 1.2.1-3
+%else
+BuildRequires: gcc-go >= %{gccgo_min_vers}
+%endif
 Provides: %{repo}-io-devel = %{version}-%{release}
 Provides: %{repo}-pkg-devel = %{version}-%{release}
 Provides: %{repo}-io-pkg-devel = %{version}-%{release}
