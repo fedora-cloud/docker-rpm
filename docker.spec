@@ -95,6 +95,9 @@ Requires(pre): %{repo}-selinux >= %{version}-%{release}
 Requires: xz
 Provides: lxc-%{repo} = %{version}-%{release}
 
+# Match with upstream name
+Provides: %{repo}-engine = %{version}-%{release}
+
 # needs tar to be able to run containers
 Requires: tar
 
@@ -550,6 +553,9 @@ fi
 %{_datadir}/zsh/site-functions/_%{repo}
 
 %changelog
+* Fri Jul 15 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.1-1.gitb6416b7
+- package provides: docker-engine
+
 * Wed Jul 15 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.1-1.gitb6416b7
 - built docker @rhatdan/fedora-1.7 commit#b6416b7
 - v1.7.1 + RH patches
