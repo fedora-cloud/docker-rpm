@@ -130,6 +130,9 @@ Requires(pre): %{repo}-selinux >= %{version}-%{release}
 Requires: xz
 Provides: lxc-%{repo} = %{version}-%{release}
 
+# Match with upstream name
+Provides: %{repo}-engine = %{version}-%{release}
+
 # needs tar to be able to run containers
 Requires: tar
 
@@ -581,6 +584,9 @@ fi
 %{_datadir}/zsh/site-functions/_%{repo}
 
 %changelog
+* Fri Jul 15 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.8.0-6.git5062080
+- package provides: docker-engine
+
 * Thu Jul 02 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.8.0-6.git5062080
 - built docker @lsm5/fedora-1.8 commit#6c23e87
 - enable non-x86_64 builds again
