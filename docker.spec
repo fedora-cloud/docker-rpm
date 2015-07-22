@@ -19,7 +19,6 @@
 %global d_shortcommit %(c=%{d_commit}; echo ${c:0:7})
 
 # d-s-s stuff (prefix with dss_)
-%global dss_libdir %{_prefix}/lib/%{repo}-storage-setup
 %global dss_commit 7cf73ddeebff0e93ffebf4e31dbde3907db6d958
 %global dss_shortcommit %(c=%{dss_commit}; echo ${c:0:7})
 
@@ -53,7 +52,7 @@
 
 Name: %{repo}
 Version: 1.7.1
-Release: 2.git%{d_shortcommit}%{?dist}
+Release: 3.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
@@ -444,8 +443,8 @@ install -d %{buildroot}%{_bindir}
 install -p -m 755 %{repo}-storage-setup.sh %{buildroot}%{_bindir}/%{repo}-storage-setup
 install -d %{buildroot}%{_unitdir}
 install -p -m 644 %{repo}-storage-setup.service %{buildroot}%{_unitdir}
-install -d %{buildroot}%{dss_libdir}
-install -p -m 644 %{repo}-storage-setup.conf %{buildroot}%{dss_libdir}/%{repo}-storage-setup
+install -d %{buildroot}%{_sysconfdir}/sysconfig
+install -p -m 644 %{repo}-storage-setup.conf %{buildroot}%{_sysconfdir}/sysconfig/%{repo}-storage-setup
 install -d %{buildroot}%{_mandir}/man1
 install -p -m 644 %{repo}-storage-setup.1 %{buildroot}%{_mandir}/man1
 popd
@@ -516,7 +515,7 @@ fi
 # d-s-s specific
 %{_unitdir}/%{repo}-storage-setup.service
 %{_bindir}/%{repo}-storage-setup
-%{dss_libdir}/%{repo}-storage-setup
+%config(noreplace) %{_sysconfdir}/sysconfig/%{repo}-storage-setup
 
 %if 0%{?with_devel}
 %files devel
@@ -553,12 +552,16 @@ fi
 %{_datadir}/zsh/site-functions/_%{repo}
 
 %changelog
-* Fri Jul 15 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.1-2.gitcc60fc3
+* Wed Jul 22 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.1-3.gitcc60fc3
+- move d-s-s sysconfig file to /etc/sysconfig
+- correct previous 2 changelog dates
+
+* Wed Jul 22 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.1-2.gitcc60fc3
 - built docker @rhatdan/fedora-1.7 commit#cc60fc3
 - built d-s-s master commit#7cf73dd
 - built docker-selinux master commit#bebf349
 
-* Fri Jul 15 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.1-1.gitb6416b7
+* Fri Jul 17 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.1-1.gitb6416b7
 - package provides: docker-engine
 
 * Wed Jul 15 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.1-1.gitb6416b7
