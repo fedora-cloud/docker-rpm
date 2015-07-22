@@ -15,7 +15,7 @@
 %global import_path %{provider}.%{provider_tld}/%{project}/%{repo}
 
 # docker stuff (prefix with d_)
-%global d_commit b6416b73f6b159bf560c118e186731e773f119c6
+%global d_commit cc60fc350415c20c21838ba7f8a7eb98d472a041
 %global d_shortcommit %(c=%{d_commit}; echo ${c:0:7})
 
 # d-s-s stuff (prefix with dss_)
@@ -53,7 +53,7 @@
 
 Name: %{repo}
 Version: 1.7.1
-Release: 1.git%{d_shortcommit}%{?dist}
+Release: 2.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
@@ -553,6 +553,11 @@ fi
 %{_datadir}/zsh/site-functions/_%{repo}
 
 %changelog
+* Fri Jul 15 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.1-2.gitcc60fc3
+- built docker @rhatdan/fedora-1.7 commit#cc60fc3
+- built d-s-s master commit#7cf73dd
+- built docker-selinux master commit#bebf349
+
 * Fri Jul 15 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.1-1.gitb6416b7
 - package provides: docker-engine
 
