@@ -19,7 +19,8 @@
 %global d_shortcommit %(c=%{d_commit}; echo ${c:0:7})
 
 # d-s-s stuff (prefix with dss_)
-%global dss_commit 7cf73ddeebff0e93ffebf4e31dbde3907db6d958
+%global dss_libdir %{_prefix}/lib/%{repo}-storage-setup
+%global dss_commit b15239869d789e86a279edae5479fd25a988bf78
 %global dss_shortcommit %(c=%{dss_commit}; echo ${c:0:7})
 
 #%global tar_import_path code.google.com/p/go/src/pkg/archive/tar
@@ -52,7 +53,7 @@
 
 Name: %{repo}
 Version: 1.7.1
-Release: 3.git%{d_shortcommit}%{?dist}
+Release: 4.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
@@ -443,8 +444,10 @@ install -d %{buildroot}%{_bindir}
 install -p -m 755 %{repo}-storage-setup.sh %{buildroot}%{_bindir}/%{repo}-storage-setup
 install -d %{buildroot}%{_unitdir}
 install -p -m 644 %{repo}-storage-setup.service %{buildroot}%{_unitdir}
+install -d %{buildroot}%{dss_libdir}
+install -p -m 644 %{repo}-storage-setup.conf %{buildroot}%{dss_libdir}/%{repo}-storage-setup
 install -d %{buildroot}%{_sysconfdir}/sysconfig
-install -p -m 644 %{repo}-storage-setup.conf %{buildroot}%{_sysconfdir}/sysconfig/%{repo}-storage-setup
+install -p -m 644 %{repo}-storage-setup-override.conf %{buildroot}%{_sysconfdir}/sysconfig/%{repo}-storage-setup
 install -d %{buildroot}%{_mandir}/man1
 install -p -m 644 %{repo}-storage-setup.1 %{buildroot}%{_mandir}/man1
 popd
@@ -515,6 +518,7 @@ fi
 # d-s-s specific
 %{_unitdir}/%{repo}-storage-setup.service
 %{_bindir}/%{repo}-storage-setup
+%{dss_libdir}/%{repo}-storage-setup
 %config(noreplace) %{_sysconfdir}/sysconfig/%{repo}-storage-setup
 
 %if 0%{?with_devel}
@@ -552,6 +556,10 @@ fi
 %{_datadir}/zsh/site-functions/_%{repo}
 
 %changelog
+* Wed Jul 22 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.1-4.gitcc60fc3
+- revert original d-s-s config location
+- d-s-s config in /etc/sysconfig is empty by default
+
 * Wed Jul 22 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.1-3.gitcc60fc3
 - move d-s-s sysconfig file to /etc/sysconfig
 - correct previous 2 changelog dates
