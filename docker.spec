@@ -15,7 +15,7 @@
 %global import_path %{provider}.%{provider_tld}/%{project}/%{repo}
 
 # docker stuff (prefix with d_)
-%global d_commit cc60fc350415c20c21838ba7f8a7eb98d472a041
+%global d_commit c8962ac1d1aabcee942faf99cac5bd5970fa7e4d
 %global d_shortcommit %(c=%{d_commit}; echo ${c:0:7})
 
 # d-s-s stuff (prefix with dss_)
@@ -53,12 +53,12 @@
 
 Name: %{repo}
 Version: 1.7.1
-Release: 4.git%{d_shortcommit}%{?dist}
+Release: 5.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
 ExclusiveArch: %{arm} %{ix86} x86_64
-# Branch used: https://github.com/lsm5/docker/commits/fedora-1.7
+# Branch used: https://github.com/rhatdan/docker/commits/fedora-1.7
 Source0: https://github.com/rhatdan/%{repo}/archive/%{d_commit}/%{repo}-%{d_shortcommit}.tar.gz
 Source1: %{repo}.service
 Source2: %{repo}.sysconfig
@@ -556,6 +556,10 @@ fi
 %{_datadir}/zsh/site-functions/_%{repo}
 
 %changelog
+* Wed Jul 22 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.1-5.gitc8962ac
+- Resolves: rhbz#1244124
+- built docker @rhatdan/fedora-1.7 commit#c8962ac
+
 * Wed Jul 22 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.1-4.gitcc60fc3
 - revert original d-s-s config location
 - d-s-s config in /etc/sysconfig is empty by default
