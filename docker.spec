@@ -15,7 +15,7 @@
 %global import_path %{provider}.%{provider_tld}/%{project}/%{repo}
 
 # docker stuff (prefix with d_)
-%global d_commit c8962ac1d1aabcee942faf99cac5bd5970fa7e4d
+%global d_commit 33de3192f50bc95ecd3b9583ce5a1ad65000c470
 %global d_shortcommit %(c=%{d_commit}; echo ${c:0:7})
 
 # d-s-s stuff (prefix with dss_)
@@ -53,7 +53,7 @@
 
 Name: %{repo}
 Version: 1.7.1
-Release: 5.git%{d_shortcommit}%{?dist}
+Release: 6.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
@@ -556,6 +556,12 @@ fi
 %{_datadir}/zsh/site-functions/_%{repo}
 
 %changelog
+* Fri Jul 24 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.1-6.git33de319
+- Resolves: rhbz#1235076
+- built docker @rhatdan/fedora-1.7 commit#33de319
+- built d-s-s master commit#b152398
+- built docker-selinux master commit#bebf349
+
 * Wed Jul 22 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.1-5.gitc8962ac
 - Resolves: rhbz#1244124
 - built docker @rhatdan/fedora-1.7 commit#c8962ac
