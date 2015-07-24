@@ -77,7 +77,7 @@
 
 Name: %{repo}
 Version: 1.8.0
-Release: 6.git%{d_shortcommit}%{?dist}
+Release: 7.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
@@ -302,7 +302,7 @@ BuildRequires: selinux-policy-devel
 Requires(post): selinux-policy-base >= %{selinux_policyver}
 Requires(post): selinux-policy-targeted >= %{selinux_policyver}
 Requires(post): policycoreutils
-Requires(post): policycoreutils-python
+Requires(post): policycoreutils-python-utils
 Requires(post): libselinux-utils
 Provides: %{repo}-io-selinux
 
@@ -584,6 +584,9 @@ fi
 %{_datadir}/zsh/site-functions/_%{repo}
 
 %changelog
+* Fri Jul 24 2015 Tomas Radej <tradej@redhat.com> - 1.8.0-6.git5062080
+- Updated dep on policycoreutils-python-utils
+
 * Fri Jul 15 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.8.0-6.git5062080
 - package provides: docker-engine
 
