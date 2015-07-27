@@ -39,7 +39,7 @@
 %global import_path %{provider}.%{provider_tld}/%{project}/%{repo}
 
 # docker stuff (prefix with d_)
-%global d_commit 5062080f189fa8e7b6a06f379d1b215479dcd343
+%global d_commit dcff4e1353468530b9cbdc11d75a6f5266bafa0d
 %global d_shortcommit %(c=%{d_commit}; echo ${c:0:7})
 
 # d-s-s stuff (prefix with dss_)
@@ -76,8 +76,8 @@
 %endif # with_selinux
 
 Name: %{repo}
-Version: 1.8.0
-Release: 7.git%{d_shortcommit}%{?dist}
+Version: 1.7.0
+Release: 21.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
@@ -93,6 +93,7 @@ Source3: %{repo}-storage.sysconfig
 Source4: %{repo}-logrotate.sh
 Source5: README.%{repo}-logrotate
 Source6: %{repo}-network.sysconfig
+Obsoletes: %{repo} >= 1.8.0
 
 %if 0%{?fedora}
 Patch0: add-debug-info.patch
@@ -340,6 +341,10 @@ tar zxf %{SOURCE8}
 tar zxf %{SOURCE7}
 %endif # with_selinux
 
+%ifnarch x86_64
+rm vendor/src/github.com/vishvananda/netns/netns_linux_amd.go
+%endif
+
 %build
 # set up temporary build gopath, and put our directory there
 mkdir -p ./_build/src/github.com/%{repo}
@@ -350,7 +355,7 @@ export DOCKER_BUILDTAGS="selinux"
 export GOPATH=$(pwd)/_build:$(pwd)/vendor:%{gopath}
 
 DEBUG=1 hack/make.sh dynbinary
-man/md2man-all.sh
+docs/man/md2man-all.sh
 cp contrib/syntax/vim/LICENSE LICENSE-vim-syntax
 cp contrib/syntax/vim/README.md README-vim-syntax.md
 
@@ -375,9 +380,9 @@ done
 
 # install manpages
 install -d %{buildroot}%{_mandir}/man1
-install -p -m 644 man/man1/%{repo}*.1 %{buildroot}%{_mandir}/man1
+install -p -m 644 docs/man/man1/%{repo}*.1 %{buildroot}%{_mandir}/man1
 install -d %{buildroot}%{_mandir}/man5
-install -p -m 644 man/man5/Dockerfile.5 %{buildroot}%{_mandir}/man5
+install -p -m 644 docs/man/man5/Dockerfile.5 %{buildroot}%{_mandir}/man5
 
 # install bash completion
 install -dp %{buildroot}%{_datadir}/bash-completion/completions
@@ -581,6 +586,11 @@ fi
 %{_datadir}/zsh/site-functions/_%{repo}
 
 %changelog
+* Mon Jul 27 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.0-21.gitdcff4e1
+- docker version downgraded to allow builds for all arches, latest version
+doesn't build for non-x86_64
+- obsoletes version 1.8.0
+
 * Fri Jul 24 2015 Tomas Radej <tradej@redhat.com> - 1.8.0-6.git5062080
 - Updated dep on policycoreutils-python-utils
 
