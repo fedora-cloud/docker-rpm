@@ -439,8 +439,8 @@ install -m 0644 %{repo}-selinux-%{ds_commit}/$MODULES %{buildroot}%{_datadir}/se
 %if 0%{?with_unit_test}
 install -d -m 0755 %{buildroot}%{_sharedstatedir}/docker-unit-test/
 cp -pav VERSION Dockerfile %{buildroot}%{_sharedstatedir}/docker-unit-test/.
-for d in api builder cliconfig contrib daemon graph hack image integration-cli links nat opts pkg registry runconfig trust utils vendor volume; do
-  cp -a $d %{buildroot}%{_sharedstatedir}/docker-unit-test/
+for d in */ ; do
+  cp -rpav $d %{buildroot}%{_sharedstatedir}/docker-unit-test/
 done
 # remove docker.initd as it requires /sbin/runtime no packages in Fedora
 rm -rf %{buildroot}%{_sharedstatedir}/docker-unit-test/contrib/init/openrc/docker.initd
