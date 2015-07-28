@@ -1,0 +1,391 @@
+From c68e7f96f9636a9b2ab0c2c0dbf753161fa73fc2 Mon Sep 17 00:00:00 2001
+From: Jana Radhakrishnan <mrjana@docker.com>
+Date: Fri, 5 Jun 2015 15:02:56 -0700
+Subject: [PATCH] libnetwork: Add garbage collection trigger
+
+When the daemon is going down trigger immediate
+garbage collection of libnetwork resources deleted
+like namespace path since there will be no way to
+remove them when the daemon restarts.
+
+Signed-off-by: Jana Radhakrishnan <mrjana@docker.com>
+---
+ daemon/daemon.go                                   |  5 +++
+ hack/vendor.sh                                     |  4 +--
+ integration-cli/docker_cli_daemon_test.go          | 39 ++++++++++++++++++++++
+ .../docker/libnetwork/Godeps/Godeps.json           |  2 +-
+ .../src/github.com/docker/libnetwork/controller.go |  7 ++++
+ .../docker/libnetwork/sandbox/namespace_linux.go   | 29 +++++++++++++++-
+ .../libnetwork/sandbox/sandbox_linux_test.go       | 13 ++++++--
+ .../docker/libnetwork/sandbox/sandbox_test.go      | 19 ++++++++++-
+ vendor/src/github.com/vishvananda/netns/netns.go   |  1 +
+ .../github.com/vishvananda/netns/netns_linux.go    |  2 ++
+ .../vishvananda/netns/netns_linux_386.go           |  2 ++
+ .../vishvananda/netns/netns_linux_amd.go           |  5 ---
+ .../vishvananda/netns/netns_linux_amd64.go         |  7 ++++
+ .../vishvananda/netns/netns_linux_arm.go           |  2 ++
+ .../vishvananda/netns/netns_linux_ppc64le.go       |  7 ++++
+ .../vishvananda/netns/netns_unspecified.go         | 12 +++----
+ 16 files changed, 137 insertions(+), 19 deletions(-)
+ delete mode 100644 vendor/src/github.com/vishvananda/netns/netns_linux_amd.go
+ create mode 100644 vendor/src/github.com/vishvananda/netns/netns_linux_amd64.go
+ create mode 100644 vendor/src/github.com/vishvananda/netns/netns_linux_ppc64le.go
+
+diff --git a/daemon/daemon.go b/daemon/daemon.go
+index 7488934..e28c703 100644
+--- a/daemon/daemon.go
++++ b/daemon/daemon.go
+@@ -996,6 +996,11 @@ func (daemon *Daemon) Shutdown() error {
+           }
+       }
+       group.Wait()
++
++      // trigger libnetwork GC only if it's initialized
++      if daemon.netController != nil {
++          daemon.netController.GC()
++      }
+   }
+ 
+   return nil
+diff --git a/hack/vendor.sh b/hack/vendor.sh
+index d093aea..7ac02e0 100755
+--- a/hack/vendor.sh
++++ b/hack/vendor.sh
+@@ -55,8 +55,8 @@ clone hg code.google.com/p/go.net 84a4013f96e0
+ clone hg code.google.com/p/gosqlite 74691fb6f837
+ 
+ #get libnetwork packages
+-clone git github.com/docker/libnetwork f72ad20491e8c46d9664da3f32a0eddb301e7c8d
+-clone git github.com/vishvananda/netns 008d17ae001344769b031375bdb38a86219154c6
++clone git github.com/docker/libnetwork ace6b576239cd671d1645d82520b16791737f60d
++clone git github.com/vishvananda/netns 5478c060110032f972e86a1f844fdb9a2f008f2c
+ clone git github.com/vishvananda/netlink 8eb64238879fed52fd51c5b30ad20b928fb4c36c
+ 
+ # get distribution packages
+diff --git a/integration-cli/docker_cli_daemon_test.go b/integration-cli/docker_cli_daemon_test.go
+index d313d73..654627b 100644
+--- a/integration-cli/docker_cli_daemon_test.go
++++ b/integration-cli/docker_cli_daemon_test.go
+@@ -1174,6 +1174,7 @@ func (s *DockerDaemonSuite) TestDaemonRestartWithContainerRunning(t *check.C) {
+   if out, err := s.d.Cmd("run", "-ti", "-d", "--name", "test", "busybox"); err != nil {
+       t.Fatal(out, err)
+   }
++
+   if err := s.d.Restart(); err != nil {
+       t.Fatal(err)
+   }
+@@ -1182,3 +1183,41 @@ func (s *DockerDaemonSuite) TestDaemonRestartWithContainerRunning(t *check.C) {
+       t.Fatal(out, err)
+   }
+ }
++
++func (s *DockerDaemonSuite) TestDaemonRestartCleanupNetns(c *check.C) {
++  if err := s.d.StartWithBusybox(); err != nil {
++      c.Fatal(err)
++  }
++  out, err := s.d.Cmd("run", "--name", "netns", "-d", "busybox", "top")
++  if err != nil {
++      c.Fatal(out, err)
++  }
++  if out, err := s.d.Cmd("stop", "netns"); err != nil {
++      c.Fatal(out, err)
++  }
++
++  // Construct netns file name from container id
++  out = strings.TrimSpace(out)
++  nsFile := out[:12]
++
++  // Test if the file still exists
++  out, _, err = runCommandWithOutput(exec.Command("stat", "-c", "%n", "/var/run/docker/netns/"+nsFile))
++  out = strings.TrimSpace(out)
++  c.Assert(err, check.IsNil, check.Commentf("Output: %s", out))
++  c.Assert(out, check.Equals, "/var/run/docker/netns/"+nsFile, check.Commentf("Output: %s", out))
++
++  // Remove the container and restart the daemon
++  if out, err := s.d.Cmd("rm", "netns"); err != nil {
++      c.Fatal(out, err)
++  }
++
++  if err := s.d.Restart(); err != nil {
++      c.Fatal(err)
++  }
++
++  // Test again and see now the netns file does not exist
++  out, _, err = runCommandWithOutput(exec.Command("stat", "-c", "%n", "/var/run/docker/netns/"+nsFile))
++  out = strings.TrimSpace(out)
++  c.Assert(err, check.Not(check.IsNil), check.Commentf("Output: %s", out))
++  // c.Assert(out, check.Equals, "", check.Commentf("Output: %s", out))
++}
+diff --git a/vendor/src/github.com/docker/libnetwork/Godeps/Godeps.json b/vendor/src/github.com/docker/libnetwork/Godeps/Godeps.json
+index c289309..f508c16 100644
+--- a/vendor/src/github.com/docker/libnetwork/Godeps/Godeps.json
++++ b/vendor/src/github.com/docker/libnetwork/Godeps/Godeps.json
+@@ -79,7 +79,7 @@
+       },
+       {
+           "ImportPath": "github.com/vishvananda/netns",
+-          "Rev": "008d17ae001344769b031375bdb38a86219154c6"
++          "Rev": "5478c060110032f972e86a1f844fdb9a2f008f2c"
+       }
+   ]
+ }
+diff --git a/vendor/src/github.com/docker/libnetwork/controller.go b/vendor/src/github.com/docker/libnetwork/controller.go
+index 442473e..00c08cc 100644
+--- a/vendor/src/github.com/docker/libnetwork/controller.go
++++ b/vendor/src/github.com/docker/libnetwork/controller.go
+@@ -76,6 +76,9 @@ type NetworkController interface {
+ 
+   // NetworkByID returns the Network which has the passed id. If not found, the error ErrNoSuchNetwork is returned.
+   NetworkByID(id string) (Network, error)
++
++  // GC triggers immediate garbage collection of resources which are garbage collected.
++  GC()
+ }
+ 
+ // NetworkWalker is a client provided function which will be used to walk the Networks.
+@@ -299,3 +302,7 @@ func (c *controller) loadDriver(networkType string) (driverapi.Driver, error) {
+   }
+   return d, nil
+ }
++
++func (c *controller) GC() {
++  sandbox.GC()
++}
+diff --git a/vendor/src/github.com/docker/libnetwork/sandbox/namespace_linux.go b/vendor/src/github.com/docker/libnetwork/sandbox/namespace_linux.go
+index 1655369..22d5fe2 100644
+--- a/vendor/src/github.com/docker/libnetwork/sandbox/namespace_linux.go
++++ b/vendor/src/github.com/docker/libnetwork/sandbox/namespace_linux.go
+@@ -24,6 +24,7 @@ var (
+   gpmLock          sync.Mutex
+   gpmWg            sync.WaitGroup
+   gpmCleanupPeriod = 60 * time.Second
++  gpmChan          = make(chan chan struct{})
+ )
+ 
+ // The networkNamespace type is the linux implementation of the Sandbox
+@@ -55,7 +56,18 @@ func removeUnusedPaths() {
+   period := gpmCleanupPeriod
+   gpmLock.Unlock()
+ 
+-  for range time.Tick(period) {
++  ticker := time.NewTicker(period)
++  for {
++      var (
++          gc   chan struct{}
++          gcOk bool
++      )
++
++      select {
++      case <-ticker.C:
++      case gc, gcOk = <-gpmChan:
++      }
++
+       gpmLock.Lock()
+       pathList := make([]string, 0, len(garbagePathMap))
+       for path := range garbagePathMap {
+@@ -70,6 +82,9 @@ func removeUnusedPaths() {
+       }
+ 
+       gpmWg.Done()
++      if gcOk {
++          close(gc)
++      }
+   }
+ }
+ 
+@@ -85,6 +100,18 @@ func removeFromGarbagePaths(path string) {
+   gpmLock.Unlock()
+ }
+ 
++// GC triggers garbage collection of namespace path right away
++// and waits for it.
++func GC() {
++  waitGC := make(chan struct{})
++
++  // Trigger GC now
++  gpmChan <- waitGC
++
++  // wait for gc to complete
++  <-waitGC
++}
++
+ // GenerateKey generates a sandbox key based on the passed
+ // container id.
+ func GenerateKey(containerID string) string {
+diff --git a/vendor/src/github.com/docker/libnetwork/sandbox/sandbox_linux_test.go b/vendor/src/github.com/docker/libnetwork/sandbox/sandbox_linux_test.go
+index 91ec6e6..1714fad 100644
+--- a/vendor/src/github.com/docker/libnetwork/sandbox/sandbox_linux_test.go
++++ b/vendor/src/github.com/docker/libnetwork/sandbox/sandbox_linux_test.go
+@@ -144,9 +144,16 @@ func verifySandbox(t *testing.T, s Sandbox) {
+   }
+ }
+ 
+-func verifyCleanup(t *testing.T, s Sandbox) {
+-  time.Sleep(time.Duration(gpmCleanupPeriod * 2))
++func verifyCleanup(t *testing.T, s Sandbox, wait bool) {
++  if wait {
++      time.Sleep(time.Duration(gpmCleanupPeriod * 2))
++  }
++
+   if _, err := os.Stat(s.Key()); err == nil {
+-      t.Fatalf("The sandbox path %s is not getting cleanup event after twice the cleanup period", s.Key())
++      if wait {
++          t.Fatalf("The sandbox path %s is not getting cleaned up even after twice the cleanup period", s.Key())
++      } else {
++          t.Fatalf("The sandbox path %s is not cleaned up after running gc", s.Key())
++      }
+   }
+ }
+diff --git a/vendor/src/github.com/docker/libnetwork/sandbox/sandbox_test.go b/vendor/src/github.com/docker/libnetwork/sandbox/sandbox_test.go
+index 258616a..fe7f297 100644
+--- a/vendor/src/github.com/docker/libnetwork/sandbox/sandbox_test.go
++++ b/vendor/src/github.com/docker/libnetwork/sandbox/sandbox_test.go
+@@ -54,7 +54,7 @@ func TestSandboxCreate(t *testing.T) {
+ 
+   verifySandbox(t, s)
+   s.Destroy()
+-  verifyCleanup(t, s)
++  verifyCleanup(t, s, true)
+ }
+ 
+ func TestSandboxCreateTwice(t *testing.T) {
+@@ -77,6 +77,23 @@ func TestSandboxCreateTwice(t *testing.T) {
+   s.Destroy()
+ }
+ 
++func TestSandboxGC(t *testing.T) {
++  key, err := newKey(t)
++  if err != nil {
++      t.Fatalf("Failed to obtain a key: %v", err)
++  }
++
++  s, err := NewSandbox(key, true)
++  if err != nil {
++      t.Fatalf("Failed to create a new sandbox: %v", err)
++  }
++
++  s.Destroy()
++
++  GC()
++  verifyCleanup(t, s, false)
++}
++
+ func TestInterfaceEqual(t *testing.T) {
+   list := getInterfaceList()
+ 
+diff --git a/vendor/src/github.com/vishvananda/netns/netns.go b/vendor/src/github.com/vishvananda/netns/netns.go
+index 3878da3..2ca0fee 100644
+--- a/vendor/src/github.com/vishvananda/netns/netns.go
++++ b/vendor/src/github.com/vishvananda/netns/netns.go
+@@ -12,6 +12,7 @@ import (
+   "fmt"
+   "syscall"
+ )
++
+ // NsHandle is a handle to a network namespace. It can be cast directly
+ // to an int and used as a file descriptor.
+ type NsHandle int
+diff --git a/vendor/src/github.com/vishvananda/netns/netns_linux.go b/vendor/src/github.com/vishvananda/netns/netns_linux.go
+index 1cf5e13..c9170d6 100644
+--- a/vendor/src/github.com/vishvananda/netns/netns_linux.go
++++ b/vendor/src/github.com/vishvananda/netns/netns_linux.go
+@@ -1,3 +1,5 @@
++// +build linux
++
+ package netns
+ 
+ import (
+diff --git a/vendor/src/github.com/vishvananda/netns/netns_linux_386.go b/vendor/src/github.com/vishvananda/netns/netns_linux_386.go
+index 0a6fe49..1d769bb 100644
+--- a/vendor/src/github.com/vishvananda/netns/netns_linux_386.go
++++ b/vendor/src/github.com/vishvananda/netns/netns_linux_386.go
+@@ -1,3 +1,5 @@
++// +build linux,386
++
+ package netns
+ 
+ const (
+diff --git a/vendor/src/github.com/vishvananda/netns/netns_linux_amd.go b/vendor/src/github.com/vishvananda/netns/netns_linux_amd.go
+deleted file mode 100644
+index bbf3f4d..0000000
+--- a/vendor/src/github.com/vishvananda/netns/netns_linux_amd.go
++++ /dev/null
+@@ -1,5 +0,0 @@
+-package netns
+-
+-const (
+-  SYS_SETNS = 308
+-)
+diff --git a/vendor/src/github.com/vishvananda/netns/netns_linux_amd64.go b/vendor/src/github.com/vishvananda/netns/netns_linux_amd64.go
+new file mode 100644
+index 0000000..b124666
+--- /dev/null
++++ b/vendor/src/github.com/vishvananda/netns/netns_linux_amd64.go
+@@ -0,0 +1,7 @@
++// +build linux,amd64
++
++package netns
++
++const (
++  SYS_SETNS = 308
++)
+diff --git a/vendor/src/github.com/vishvananda/netns/netns_linux_arm.go b/vendor/src/github.com/vishvananda/netns/netns_linux_arm.go
+index e35cb07..fbf165e 100644
+--- a/vendor/src/github.com/vishvananda/netns/netns_linux_arm.go
++++ b/vendor/src/github.com/vishvananda/netns/netns_linux_arm.go
+@@ -1,3 +1,5 @@
++// +build linux,arm
++
+ package netns
+ 
+ const (
+diff --git a/vendor/src/github.com/vishvananda/netns/netns_linux_ppc64le.go b/vendor/src/github.com/vishvananda/netns/netns_linux_ppc64le.go
+new file mode 100644
+index 0000000..c49eba5
+--- /dev/null
++++ b/vendor/src/github.com/vishvananda/netns/netns_linux_ppc64le.go
+@@ -0,0 +1,7 @@
++// +build linux,ppc64le
++
++package netns
++
++const (
++  SYS_SETNS = 350
++)
+diff --git a/vendor/src/github.com/vishvananda/netns/netns_unspecified.go b/vendor/src/github.com/vishvananda/netns/netns_unspecified.go
+index 42a804f..b2edc56 100644
+--- a/vendor/src/github.com/vishvananda/netns/netns_unspecified.go
++++ b/vendor/src/github.com/vishvananda/netns/netns_unspecified.go
+@@ -10,26 +10,26 @@ var (
+   ErrNotImplemented = errors.New("not implemented")
+ )
+ 
+-func Set(ns Namespace) (err error) {
++func Set(ns NsHandle) (err error) {
+   return ErrNotImplemented
+ }
+ 
+-func New() (ns Namespace, err error) {
++func New() (ns NsHandle, err error) {
+   return -1, ErrNotImplemented
+ }
+ 
+-func Get() (Namespace, error) {
++func Get() (NsHandle, error) {
+   return -1, ErrNotImplemented
+ }
+ 
+-func GetFromName(name string) (Namespace, error) {
++func GetFromName(name string) (NsHandle, error) {
+   return -1, ErrNotImplemented
+ }
+ 
+-func GetFromPid(pid int) (Namespace, error) {
++func GetFromPid(pid int) (NsHandle, error) {
+   return -1, ErrNotImplemented
+ }
+ 
+-func GetFromDocker(id string) (Namespace, error) {
++func GetFromDocker(id string) (NsHandle, error) {
+   return -1, ErrNotImplemented
+ }

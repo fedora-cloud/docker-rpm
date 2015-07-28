@@ -98,6 +98,8 @@ Obsoletes: %{repo} >= 1.8.0
 %if 0%{?fedora}
 Patch0: add-debug-info.patch
 %endif
+Patch1: netns-upstream-docker.patch
+Patch2: 0001-Backport-support-in-to-the-netns-for-non-intel-archs.patch
 
 %if 0%{?with_selinux}
 Source7: https://github.com/fedora-cloud/%{repo}-selinux/archive/%{ds_commit}/%{repo}-selinux-%{ds_shortcommit}.tar.gz
@@ -340,10 +342,6 @@ tar zxf %{SOURCE8}
 # unpack %{repo}-selinux
 tar zxf %{SOURCE7}
 %endif # with_selinux
-
-%ifnarch x86_64
-rm vendor/src/github.com/vishvananda/netns/netns_linux_amd.go
-%endif
 
 %build
 # set up temporary build gopath, and put our directory there
