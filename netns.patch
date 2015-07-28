@@ -28,8 +28,8 @@ index fbf165e..9c74eb5 100644
  package netns
  
  const (
--  SYS_SETNS = 374
-+  SYS_SETNS = 375
+-	SYS_SETNS = 374
++	SYS_SETNS = 375
  )
 diff --git a/vendor/src/github.com/vishvananda/netns/netns_linux_arm64.go b/vendor/src/github.com/vishvananda/netns/netns_linux_arm64.go
 new file mode 100644
@@ -42,7 +42,7 @@ index 0000000..741a302
 +package netns
 +
 +const (
-+  SYS_SETNS = 268
++	SYS_SETNS = 268
 +)
 diff --git a/vendor/src/github.com/vishvananda/netns/netns_linux_ppc64.go b/vendor/src/github.com/vishvananda/netns/netns_linux_ppc64.go
 new file mode 100644
@@ -55,7 +55,7 @@ index 0000000..e97562f
 +package netns
 +
 +const (
-+  SYS_SETNS = 350
++	SYS_SETNS = 350
 +)
 diff --git a/vendor/src/github.com/vishvananda/netns/netns_linux_s390x.go b/vendor/src/github.com/vishvananda/netns/netns_linux_s390x.go
 new file mode 100644
@@ -68,7 +68,7 @@ index 0000000..cc13e62
 +package netns
 +
 +const (
-+  SYS_SETNS = 339
++	SYS_SETNS = 339
 +)
 -- 
 2.1.0

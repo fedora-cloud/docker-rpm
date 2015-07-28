@@ -98,8 +98,8 @@ Source6: %{repo}-network.sysconfig
 %if 0%{?fedora}
 Patch0: add-debug-info.patch
 %endif
-Patch1: netns-upstream-docker.patch
-Patch2: 0001-Backport-support-in-to-the-netns-for-non-intel-archs.patch
+Patch1: netns.patch
+Patch2: libnetwork.patch
 
 %if 0%{?with_selinux}
 Source7: https://github.com/fedora-cloud/%{repo}-selinux/archive/%{ds_commit}/%{repo}-selinux-%{ds_shortcommit}.tar.gz
