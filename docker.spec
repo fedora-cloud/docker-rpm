@@ -591,7 +591,7 @@ fi
 * Fri Jul 24 2015 Tomas Radej <tradej@redhat.com> - 1.8.0-6.git5062080
 - Updated dep on policycoreutils-python-utils
 
-* Fri Jul 15 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.8.0-6.git5062080
+* Fri Jul 17 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.8.0-6.git5062080
 - package provides: docker-engine
 
 * Thu Jul 02 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.8.0-6.git5062080
