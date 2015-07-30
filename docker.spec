@@ -475,6 +475,9 @@ exit 0
 %if 0%{?with_selinux}
 %post selinux
 # Install all modules in a single transaction
+if [ $1 -eq 1 ]; then
+    %{_sbindir}/setsebool -P -N virt_use_nfs=1 virt_sandbox_use_all_caps=1
+fi
 %_format MODULES %{_datadir}/selinux/packages/$x.pp.bz2
 %{_sbindir}/semodule -n -s %{selinuxtype} -i $MODULES
 if %{_sbindir}/selinuxenabled ; then
