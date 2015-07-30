@@ -39,12 +39,12 @@
 %global import_path %{provider}.%{provider_tld}/%{project}/%{repo}
 
 # docker stuff (prefix with d_)
-%global d_commit 5062080f189fa8e7b6a06f379d1b215479dcd343
+%global d_commit 2df828dfb2c587cd47ca164505635761913f888e
 %global d_shortcommit %(c=%{d_commit}; echo ${c:0:7})
 
 # d-s-s stuff (prefix with dss_)
 %global dss_libdir %{_prefix}/lib/docker-storage-setup
-%global dss_commit 90f4a5f516ad396817ed5068ad6f7cb4b2665341
+%global dss_commit b15239869d789e86a279edae5479fd25a988bf78
 %global dss_shortcommit %(c=%{dss_commit}; echo ${c:0:7})
 
 #%global tar_import_path code.google.com/p/go/src/pkg/archive/tar
@@ -57,7 +57,7 @@
 %if 0%{?with_selinux}
 # docker-selinux stuff (prefix with ds_ for version/release etc.)
 # Some bits borrowed from the openstack-selinux package
-%global ds_commit bebf349f6e66c10f8010446a6b3440e43311a8ff
+%global ds_commit 16ebd81e9ae659b27ff801af492ed818883f2c9a
 %global ds_shortcommit %(c=%{ds_commit}; echo ${c:0:7})
 %global selinuxtype targeted
 %global moduletype services
@@ -78,7 +78,7 @@
 Name: %{repo}
 Epoch: 1
 Version: 1.8.0
-Release: 7.git%{d_shortcommit}%{?dist}
+Release: 8.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
@@ -588,6 +588,11 @@ fi
 %{_datadir}/zsh/site-functions/_%{repo}
 
 %changelog
+* Thu Jul 30 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.8.0-8.git2df828d
+- built docker @rhatdan/fedora-1.8 commit#2df828d
+- built d-s-s master commit#b152398
+- built docker-selinux master commit#16ebd81
+
 * Tue Jul 28 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.8.0-7.git5062080
 - include epoch for downgrading purposes
 
