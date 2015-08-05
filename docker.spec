@@ -123,8 +123,12 @@ Requires: device-mapper-libs >= 1.02.90-1
 
 # RE: rhbz#1195804 - ensure min NVR for selinux-policy
 %if 0%{?with_selinux}
+# But not on C7/RHEL7 as the version number differs there
+%if 0%{?fedora} >= 22
 Requires: selinux-policy >= 3.13.1-114
 Requires(pre): %{repo}-selinux >= %{epoch}:%{version}-%{release}
+
+%endif # rhel7
 %endif # with_selinux
 
 # Resolves: rhbz#1045220
