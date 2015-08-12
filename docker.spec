@@ -1,21 +1,21 @@
 # Define arches for PA and SA
-%global golang_arches   %{ix86} x86_64 %{arm}
-%global gccgo_arches    %{power64} s390x aarch64
-%global go_arches       %{golang_arches} %{gccgo_arches}
+%global golang_arches %{ix86} x86_64 %{arm}
+%global gccgo_arches %{power64} s390x aarch64
+%global go_arches %{golang_arches} %{gccgo_arches}
 
 # Where to set GOPATH for builds
-%global gopath          %{_datadir}/gocode
+%global gopath %{_datadir}/gocode
 
 # Minimal version of gcc providing gcc-go
-%global gccgo_min_vers  5.0.0
+%global gccgo_min_vers 5.0.0
 
 # Define commands for building
-%global golang_build    go build -compiler gc
-%global gcc_go_build    go build -compiler gccgo -gccgoflags "$RPM_OPT_FLAGS"
+%global golang_build go build -compiler gc
+%global gcc_go_build go build -compiler gccgo -gccgoflags %{optflags}
 
 # Define commands for testing
-%global golang_test     go test -compiler gc
-%global gcc_go_test     go test -compiler gccgo -gccgoflags "$RPM_OPT_FLAGS"
+%global golang_test go test -compiler gc
+%global gcc_go_test go test -compiler gccgo -gccgoflags %{optflags}
 
 %if 0%{?fedora}
 %global with_devel 1
@@ -585,7 +585,7 @@ fi
 %{_datadir}/zsh/site-functions/_%{repo}
 
 %changelog
-* Tue Jul 28 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.0-22.gitdcff4e1
+* Tue Jul 28 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.7.0-22.gitdcff4e1
 - release 21 was crap, include epoch for downgrading
 
 * Mon Jul 27 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.0-21.gitdcff4e1
