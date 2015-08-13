@@ -368,7 +368,7 @@ export DOCKER_BUILDTAGS="selinux"
 export GOPATH=$(pwd)/_build:$(pwd)/vendor:%{gopath}
 
 DEBUG=1 hack/make.sh dynbinary
-docs/man/md2man-all.sh
+man/md2man-all.sh
 cp contrib/syntax/vim/LICENSE LICENSE-vim-syntax
 cp contrib/syntax/vim/README.md README-vim-syntax.md
 
@@ -402,9 +402,9 @@ done
 
 # install manpages
 install -d %{buildroot}%{_mandir}/man1
-install -p -m 644 docs/man/man1/%{repo}*.1 %{buildroot}%{_mandir}/man1
+install -p -m 644 man/man1/%{repo}*.1 %{buildroot}%{_mandir}/man1
 install -d %{buildroot}%{_mandir}/man5
-install -p -m 644 docs/man/man5/Dockerfile.5 %{buildroot}%{_mandir}/man5
+install -p -m 644 man/man5/Dockerfile.5 %{buildroot}%{_mandir}/man5
 
 # install bash completion
 install -dp %{buildroot}%{_datadir}/bash-completion/completions
@@ -479,7 +479,7 @@ rm -rf pkg/symlink/testdata
 #cp -rpav vendor/src/%{tar_import_path}/* %{buildroot}%{gopath}/src/%{import_path}/vendor/src/%{tar_import_path}
 
 # remove dirs that won't be installed in devel
-rm -rf vendor docs _build bundles contrib/init hack project
+rm -rf vendor docs man _build bundles contrib/init hack project
 
 # install sources to devel
 for dir in */ ; do
