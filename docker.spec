@@ -25,6 +25,8 @@
 
 #%global tar_import_path code.google.com/p/go/src/pkg/archive/tar
 
+%global utils_commit dab51acd1b1a77f7cb01a1b7e2129ec85c846b71
+
 # docker-selinux conditional
 %if 0%{?fedora} >= 22 || 0%{?centos} >= 7 || 0%{?rhel} >= 7
 %global with_selinux 1
@@ -72,6 +74,8 @@ Source7: https://github.com/fedora-cloud/%{repo}-selinux/archive/%{ds_commit}/%{
 %endif # with_selinux
 # Source8 is the source tarball for docker-storage-setup
 Source8: https://github.com/projectatomic/%{repo}-storage-setup/archive/%{dss_commit}/%{repo}-storage-setup-%{dss_shortcommit}.tar.gz
+# Source9 is the source tarball for docker-utils
+Source9: https://github.com/vbatts/%{repo}-utils/archive/%{utils_commit}.tar.gz
 BuildRequires: git
 BuildRequires: glibc-static
 BuildRequires: golang >= 1.4.2
@@ -239,6 +243,12 @@ Provides: golang(%{import_path}/opts) = %{version}-%{release}
 This package provides the source libraries for Docker.
 %endif # with_devel
 
+%package utils
+Summary: External utilities for the %{repo} experience
+
+%description utils
+%{summary}
+
 %if 0%{?with_unit_test}
 %package unit-test
 Summary: %{summary} - for running unit tests
@@ -307,6 +317,9 @@ sed -i 's/$/%{?dist}/' VERSION
 # untar d-s-s
 tar zxf %{SOURCE8}
 
+# untar %{repo}-utils
+tar zxf %{SOURCE9}
+
 %if 0%{?with_selinux}
 # unpack %{repo}-selinux
 tar zxf %{SOURCE7}
@@ -314,8 +327,12 @@ tar zxf %{SOURCE7}
 
 %build
 # set up temporary build gopath, and put our directory there
-mkdir -p ./_build/src/github.com/%{repo}
-ln -s $(pwd) ./_build/src/%{import_path}
+mkdir _build
+pushd _build
+mkdir -p src/%{provider}.%{provider_tld}/{%{repo},vbatts}
+ln -s $(dirs +1 -l) src/%{import_path}
+ln -s $(dirs +1 -l)/%{repo}-utils-%{utils_commit} src/%{provider}.%{provider_tld}/vbatts/%{repo}-utils
+popd
 
 export DOCKER_GITCOMMIT="%{d_shortcommit}/%{version}"
 export DOCKER_BUILDTAGS="selinux btrfs_noversion"
@@ -325,6 +342,11 @@ DEBUG=1 hack/make.sh dynbinary
 man/md2man-all.sh
 cp contrib/syntax/vim/LICENSE LICENSE-vim-syntax
 cp contrib/syntax/vim/README.md README-vim-syntax.md
+
+pushd $(pwd)/_build/src
+go build github.com/vbatts/%{repo}-utils/cmd/%{repo}-fetch
+go build github.com/vbatts/%{repo}-utils/cmd/%{repo}tarsum
+popd
 
 %if 0%{?with_selinux}
 # build %{repo}-selinux
@@ -337,6 +359,10 @@ popd
 # install binary
 install -d %{buildroot}%{_bindir}
 install -d %{buildroot}%{_libexecdir}/%{repo}
+
+# install utils
+install -p -m 755 _build/src/%{repo}-fetch %{buildroot}%{_bindir}
+install -p -m 755 _build/src/%{repo}tarsum %{buildroot}%{_bindir}
 
 # Grab the first thing from -dev
 for x in bundles/%{version}%{?dist}; do \
@@ -557,6 +583,10 @@ fi
 
 %files zsh-completion
 %{_datadir}/zsh/site-functions/_%{repo}
+
+%files utils
+%{_bindir}/%{repo}-fetch
+%{_bindir}/%{repo}tarsum
 
 %changelog
 * Tue Aug 11 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.1-8.gitb6416b7
