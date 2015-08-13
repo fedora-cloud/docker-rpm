@@ -93,7 +93,7 @@ URL: http://www.%{repo}.com
 # arch specific files in seccomp and vishvananda/netns projects
 ExclusiveArch: %{gccgo_arches} %{arm} %{ix86} x86_64
 #Source0: https://%{import_path}/archive/%{commit}/%{repo}-%{shortcommit}.tar.gz
-Source0: https://github.com/lsm5/%{repo}/archive/%{d_commit}/%{repo}-%{d_shortcommit}.tar.gz
+Source0: https://github.com/rhatdan/%{repo}/archive/%{d_commit}/%{repo}-%{d_shortcommit}.tar.gz
 Source1: %{repo}.service
 Source2: %{repo}.sysconfig
 Source3: %{repo}-storage.sysconfig
