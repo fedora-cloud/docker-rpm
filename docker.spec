@@ -15,12 +15,12 @@
 %global import_path %{provider}.%{provider_tld}/%{project}/%{repo}
 
 # docker stuff (prefix with d_)
-%global d_commit b6416b73f6b159bf560c118e186731e773f119c6
+%global d_commit 9281dc327220a8e21d5f634462d806a1e0f7451a
 %global d_shortcommit %(c=%{d_commit}; echo ${c:0:7})
 
 # d-s-s stuff (prefix with dss_)
 %global dss_libdir %{_prefix}/lib/%{repo}-storage-setup
-%global dss_commit b15239869d789e86a279edae5479fd25a988bf78
+%global dss_commit ac1b30e05557bc2375992747ed94a9e1ab1f208a
 %global dss_shortcommit %(c=%{dss_commit}; echo ${c:0:7})
 
 #%global tar_import_path code.google.com/p/go/src/pkg/archive/tar
@@ -54,8 +54,8 @@
 %endif # with_selinux
 
 Name: %{repo}
-Version: 1.7.1
-Release: 8.git%{d_shortcommit}%{?dist}
+Version: 1.8.1
+Release: 1.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
@@ -589,6 +589,12 @@ fi
 %{_bindir}/%{repo}tarsum
 
 %changelog
+* Thu Aug 13 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.8.1-1
+- built docker @rhatdan/fedora-1.8 commit#9281dc3
+- built d-s-s master commit#ac1b30e
+- built docker-selinux master commit#16ebd81
+- built docker-utils master commit#dab51ac
+
 * Tue Aug 11 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.7.1-8.gitb6416b7
 - revert to what existed in 1.7.1-1 (temp fix for rhbz#1252168)
 
