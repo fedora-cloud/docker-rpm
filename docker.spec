@@ -512,6 +512,7 @@ install -d %{buildroot}%{_unitdir}
 install -p -m 644 %{repo}-storage-setup.service %{buildroot}%{_unitdir}
 install -d %{buildroot}%{dss_libdir}
 install -p -m 644 %{repo}-storage-setup.conf %{buildroot}%{dss_libdir}/%{repo}-storage-setup
+install -p -m 755 libdss.sh %{buildroot}%{dss_libdir}
 install -d %{buildroot}%{_mandir}/man1
 install -p -m 644 %{repo}-storage-setup.1 %{buildroot}%{_mandir}/man1
 popd
@@ -586,6 +587,7 @@ fi
 %{_unitdir}/%{repo}-storage-setup.service
 %{_bindir}/%{repo}-storage-setup
 %{dss_libdir}/%{repo}-storage-setup
+%{dss_libdir}/libdss.sh
 
 %if 0%{?with_devel}
 %files devel
