@@ -39,7 +39,7 @@
 %global import_path %{provider}.%{provider_tld}/%{project}/%{repo}
 
 # docker stuff (prefix with d_)
-%global d_commit b4e2cc594f9a52057e700996718a97579b51e7c1
+%global d_commit f8950e08f120770f5555a1110f7212b23cb4c581
 %global d_shortcommit %(c=%{d_commit}; echo ${c:0:7})
 
 # d-s-s stuff (prefix with dss_)
@@ -84,7 +84,7 @@
 Name: %{repo}
 Epoch: 1
 Version: 1.9.0
-Release: 1.git%{d_shortcommit}%{?dist}
+Release: 2.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
@@ -515,6 +515,8 @@ install -p -m 644 %{repo}-storage-setup.conf %{buildroot}%{dss_libdir}/%{repo}-s
 install -p -m 755 libdss.sh %{buildroot}%{dss_libdir}
 install -d %{buildroot}%{_mandir}/man1
 install -p -m 644 %{repo}-storage-setup.1 %{buildroot}%{_mandir}/man1
+install -d %{buildroot}%{_sysconfdir}/sysconfig
+install -p -m 644 %{repo}-storage-setup-override.conf %{buildroot}%{_sysconfdir}/sysconfig/%{repo}-storage-setup
 popd
 
 %check
@@ -584,6 +586,7 @@ fi
 %{_udevrulesdir}/80-%{repo}.rules
 %{_sysconfdir}/%{repo}
 # d-s-s specific
+%config(noreplace) %{_sysconfdir}/sysconfig/%{repo}-storage-setup
 %{_unitdir}/%{repo}-storage-setup.service
 %{_bindir}/%{repo}-storage-setup
 %{dss_libdir}/%{repo}-storage-setup
@@ -628,6 +631,12 @@ fi
 %{_bindir}/%{repo}tarsum
 
 %changelog
+* Fri Aug 14 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.9.0-2.gitf8950e0
+- built docker @rhatdan/fedora-1.9 commit#f8950e0
+- built d-s-s master commit#ac1b30e
+- built docker-selinux master commit#16ebd81
+- built docker-utils master commit#dab51ac
+
 * Thu Aug 13 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.9.0-1
 - built docker @rhatdan/fedora-1.9 commit#b4e2cc5
 - built d-s-s master commit#ac1b30e
