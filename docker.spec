@@ -78,6 +78,7 @@
 %global selinux_policyver 3.13.1-119
 %else
 %global selinux_policyver 3.13.1-23
+%endif # fedora >= 22 or not
 %endif # with_selinux
 
 Name: %{repo}
