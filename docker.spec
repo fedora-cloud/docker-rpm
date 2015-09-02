@@ -41,6 +41,7 @@
 # docker stuff (prefix with d_)
 %global d_commit 566d2be0920655a5d6248ebc91a2079e138c59dd
 %global d_shortcommit %(c=%{d_commit}; echo ${c:0:7})
+%global d_dist %(echo %{?dist} | sed 's/./-/')
 
 # d-s-s stuff (prefix with dss_)
 %global dss_libdir %{_prefix}/lib/docker-storage-setup
@@ -352,7 +353,7 @@ This package installs %{summary}.
 
 # here keep the new line above otherwise autosetup fails when applying patch
 cp %{SOURCE5} .
-sed -i 's/$/%{?dist}/' VERSION
+sed -i 's/$/%{d_dist}/' VERSION
 
 # untar d-s-s
 tar zxf %{SOURCE8}
@@ -405,9 +406,9 @@ install -p -m 755 _build/src/%{repo}-fetch %{buildroot}%{_bindir}
 install -p -m 755 _build/src/%{repo}tarsum %{buildroot}%{_bindir}
 
 # Grab the first thing from -dev
-for x in bundles/*-dev%{?dist}; do \
-  install -p -m 755 $x/dynbinary/%{repo}-*-dev%{?dist} %{buildroot}%{_bindir}/%{repo}
-  install -p -m 755 $x/dynbinary/%{repo}init-*-dev%{?dist} %{buildroot}%{_libexecdir}/%{repo}/%{repo}init
+for x in bundles/*-dev%{d_dist}; do \
+  install -p -m 755 $x/dynbinary/%{repo}-*-dev%{d_dist} %{buildroot}%{_bindir}/%{repo}
+  install -p -m 755 $x/dynbinary/%{repo}init-*-dev%{d_dist} %{buildroot}%{_libexecdir}/%{repo}/%{repo}init
   break
 done
 
