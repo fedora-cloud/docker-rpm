@@ -17,6 +17,7 @@
 # docker stuff (prefix with d_)
 %global d_commit 32b8b25dfb8895d2a5ff0a9becf6be8bab93eaea
 %global d_shortcommit %(c=%{d_commit}; echo ${c:0:7})
+%global d_dist %(echo %{?dist} | sed 's/./-/')
 
 # d-s-s stuff (prefix with dss_)
 %global dss_libdir %{_prefix}/lib/%{repo}-storage-setup
@@ -311,7 +312,7 @@ This package installs %{summary}.
 %prep
 %setup -q -n %{repo}-%{d_commit}
 cp %{SOURCE5} .
-sed -i 's/$/%{?dist}/' VERSION
+sed -i 's/$/%{d_dist}/' VERSION
 
 # untar d-s-s
 tar zxf %{SOURCE8}
@@ -364,9 +365,9 @@ install -p -m 755 _build/src/%{repo}-fetch %{buildroot}%{_bindir}
 install -p -m 755 _build/src/%{repo}tarsum %{buildroot}%{_bindir}
 
 # Grab the first thing from -dev
-for x in bundles/%{version}%{?dist}; do \
-  install -p -m 755 $x/dynbinary/%{repo}-%{version}%{?dist} %{buildroot}%{_bindir}/%{repo}
-  install -p -m 755 $x/dynbinary/%{repo}init-%{version}%{?dist} %{buildroot}%{_libexecdir}/%{repo}/%{repo}init
+for x in bundles/latest; do \
+  install -p -m 755 $x/dynbinary/%{repo}-%{version}%{d_dist} %{buildroot}%{_bindir}/%{repo}
+  install -p -m 755 $x/dynbinary/%{repo}init-%{version}%{d_dist} %{buildroot}%{_libexecdir}/%{repo}/%{repo}init
   break
 done
 
