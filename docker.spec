@@ -47,8 +47,6 @@
 %global dss_commit d3b9ba74525192f02cefc993b77a476b879974fb
 %global dss_shortcommit %(c=%{dss_commit}; echo ${c:0:7})
 
-#%global tar_import_path code.google.com/p/go/src/pkg/archive/tar
-
 %global utils_commit dab51acd1b1a77f7cb01a1b7e2129ec85c846b71
 
 # docker-selinux conditional
@@ -176,7 +174,6 @@ BuildRequires: gcc-go >= %{gccgo_min_vers}
 Provides: %{repo}-io-devel = %{epoch}:%{version}-%{release}
 Provides: %{repo}-pkg-devel = %{epoch}:%{version}-%{release}
 Provides: %{repo}-io-pkg-devel = %{epoch}:%{version}-%{release}
-#Provides: golang(%{import_path}/vendor/src/%{tar_import_path}) = %{epoch}:%{version}-%{release}
 Summary:  A golang registry for global request variables (source libraries)
 Provides: golang(%{import_path}) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/builder) = %{epoch}:%{version}-%{release}
@@ -477,10 +474,6 @@ rm -rf %{buildroot}%{_sharedstatedir}/docker-unit-test/contrib/init/openrc/docke
 # sources
 install -d -p %{buildroot}%{gopath}/src/%{import_path}
 rm -rf pkg/symlink/testdata
-
-# install tar_import_path to devel package
-#install -d -p %{buildroot}%{gopath}/src/%{import_path}/vendor/src/%{tar_import_path}
-#cp -rpav vendor/src/%{tar_import_path}/* %{buildroot}%{gopath}/src/%{import_path}/vendor/src/%{tar_import_path}
 
 # remove dirs that won't be installed in devel
 rm -rf vendor docs man _build bundles contrib/init hack project
