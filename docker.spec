@@ -83,7 +83,7 @@
 Name: %{repo}
 Epoch: 1
 Version: 1.8.1
-Release: 2.git%{d_shortcommit}%{?dist}
+Release: 3.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
@@ -618,6 +618,9 @@ fi
 %{_bindir}/%{repo}tarsum
 
 %changelog
+* Thu Sep 03 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.8.1-3.git32b8b25
+- Resolves: rhbz#1259427
+
 * Mon Aug 24 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.8.1-2.git32b8b25
 - built docker @rhatdan/ commit#32b8b25
 - built d-s-s master commit#d3b9ba7
