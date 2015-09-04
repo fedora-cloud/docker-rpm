@@ -130,6 +130,7 @@ servers, OpenStack clusters, public instances, or combinations of the above.
 
 %if 0%{?with_devel}
 %package devel
+%ifarch %{golang_arches}
 BuildRequires: golang >= 1.2.1-3
 %else
 BuildRequires: gcc-go >= %{gccgo_min_vers}
