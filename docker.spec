@@ -58,7 +58,7 @@
 %if 0%{?with_selinux}
 # docker-selinux stuff (prefix with ds_ for version/release etc.)
 # Some bits borrowed from the openstack-selinux package
-%global ds_commit 6267b8324424e5ac7eb57a91243474b32dd2d965
+%global ds_commit b5281b76967235e95c901fae822af715991e70dd
 %global ds_shortcommit %(c=%{ds_commit}; echo ${c:0:7})
 %global selinuxtype targeted
 %global moduletype services
