@@ -30,7 +30,7 @@
 
 # docker builds in a checksum of dockerinit into docker,
 # so stripping the binaries breaks docker
-%global debug_package %{nil}
+%global debug_package %%{nil}
 %global provider github
 %global provider_tld com
 %global project docker
@@ -39,16 +39,14 @@
 %global import_path %{provider}.%{provider_tld}/%{project}/%{repo}
 
 # docker stuff (prefix with d_)
-%global d_commit 566d2be0920655a5d6248ebc91a2079e138c59dd
+%global d_commit 11b81f9b47b1df8bc1d1d3d8103beeb1923bfd48
 %global d_shortcommit %(c=%{d_commit}; echo ${c:0:7})
 %global d_dist %(echo %{?dist} | sed 's/./-/')
 
 # d-s-s stuff (prefix with dss_)
 %global dss_libdir %{_prefix}/lib/docker-storage-setup
-%global dss_commit d3b9ba74525192f02cefc993b77a476b879974fb
+%global dss_commit 6898d433f7c7666475656ab89565ec02d08c4c55
 %global dss_shortcommit %(c=%{dss_commit}; echo ${c:0:7})
-
-#%global tar_import_path code.google.com/p/go/src/pkg/archive/tar
 
 %global utils_commit dab51acd1b1a77f7cb01a1b7e2129ec85c846b71
 
@@ -85,7 +83,7 @@
 Name: %{repo}
 Epoch: 1
 Version: 1.9.0
-Release: 4.git%{d_shortcommit}%{?dist}
+Release: 5.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
@@ -93,7 +91,6 @@ URL: http://www.%{repo}.com
 # non-x86_64 architectures can be removed/added based on available
 # arch specific files in seccomp and vishvananda/netns projects
 ExclusiveArch: %{gccgo_arches} %{arm} %{ix86} x86_64
-#Source0: https://%{import_path}/archive/%{commit}/%{repo}-%{shortcommit}.tar.gz
 Source0: https://github.com/rhatdan/%{repo}/archive/%{d_commit}/%{repo}-%{d_shortcommit}.tar.gz
 Source1: %{repo}.service
 Source2: %{repo}.sysconfig
@@ -180,7 +177,6 @@ BuildRequires: gcc-go >= %{gccgo_min_vers}
 Provides: %{repo}-io-devel = %{epoch}:%{version}-%{release}
 Provides: %{repo}-pkg-devel = %{epoch}:%{version}-%{release}
 Provides: %{repo}-io-pkg-devel = %{epoch}:%{version}-%{release}
-#Provides: golang(%{import_path}/vendor/src/%{tar_import_path}) = %{epoch}:%{version}-%{release}
 Summary:  A golang registry for global request variables (source libraries)
 Provides: golang(%{import_path}) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/builder) = %{epoch}:%{version}-%{release}
@@ -632,6 +628,11 @@ fi
 %{_bindir}/%{repo}tarsum
 
 %changelog
+* Thu Sep 10 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.9.0-5.git11b81f9
+- built docker @rhatdan/fedora-1.9 commit#11b81f9
+- built d-s-s master commit#6898d43
+- built docker-selinux master commit#b5281b7
+
 * Wed Sep 02 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.9.0-4.git566d2be
 - Resolves: rhbz#1259427
 
