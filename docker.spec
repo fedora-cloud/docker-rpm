@@ -100,10 +100,6 @@ Source4: %{repo}-logrotate.sh
 Source5: README.%{repo}-logrotate
 Source6: %{repo}-network.sysconfig
 
-%if 0%{?fedora}
-Patch0: add-debug-info.patch
-%endif
-
 %if 0%{?with_selinux}
 Source7: https://github.com/fedora-cloud/%{repo}-selinux/archive/%{ds_commit}/%{repo}-selinux-%{ds_shortcommit}.tar.gz
 %endif # with_selinux
