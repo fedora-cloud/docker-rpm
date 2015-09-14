@@ -54,7 +54,7 @@
 
 Name: %{repo}
 Version: 1.8.2
-Release: 1.git%{d_shortcommit}%{?dist}
+Release: 2.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
@@ -77,7 +77,7 @@ Source8: https://github.com/projectatomic/%{repo}-storage-setup/archive/%{dss_co
 Source9: https://github.com/vbatts/%{repo}-utils/archive/%{utils_commit}.tar.gz
 BuildRequires: git
 BuildRequires: glibc-static
-BuildRequires: golang >= 1.4.2
+BuildRequires: golang < 1.5.0
 BuildRequires: go-md2man
 BuildRequires: device-mapper-devel
 BuildRequires: btrfs-progs-devel
@@ -588,6 +588,9 @@ fi
 %{_bindir}/%{repo}tarsum
 
 %changelog
+* Mon Sep 14 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.8.2-2.gitf1db8f2
+- BR: golang < 1.5 until https://github.com/docker/docker/pull/15703
+
 * Fri Sep 11 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.8.2-1.gitf1db8f2
 - built docker @rhatdan/fedora-1.8 commit#f1d8f2
 - built d-s-s master commit#6898d43
