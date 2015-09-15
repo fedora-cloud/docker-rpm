@@ -15,7 +15,7 @@
 %global import_path %{provider}.%{provider_tld}/%{project}/%{repo}
 
 # docker stuff (prefix with d_)
-%global d_commit f1db8f29866d907dad5860bb9473d9b709025ded
+%global d_commit d449443fee2e0388787b189b6b37bf3776524bc8
 %global d_shortcommit %(c=%{d_commit}; echo ${c:0:7})
 %global d_dist %(echo %{?dist} | sed 's/./-/')
 
@@ -77,7 +77,7 @@ Source8: https://github.com/projectatomic/%{repo}-storage-setup/archive/%{dss_co
 Source9: https://github.com/vbatts/%{repo}-utils/archive/%{utils_commit}.tar.gz
 BuildRequires: git
 BuildRequires: glibc-static
-BuildRequires: golang < 1.5.0
+BuildRequires: golang >= 1.4.2
 BuildRequires: go-md2man
 BuildRequires: device-mapper-devel
 BuildRequires: btrfs-progs-devel
@@ -588,6 +588,10 @@ fi
 %{_bindir}/%{repo}tarsum
 
 %changelog
+* Tue Sep 15 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.8.2-3.gitd449443
+- built docker @rhatdan/fedora-1.8 commit#d449443
+- revert to BR: golang >= 1.4.2
+
 * Mon Sep 14 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.8.2-2.gitf1db8f2
 - BR: golang < 1.5 until https://github.com/docker/docker/pull/15703
 
