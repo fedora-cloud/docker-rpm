@@ -39,7 +39,7 @@
 %global import_path %{provider}.%{provider_tld}/%{project}/%{repo}
 
 # docker stuff (prefix with d_)
-%global d_commit d449443fee2e0388787b189b6b37bf3776524bc8
+%global d_commit cb216bee4d723fe967345a2b11a02cd7d7d2fdd5
 %global d_shortcommit %(c=%{d_commit}; echo ${c:0:7})
 %global d_dist %(echo %{?dist} | sed 's/./-/')
 
@@ -83,7 +83,7 @@
 Name: %{repo}
 Epoch: 1
 Version: 1.8.2
-Release: 2.git%{d_shortcommit}%{?dist}
+Release: 3.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
@@ -614,6 +614,9 @@ fi
 %{_bindir}/%{repo}tarsum
 
 %changelog
+* Wed Sep 16 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.8.2-2.gitcb216be
+- built docker @rhatdan/fedora-1.8 commit#cb216be
+
 * Tue Sep 15 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.8.2-2.gitd449443
 - built docker @rhatdan/fedora-1.8 commit#d449443
 - built d-s-s master commit#6898d43
