@@ -113,6 +113,7 @@ BuildRequires: git
 BuildRequires: glibc-static
 BuildRequires: go-md2man
 BuildRequires: device-mapper-devel
+BuildRequires: pkgconfig(audit)
 BuildRequires: btrfs-progs-devel
 BuildRequires: sqlite-devel
 BuildRequires: pkgconfig(systemd)
