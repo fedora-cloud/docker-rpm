@@ -39,7 +39,7 @@
 %global import_path %{provider}.%{provider_tld}/%{project}/%{repo}
 
 # docker stuff (prefix with d_)
-%global d_commit 11b81f9b47b1df8bc1d1d3d8103beeb1923bfd48
+%global d_commit 05653f9e565a9fae5d7c8c0d9fb942bf50ac4c04
 %global d_shortcommit %(c=%{d_commit}; echo ${c:0:7})
 %global d_dist %(echo %{?dist} | sed 's/./-/')
 
@@ -83,7 +83,7 @@
 Name: %{repo}
 Epoch: 1
 Version: 1.9.0
-Release: 5.git%{d_shortcommit}%{?dist}
+Release: 6.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
@@ -98,10 +98,6 @@ Source3: %{repo}-storage.sysconfig
 Source4: %{repo}-logrotate.sh
 Source5: README.%{repo}-logrotate
 Source6: %{repo}-network.sysconfig
-
-%if 0%{?fedora}
-Patch0: add-debug-info.patch
-%endif
 
 %if 0%{?with_selinux}
 Source7: https://github.com/fedora-cloud/%{repo}-selinux/archive/%{ds_commit}/%{repo}-selinux-%{ds_shortcommit}.tar.gz
@@ -629,6 +625,10 @@ fi
 %{_bindir}/%{repo}tarsum
 
 %changelog
+* Thu Sep 17 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.9.0-6.git05653f9
+- built docker @rhatdan/fedora-1.9 commit#05653f9
+- Resolves: rhbz#1264193, rhbz#1260392, rhbz#1264196
+
 * Thu Sep 10 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.9.0-5.git11b81f9
 - built docker @rhatdan/fedora-1.9 commit#11b81f9
 - built d-s-s master commit#6898d43
