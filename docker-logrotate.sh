@@ -5,7 +5,7 @@ LOGROTATE=true
 
 if [ $LOGROTATE == true ]; then
     for id in $(docker ps -q); do
-        exec $(docker exec $id logrotate -s /var/log/logstatus /etc/logrotate.conf > /dev/null 2&>1)
+        exec $(docker exec $id logrotate -s /var/log/logstatus /etc/logrotate.conf > /dev/null 2>&1)
     done
 fi
 exit 0
