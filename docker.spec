@@ -34,7 +34,7 @@
 %if 0%{?with_selinux}
 # docker-selinux stuff (prefix with ds_ for version/release etc.)
 # Some bits borrowed from the openstack-selinux package
-%global ds_commit d6560f808c5cf0704218783d9f10d519ae745eda
+%global ds_commit 2ed73eb5066f2a4e0e7fa84c260816d754433bc6
 %global ds_shortcommit %(c=%{ds_commit}; echo ${c:0:7})
 %global selinuxtype targeted
 %global moduletype services
@@ -54,7 +54,7 @@
 
 Name: %{repo}
 Version: 1.8.2
-Release: 4.git%{d_shortcommit}%{?dist}
+Release: 5.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
@@ -588,6 +588,12 @@ fi
 %{_bindir}/%{repo}tarsum
 
 %changelog
+* Thu Oct 01 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.8.2-5.gitcb216be
+- built docker @rhatdan/fedora-1.8 commit#cb216be
+- built docker-selinux master commit#2ed73eb
+- built d-s-s master commit#6898d43
+- built docker-utils master commit#dab51ac
+
 * Mon Sep 21 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.8.2-4.gitcb216be
 - build docker @rhatdan/fedora-1.8 commit#cb216be
 - built docker-selinux master commit#d6560f8
