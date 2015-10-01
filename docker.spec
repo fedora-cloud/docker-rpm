@@ -54,7 +54,7 @@
 
 Name: %{repo}
 Version: 1.8.2
-Release: 5.git%{d_shortcommit}%{?dist}
+Release: 6.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
@@ -594,6 +594,12 @@ fi
 %{_bindir}/%{repo}tarsum
 
 %changelog
+* Thu Oct 01 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.8.2-6.gitcb216be
+- built docker @rhatdan/fedora-1.8 commit#cb216be
+- built docker-selinux master commit#2ed73eb
+- built d-s-s master commit#6898d43
+- built docker-utils master commit#dab51ac
+
 * Thu Oct 01 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1.8.2-6.gitcb216be
 - Resolves: rhbz#1267975
 
