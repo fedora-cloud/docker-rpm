@@ -49,7 +49,11 @@
 %global relabel_files() %{_sbindir}/restorecon -R %{_bindir}/%{repo} %{_localstatedir}/run/%{repo}.sock %{_localstatedir}/run/%{repo}.pid %{_sharedstatedir}/%{repo} %{_sysconfdir}/%{repo} %{_localstatedir}/log/%{repo} %{_localstatedir}/log/lxc %{_localstatedir}/lock/lxc %{_unitdir}/%{repo}.service %{_sysconfdir}/%{repo} &> /dev/null || :
 
 # Version of SELinux we were using
+%if 0%{?fedora} >= 22
 %global selinux_policyver 3.13.1-119
+%else
+%golbal selinux_policyver 3.13.1-23
+%endif
 %endif # with_selinux
 
 Name: %{repo}
@@ -92,7 +96,7 @@ Requires: device-mapper-libs >= 1.02.90-1
 
 # RE: rhbz#1195804 - ensure min NVR for selinux-policy
 %if 0%{?with_selinux}
-Requires: selinux-policy >= 3.13.1-114
+Requires: selinux-policy >= %{selinux_policyver}
 Requires(pre): %{repo}-selinux >= %{version}-%{release}
 %endif # with_selinux
 
