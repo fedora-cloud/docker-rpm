@@ -52,7 +52,7 @@
 %if 0%{?fedora} >= 22
 %global selinux_policyver 3.13.1-119
 %else
-%golbal selinux_policyver 3.13.1-23
+%global selinux_policyver 3.13.1-23
 %endif
 %endif # with_selinux
 
