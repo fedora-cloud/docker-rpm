@@ -112,7 +112,6 @@ BuildRequires: go-md2man
 BuildRequires: device-mapper-devel
 BuildRequires: pkgconfig(audit)
 BuildRequires: btrfs-progs-devel
-BuildRequires: dbus-python
 BuildRequires: sqlite-devel
 BuildRequires: pkgconfig(systemd)
 %ifarch %{golang_arches}
