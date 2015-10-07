@@ -545,7 +545,7 @@ if %{_sbindir}/selinuxenabled ; then
     %{_sbindir}/load_policy
     %relabel_files
     if [ $1 -eq 1 ]; then
-	retorecon -R %{_sharedstatedir}/%{repo}
+	restorecon -R %{_sharedstatedir}/%{repo}
     fi
 fi
 %endif # with_selinux
