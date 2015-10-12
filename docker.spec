@@ -58,7 +58,7 @@
 %if 0%{?with_selinux}
 # docker-selinux stuff (prefix with ds_ for version/release etc.)
 # Some bits borrowed from the openstack-selinux package
-%global ds_commit 2ed73eb5066f2a4e0e7fa84c260816d754433bc6
+%global ds_commit 44abd21628c8f4c054343f12d609d03de4644234
 %global ds_shortcommit %(c=%{ds_commit}; echo ${c:0:7})
 %global selinuxtype targeted
 %global moduletype services
@@ -83,7 +83,7 @@
 Name: %{repo}
 Epoch: 1
 Version: 1.8.2
-Release: 5.git%{d_shortcommit}%{?dist}
+Release: 7.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
@@ -617,6 +617,18 @@ fi
 %{_bindir}/%{repo}tarsum
 
 %changelog
+* Mon Oct 12 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.8.2-7.gitcb216be
+- built docker @rhatdan/fedora-1.8 commit#cb216be
+- built docker-selinux master commit#44abd21
+- built d-s-s master commit#6898d43
+- built docker-utils master commit#dab51ac
+
+* Mon Oct 12 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.8.2-6.gitcb216be
+- built docker @rhatdan/fedora-1.8 commit#cb216be
+- built docker-selinux master commit#44abd21
+- built d-s-s master commit#6898d43
+- built docker-utils master commit#dab51ac
+
 * Mon Sep 21 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.8.2-5.gitcb216be
 - built docker-selinux master commit#2ed73eb
 
