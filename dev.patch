@@ -1,18 +1,34 @@
-From c9d58506297ed6c86c9d8a91d861e4de3772e699 Mon Sep 17 00:00:00 2001
+From 40b0f129f5a6e005a949dc0ba808fb9ee557ebe4 Mon Sep 17 00:00:00 2001
 From: Mrunal Patel <mrunalp@gmail.com>
-Date: Tue, 7 Jul 2015 17:46:44 -0400
-Subject: [PATCH] Don't make modifications to /dev there are no devices in the
- configuration
+Date: Fri, 9 Oct 2015 17:57:44 -0400
+Subject: [PATCH] Cherry pick changes for allowing /dev mount from host
+
+docker #16639
+
+runc commit id c9d58506297e
 
 Signed-off-by: Mrunal Patel <mrunalp@gmail.com>
 ---
- libcontainer/rootfs_linux.go | 26 ++++++++++++++++----------
- 1 file changed, 16 insertions(+), 10 deletions(-)
+ daemon/execdriver/native/create.go                 |  1 +
+ .../runc/libcontainer/rootfs_linux.go              | 26 +++++++++++++---------
+ 2 files changed, 17 insertions(+), 10 deletions(-)
 
-diff --git a/libcontainer/rootfs_linux.go b/libcontainer/rootfs_linux.go
-index 88aa77d..21f380d 100644
---- a/libcontainer/rootfs_linux.go
-+++ b/libcontainer/rootfs_linux.go
+diff --git a/daemon/execdriver/native/create.go b/daemon/execdriver/native/create.go
+index bbc83fe..ca8d7fd 100644
+--- a/daemon/execdriver/native/create.go
++++ b/daemon/execdriver/native/create.go
+@@ -234,6 +234,7 @@ func (d *driver) setupMounts(container *configs.Config, c *execdriver.Command) e
+ 	for _, m := range container.Mounts {
+ 		if _, ok := userMounts[m.Destination]; !ok {
+ 			if mountDev && strings.HasPrefix(m.Destination, "/dev/") {
++				container.Devices = nil
+ 				continue
+ 			}
+ 			defaultMounts = append(defaultMounts, m)
+diff --git a/vendor/src/github.com/opencontainers/runc/libcontainer/rootfs_linux.go b/vendor/src/github.com/opencontainers/runc/libcontainer/rootfs_linux.go
+index a211d8d..9fd7058 100644
+--- a/vendor/src/github.com/opencontainers/runc/libcontainer/rootfs_linux.go
++++ b/vendor/src/github.com/opencontainers/runc/libcontainer/rootfs_linux.go
 @@ -27,6 +27,8 @@ func setupRootfs(config *configs.Config, console *linuxConsole) (err error) {
  	if err := prepareRoot(config); err != nil {
  		return newSystemError(err)
