@@ -79,8 +79,8 @@ Source7: https://github.com/fedora-cloud/%{repo}-selinux/archive/%{ds_commit}/%{
 Source8: https://github.com/projectatomic/%{repo}-storage-setup/archive/%{dss_commit}/%{repo}-storage-setup-%{dss_shortcommit}.tar.gz
 # Source9 is the source tarball for docker-utils
 Source9: https://github.com/vbatts/%{repo}-utils/archive/%{utils_commit}.tar.gz
-Patch0: dev-setup.patch
-Patch1: dev-dont-modify.patch
+Patch0: libcontainer.patch
+Patch1: dev.patch
 BuildRequires: git
 BuildRequires: glibc-static
 BuildRequires: golang >= 1.4.2
@@ -319,9 +319,7 @@ This package installs %{summary}.
 %prep
 %setup -q -n %{repo}-%{d_commit}
 %patch0 -p1
-pushd vendor/src/github.com/opencontainers/runc
 %patch1 -p1
-popd
 cp %{SOURCE5} .
 sed -i 's/$/%{d_dist}/' VERSION
 
