@@ -308,10 +308,10 @@ Summary: SELinux policies for Docker
 BuildRequires: selinux-policy
 BuildRequires: selinux-policy-devel
 Requires(post): selinux-policy-base >= %{selinux_policyver}
-Requires(post): selinux-policy-targeted >= %{selinux_policyver}
 Requires(post): policycoreutils
 Requires(post): policycoreutils-python-utils
 Requires(post): libselinux-utils
+Requires(post): docker
 Provides: %{repo}-io-selinux
 
 %description selinux
