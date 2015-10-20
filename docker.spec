@@ -74,7 +74,7 @@
 
 # Version of SELinux we were using
 %if 0%{?fedora} >= 22
-%global selinux_policyver 3.13.1-119
+%global selinux_policyver 3.13.1-155
 %else
 %global selinux_policyver 3.13.1-39
 %endif
