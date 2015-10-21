@@ -623,6 +623,7 @@ fi
 - built docker-selinux master commit#fe61432
 - built d-s-s master commit#01df512
 - built docker-utils master commit#dab51ac
+- Resolves: rhbz#1273893
 
 * Wed Oct 21 2015 Lokesh Mandvekar <lsm5@fedoraproject.org>
 - built docker @rhatdan/fedora-1.8 commit#
