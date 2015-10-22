@@ -392,11 +392,13 @@ install -d %{buildroot}%{_libexecdir}/%{repo}
 install -p -m 755 _build/src/%{repo}-fetch %{buildroot}%{_bindir}
 install -p -m 755 _build/src/%{repo}tarsum %{buildroot}%{_bindir}
 
-# Grab the first thing from -dev
-for x in bundles/latest; do \
-  install -p -m 755 $x/dynbinary/%{repo}-%{version}%{d_dist} %{buildroot}%{_bindir}/%{repo}
-  install -p -m 755 $x/dynbinary/%{repo}init-%{version}%{d_dist} %{buildroot}%{_libexecdir}/%{repo}/%{repo}init
-  break
+for x in bundles/*%{d_dist}; do
+    if ! test -d $x/dynbinary; then
+	continue
+    fi
+    install -p -m 755 $x/dynbinary/%{repo}-*%{d_dist} %{buildroot}%{_bindir}/%{repo}
+    install -p -m 755 $x/dynbinary/%{repo}init-*%{d_dist} %{buildroot}%{_libexecdir}/%{repo}/%{repo}init
+    break
 done
 
 # install manpages
