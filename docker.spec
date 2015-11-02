@@ -44,7 +44,7 @@
 %global d_dist %(echo %{?dist} | sed 's/./-/')
 
 # d-s-s stuff (prefix with dss_)
-%global dss_libdir %{_prefix}/lib/docker-storage-setup
+%global dss_libdir %{_exec_prefix}/lib/%{repo}-storage-setup
 %global dss_commit 01df51290475e7bd0243bca50725cb85c4915f36
 %global dss_shortcommit %(c=%{dss_commit}; echo ${c:0:7})
 
@@ -317,7 +317,7 @@ Requires(post): policycoreutils-python
 %endif
 Requires(post): libselinux-utils
 Requires(post): docker
-Provides: %{repo}-io-selinux
+Provides: %{repo}-io-selinux = %{epoch}:%{version}-%{release}
 
 %description selinux
 SELinux policy modules for use with Docker.
@@ -351,11 +351,11 @@ sed -i 's/$/%{d_dist}/' VERSION
 # untar d-s-s
 tar zxf %{SOURCE8}
 
-# untar %{repo}-utils
+# untar %%{repo}-utils
 tar zxf %{SOURCE9}
 
 %if 0%{?with_selinux}
-# unpack %{repo}-selinux
+# unpack %%{repo}-selinux
 tar zxf %{SOURCE7}
 %endif # with_selinux
 
@@ -383,7 +383,7 @@ go build github.com/vbatts/%{repo}-utils/cmd/%{repo}tarsum
 popd
 
 %if 0%{?with_selinux}
-# build %{repo}-selinux
+# build %%{repo}-selinux
 pushd %{repo}-selinux-%{ds_commit}
 make SHARE="%{_datadir}" TARGETS="%{modulenames}"
 popd
@@ -400,7 +400,7 @@ install -p -m 755 _build/src/%{repo}tarsum %{buildroot}%{_bindir}
 
 for x in bundles/*%{d_dist}; do
     if ! test -d $x/dynbinary; then
-	continue
+    continue
     fi
     install -p -m 755 $x/dynbinary/%{repo}-*%{d_dist} %{buildroot}%{_bindir}/%{repo}
     install -p -m 755 $x/dynbinary/%{repo}init-*%{d_dist} %{buildroot}%{_libexecdir}/%{repo}/%{repo}init
@@ -474,10 +474,6 @@ rm -rf %{buildroot}%{_sharedstatedir}/docker-unit-test/contrib/init/openrc/docke
 install -d -p %{buildroot}%{gopath}/src/%{import_path}
 rm -rf pkg/symlink/testdata
 
-# install tar_import_path to devel package
-#install -d -p %{buildroot}%{gopath}/src/%{import_path}/vendor/src/%{tar_import_path}
-#cp -rpav vendor/src/%{tar_import_path}/* %{buildroot}%{gopath}/src/%{import_path}/vendor/src/%{tar_import_path}
-
 # remove dirs that won't be installed in devel
 rm -rf vendor docs _build bundles contrib/init hack project
 
@@ -487,10 +483,10 @@ for dir in */ ; do
 done
 %endif
 
-# remove %{repo}-selinux rpm spec file
+# remove %%{repo}-selinux rpm spec file
 rm -rf %{repo}-selinux-%{ds_commit}/%{repo}-selinux.spec
 
-# install %{repo} config directory
+# install %%{repo} config directory
 install -dp %{buildroot}%{_sysconfdir}/%{repo}
 
 # install d-s-s
@@ -540,7 +536,7 @@ if %{_sbindir}/selinuxenabled ; then
     %{_sbindir}/load_policy
     %relabel_files
     if [ $1 -eq 1 ]; then
-	restorecon -R %{_sharedstatedir}/%{repo}
+    restorecon -R %{_sharedstatedir}/%{repo}
     fi
 fi
 %endif # with_selinux
