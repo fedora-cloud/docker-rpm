@@ -107,8 +107,6 @@ Source7: https://github.com/fedora-cloud/%{repo}-selinux/archive/%{ds_commit}/%{
 Source8: https://github.com/projectatomic/%{repo}-storage-setup/archive/%{dss_commit}/%{repo}-storage-setup-%{dss_shortcommit}.tar.gz
 # Source9 is the source tarball for docker-utils
 Source9: https://github.com/vbatts/%{repo}-utils/archive/%{utils_commit}.tar.gz
-Patch0: libcontainer.patch
-Patch1: dev.patch
 BuildRequires: git
 BuildRequires: glibc-static
 BuildRequires: go-md2man
