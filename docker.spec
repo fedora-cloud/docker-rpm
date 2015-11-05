@@ -128,7 +128,7 @@ Requires: device-mapper-libs >= 1.02.90-1
 # RE: rhbz#1195804 - ensure min NVR for selinux-policy
 %if 0%{?with_selinux}
 Requires: selinux-policy >= 3.13.1-114
-Requires(pre): %{repo}-selinux >= %{epoch}:%{version}-%{release}
+Requires: %{repo}-selinux >= %{epoch}:%{version}-%{release}
 %endif # with_selinux
 
 # Resolves: rhbz#1045220
@@ -310,7 +310,7 @@ Requires(post): selinux-policy-base >= %{selinux_policyver}
 Requires(post): policycoreutils
 Requires(post): policycoreutils-python-utils
 Requires(post): libselinux-utils
-Requires(post): docker
+Requires(post): %{repo} = %{epoch}:%{version}-%{release}
 Provides: %{repo}-io-selinux = %{epoch}:%{version}-%{release}
 
 %description selinux
