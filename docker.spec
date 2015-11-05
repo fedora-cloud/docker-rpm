@@ -127,7 +127,7 @@ Requires: device-mapper-libs >= 1.02.90-1
 # RE: rhbz#1195804 - ensure min NVR for selinux-policy
 %if 0%{?with_selinux}
 Requires: selinux-policy >= %{selinux_policyver}
-Requires(pre): %{repo}-selinux >= %{epoch}:%{version}-%{release}
+Requires: %{repo}-selinux = %{epoch}:%{version}-%{release}
 %endif # with_selinux
 
 # Resolves: rhbz#1045220
@@ -316,7 +316,7 @@ Requires(post): policycoreutils-python-utils
 Requires(post): policycoreutils-python
 %endif
 Requires(post): libselinux-utils
-Requires(post): docker
+Requires(post): %{repo}
 Provides: %{repo}-io-selinux = %{epoch}:%{version}-%{release}
 
 %description selinux
@@ -622,8 +622,10 @@ fi
 * Wed Nov 04 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.9.0-10.git1c1e196
 - built docker @projectatomic/fedora-1.9 commit#1c1e196
 - built docker-selinux commit#e522191
-- built d-s-s commit#e9722cc
-- built docker-utils commit#dab51ac
+- Dependency changes
+- For docker: Requires: docker-selinux
+- For docker-selinux: Requires(post): docker
+- From: Dusty Mabe <dustymabe@redhat.com>
 
 * Tue Oct 20 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.9.0-9.gitc743657
 - built docker @projectatomic/fedora-1.9 commit#c743657
