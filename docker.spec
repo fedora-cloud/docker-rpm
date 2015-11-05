@@ -622,6 +622,7 @@ fi
 - Dependency changes
 - For docker: Requires: docker-selinux
 - For docker-selinux: Requires(post): docker
+- From: Dusty Mabe <dustymabe@redhat.com>
 
 * Tue Nov 03 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.8.2-10.git28c300f
 - Resolves: rhbz#1270521
