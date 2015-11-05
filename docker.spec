@@ -83,7 +83,7 @@
 Name: %{repo}
 Epoch: 1
 Version: 1.8.2
-Release: 10.git%{d_shortcommit}%{?dist}
+Release: 11.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
@@ -618,6 +618,11 @@ fi
 %{_bindir}/%{repo}tarsum
 
 %changelog
+* Thu Nov 05 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.8.2-11.git28c300f
+- Dependency changes
+- For docker: Requires: docker-selinux
+- For docker-selinux: Requires(post): docker
+
 * Tue Nov 03 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.8.2-10.git28c300f
 - Resolves: rhbz#1270521
 - built docker @rhatdan/fedora-1.8 commit#28c300f
