@@ -1,22 +1,3 @@
-# Define arches for PA and SA
-%global golang_arches %{ix86} x86_64 %{arm}
-%global gccgo_arches %{power64} s390x aarch64
-%global go_arches %{golang_arches} %{gccgo_arches}
-
-# Where to set GOPATH for builds
-%global gopath %{_datadir}/gocode
-
-# Minimal version of gcc providing gcc-go
-%global gccgo_min_vers 5.0.0
-
-# Define commands for building
-%global golang_build go build -compiler gc
-%global gcc_go_build go build -compiler gccgo -gccgoflags %{optflags}
-
-# Define commands for testing
-%global golang_test go test -compiler gc
-%global gcc_go_test go test -compiler gccgo -gccgoflags %{optflags}
-
 %if 0%{?fedora}
 %global with_devel 1
 %global with_unit_test 1
@@ -87,11 +68,7 @@ Release: 11.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
-# keeping expansion of golang_arches instead of the macro as 
-# non-x86_64 architectures can be removed/added based on available
-# arch specific files in seccomp and vishvananda/netns projects
-ExclusiveArch: %{gccgo_arches} %{arm} %{ix86} x86_64
-#Source0: https://%%{import_path}/archive/%%{commit}/%%{repo}-%%{shortcommit}.tar.gz
+ExclusiveArch: %{go_arches}
 Source0: https://github.com/rhatdan/%{repo}/archive/%{d_commit}/%{repo}-%{d_shortcommit}.tar.gz
 Source1: %{repo}.service
 Source2: %{repo}.sysconfig
@@ -115,10 +92,14 @@ BuildRequires: pkgconfig(audit)
 BuildRequires: btrfs-progs-devel
 BuildRequires: sqlite-devel
 BuildRequires: pkgconfig(systemd)
+%if %{go_compiler}
+BuildRequires: compiler(go-compiler)
+%else
 %ifarch %{golang_arches}
 BuildRequires: golang >= 1.4.2
 %else
 BuildRequires: gcc-go >= %{gccgo_min_vers}
+%endif
 %endif
 %if 0%{?fedora} >= 21
 # Resolves: rhbz#1165615
@@ -618,6 +599,9 @@ fi
 %{_bindir}/%{repo}tarsum
 
 %changelog
+* Thu Nov 12 2015 Jakub Čajka <jcajka@fedoraproject.org> - 1:1.8.2-12.git28c300f
+- clean up macros overrides
+
 * Thu Nov 05 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.8.2-11.git28c300f
 - Dependency changes
 - For docker: Requires: docker-selinux
