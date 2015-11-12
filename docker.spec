@@ -64,7 +64,7 @@
 Name: %{repo}
 Epoch: 1
 Version: 1.8.2
-Release: 11.git%{d_shortcommit}%{?dist}
+Release: 13.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -291,7 +291,6 @@ Requires(post): selinux-policy-base >= %{selinux_policyver}
 Requires(post): policycoreutils
 Requires(post): policycoreutils-python-utils
 Requires(post): libselinux-utils
-Requires(post): %{repo} = %{epoch}:%{version}-%{release}
 Provides: %{repo}-io-selinux = %{epoch}:%{version}-%{release}
 
 %description selinux
@@ -516,7 +515,7 @@ if %{_sbindir}/selinuxenabled ; then
     %{_sbindir}/load_policy
     %relabel_files
     if [ $1 -eq 1 ]; then
-    restorecon -R %{_sharedstatedir}/%{repo}
+    restorecon -R %{_sharedstatedir}/%{repo} &> /dev/null || :
     fi
 fi
 %endif # with_selinux
@@ -599,6 +598,14 @@ fi
 %{_bindir}/%{repo}tarsum
 
 %changelog
+* Thu Nov 12 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.8.2-13.git28c300f
+- built docker @rhatdan/fedora-1.8 commit#28c300f
+- built docker-selinux commit#dbfad05
+- built d-s-s commit#e9722cc
+- built docker-utils commit#dab51ac
+- Resolves: rhbz#1273893
+- From: Dan Walsh <dwalsh@redhat.com>
+
 * Thu Nov 12 2015 Jakub Čajka <jcajka@fedoraproject.org> - 1:1.8.2-12.git28c300f
 - clean up macros overrides
 
