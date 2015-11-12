@@ -64,7 +64,7 @@
 Name: %{repo}
 Epoch: 1
 Version: 1.9.0
-Release: 11.git%{d_shortcommit}%{?dist}
+Release: 12.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -298,7 +298,6 @@ Requires(post): policycoreutils-python-utils
 Requires(post): policycoreutils-python
 %endif
 Requires(post): libselinux-utils
-Requires(post): %{repo}
 Provides: %{repo}-io-selinux = %{epoch}:%{version}-%{release}
 
 %description selinux
@@ -518,7 +517,7 @@ if %{_sbindir}/selinuxenabled ; then
     %{_sbindir}/load_policy
     %relabel_files
     if [ $1 -eq 1 ]; then
-    restorecon -R %{_sharedstatedir}/%{repo}
+    restorecon -R %{_sharedstatedir}/%{repo} &> /dev/null || :
     fi
 fi
 %endif # with_selinux
@@ -601,6 +600,10 @@ fi
 %{_bindir}/%{repo}tarsum
 
 %changelog
+* Thu Nov 12 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.9.0-12.git1c1e196
+- Resolves: rhbz#1273893
+- From: Dan Walsh <dwalsh@redhat.com>
+
 * Thu Nov 12 2015 Jakub Čajka <jcajka@fedoraproject.org> - 1:1.9.0-11.git1c1e196
 - clean up macros overrides
 
