@@ -67,9 +67,9 @@ Version: 1.8.2
 Release: 11.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
-URL: http://www.%{repo}.com
+URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
 ExclusiveArch: %{go_arches}
-Source0: https://github.com/rhatdan/%{repo}/archive/%{d_commit}/%{repo}-%{d_shortcommit}.tar.gz
+Source0: https://%{provider}.%{provider_tld}/rhatdan/%{repo}/archive/%{d_commit}/%{repo}-%{d_shortcommit}.tar.gz
 Source1: %{repo}.service
 Source2: %{repo}.sysconfig
 Source3: %{repo}-storage.sysconfig
@@ -78,12 +78,12 @@ Source5: README.%{repo}-logrotate
 Source6: %{repo}-network.sysconfig
 
 %if 0%{?with_selinux}
-Source7: https://github.com/fedora-cloud/%{repo}-selinux/archive/%{ds_commit}/%{repo}-selinux-%{ds_shortcommit}.tar.gz
+Source7: https://%{provider}.%{provider_tld}/fedora-cloud/%{repo}-selinux/archive/%{ds_commit}/%{repo}-selinux-%{ds_shortcommit}.tar.gz
 %endif # with_selinux
 # Source8 is the source tarball for docker-storage-setup
-Source8: https://github.com/projectatomic/%{repo}-storage-setup/archive/%{dss_commit}/%{repo}-storage-setup-%{dss_shortcommit}.tar.gz
+Source8: https://%{provider}.%{provider_tld}/projectatomic/%{repo}-storage-setup/archive/%{dss_commit}/%{repo}-storage-setup-%{dss_shortcommit}.tar.gz
 # Source9 is the source tarball for docker-utils
-Source9: https://github.com/vbatts/%{repo}-utils/archive/%{utils_commit}.tar.gz
+Source9: https://%{provider}.%{provider_tld}/vbatts/%{repo}-utils/archive/%{utils_commit}.tar.gz
 BuildRequires: git
 BuildRequires: glibc-static
 BuildRequires: go-md2man
