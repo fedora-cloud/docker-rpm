@@ -20,7 +20,7 @@
 %global import_path %{provider}.%{provider_tld}/%{project}/%{repo}
 
 # docker stuff (prefix with d_)
-%global d_commit 1c1e19641cfa0f5ef6cabd8ee6ff764c3e86ee3a
+%global d_commit e08c5ef211aa8cb1269af5e8218c10b2a3aee442
 %global d_shortcommit %(c=%{d_commit}; echo ${c:0:7})
 %global d_dist %(echo %{?dist} | sed 's/./-/')
 
@@ -64,7 +64,7 @@
 Name: %{repo}
 Epoch: 1
 Version: 1.9.0
-Release: 12.git%{d_shortcommit}%{?dist}
+Release: 14.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -600,6 +600,18 @@ fi
 %{_bindir}/%{repo}tarsum
 
 %changelog
+* Fri Nov 13 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.9.0-14.gite08c5ef
+- built docker @projectatomic/fedora-1.10 commit#e08c5ef
+- built docker-selinux commit#e522191
+- built d-s-s commit#e9722cc
+- built docker-utils commit#dab51ac
+
+* Fri Nov 13 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.9.0-13.gite08c5ef
+- built docker @projectatomic/fedora-1.10 commit#e08c5ef
+- built docker-selinux commit#e522191
+- built d-s-s commit#e9722cc
+- built docker-utils commit#dab51ac
+
 * Thu Nov 12 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.9.0-12.git1c1e196
 - Resolves: rhbz#1273893
 - From: Dan Walsh <dwalsh@redhat.com>
