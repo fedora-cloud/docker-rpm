@@ -57,6 +57,7 @@
 %endif # with_selinux
 
 Name: %{repo}
+Epoch: 0
 Version: 1.8.2
 Release: 7.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
