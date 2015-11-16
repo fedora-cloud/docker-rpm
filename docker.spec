@@ -64,7 +64,7 @@
 Name: %{repo}
 Epoch: 1
 Version: 1.10.0
-Release: 1.git%{d_shortcommit}%{?dist}
+Release: 2.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -600,6 +600,12 @@ fi
 %{_bindir}/%{repo}tarsum
 
 %changelog
+* Mon Nov 16 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.10.0-2.git6669c1a
+- built docker @projectatomic/fedora-1.10 commit#6669c1a
+- built docker-selinux commit#e522191
+- built d-s-s commit#c638a60
+- built docker-utils commit#dab51ac
+
 * Mon Nov 16 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.9.0-15.git6669c1a
 - built docker @projectatomic/fedora-1.10 commit#6669c1a
 - built docker-selinux commit#e522191
