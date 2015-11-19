@@ -72,6 +72,7 @@ Source3: %{repo}-storage.sysconfig
 Source4: %{repo}-logrotate.sh
 Source5: README.%{repo}-logrotate
 Source6: %{repo}-network.sysconfig
+Patch0: muldefs.patch
 
 %if 0%{?with_selinux}
 Source7: https://github.com/fedora-cloud/%{repo}-selinux/archive/%{ds_commit}/%{repo}-selinux-%{ds_shortcommit}.tar.gz
@@ -347,10 +348,10 @@ ln -s $(dirs +1 -l)/%{repo}-utils-%{utils_commit} src/%{provider}.%{provider_tld
 popd
 
 export DOCKER_GITCOMMIT="%{d_shortcommit}/%{version}"
-export DOCKER_BUILDTAGS="selinux"
+export DOCKER_BUILDTAGS="selinux journald"
 export GOPATH=$(pwd)/_build:$(pwd)/vendor:%{gopath}
 
-DEBUG=1 hack/make.sh dynbinary
+DEBUG=1 bash -x hack/make.sh dynbinary
 man/md2man-all.sh
 cp contrib/syntax/vim/LICENSE LICENSE-vim-syntax
 cp contrib/syntax/vim/README.md README-vim-syntax.md
