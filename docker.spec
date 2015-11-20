@@ -19,17 +19,28 @@
 
 %global import_path %{provider}.%{provider_tld}/%{project}/%{repo}
 
-# docker stuff (prefix with d_)
-%global d_commit 6d8d26a7712ccb9d9121d24d9263d09d3a6830b8
-%global d_shortcommit %(c=%{d_commit}; echo ${c:0:7})
+# docker
+%global git0 https://github.com/projectatomic/docker
+%global commit0 6d8d26a7712ccb9d9121d24d9263d09d3a6830b8
+%global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 %global d_dist %(echo %{?dist} | sed 's/./-/')
 
-# d-s-s stuff (prefix with dss_)
+# d-s-s
+%global git1 https://github.com/projectatomic/docker-storage-setup/
+%global commit1 0814c269bea1d0daf61c794ee8a48de582dd2658
+%global shortcommit1 %(c=%{commit1}; echo ${c:0:7})
 %global dss_libdir %{_exec_prefix}/lib/%{repo}-storage-setup
-%global dss_commit 0814c269bea1d0daf61c794ee8a48de582dd2658
-%global dss_shortcommit %(c=%{dss_commit}; echo ${c:0:7})
 
-%global utils_commit dab51acd1b1a77f7cb01a1b7e2129ec85c846b71
+# docker-selinux
+%global git2 https://github.com/fedora-cloud/docker-selinux
+%global commit2 d9b67f9af50b3376ef362f3da314155667242cba
+%global shortcommit2 %(c=%{commit2}; echo ${c:0:7})
+
+# docker-utils
+#  https://github.com/vbatts/docker-utils
+%global git3 https://github.com/vbatts/docker-utils
+%global commit3 dab51acd1b1a77f7cb01a1b7e2129ec85c846b71
+%global shortcommit3 %(c=%{commit3}; echo ${c:0:7})
 
 # docker-selinux conditional
 %if 0%{?fedora} >= 22 || 0%{?centos} >= 7 || 0%{?rhel} >= 7
@@ -39,8 +50,6 @@
 %if 0%{?with_selinux}
 # docker-selinux stuff (prefix with ds_ for version/release etc.)
 # Some bits borrowed from the openstack-selinux package
-%global ds_commit d9b67f9af50b3376ef362f3da314155667242cba
-%global ds_shortcommit %(c=%{ds_commit}; echo ${c:0:7})
 %global selinuxtype targeted
 %global moduletype services
 %global modulenames %{repo}
@@ -64,27 +73,25 @@
 Name: %{repo}
 Epoch: 1
 Version: 1.10.0
-Release: 9.git%{d_shortcommit}%{?dist}
+Release: 9.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
 ExclusiveArch: %{go_arches}
-Source0: https://%{provider}.%{provider_tld}/projectatomic/%{repo}/archive/%{d_commit}/%{repo}-%{d_shortcommit}.tar.gz
-Source1: %{repo}.service
-Source2: %{repo}.sysconfig
-Source3: %{repo}-storage.sysconfig
-Source4: %{repo}-logrotate.sh
-Source5: README.%{repo}-logrotate
-Source6: %{repo}-network.sysconfig
+Source0: %{git0}/archive/%{commit0}/docker-%{shortcommit0}.tar.gz
+Source1: %{git1}/archive/%{commit1}/docker-storage-setup-%{shortcommit1}.tar.gz
+%if 0%{?with_selinux}
+Source2: %{git2}/archive/%{commit2}/docker-selinux-%{shortcommit2}.tar.gz
+%endif # with_selinux
+Source3: %{git3}/archive/%{commit3}/docker-utils-%{shortcommit3}.tar.gz
+Source4: %{repo}.service
+Source5: %{repo}.sysconfig
+Source6: %{repo}-storage.sysconfig
+Source7: %{repo}-logrotate.sh
+Source8: README.%{repo}-logrotate
+Source9: %{repo}-network.sysconfig
 Patch0: muldefs.patch
 
-%if 0%{?with_selinux}
-Source7: https://%{provider}.%{provider_tld}/fedora-cloud/%{repo}-selinux/archive/%{ds_commit}/%{repo}-selinux-%{ds_shortcommit}.tar.gz
-%endif # with_selinux
-# Source8 is the source tarball for docker-storage-setup
-Source8: https://%{provider}.%{provider_tld}/projectatomic/%{repo}-storage-setup/archive/%{dss_commit}/%{repo}-storage-setup-%{dss_shortcommit}.tar.gz
-# Source9 is the source tarball for docker-utils
-Source9: https://%{provider}.%{provider_tld}/vbatts/%{repo}-utils/archive/%{utils_commit}.tar.gz
 BuildRequires: git
 BuildRequires: glibc-static
 BuildRequires: go-md2man
@@ -324,22 +331,22 @@ Provides: %{repo}-io-zsh-completion = %{epoch}:%{version}-%{release}
 This package installs %{summary}.
 
 %prep
-%autosetup -Sgit -n %{repo}-%{d_commit}
+%autosetup -Sgit -n %{repo}-%{commit0}
 
 # here keep the new line above otherwise autosetup fails when applying patch
-cp %{SOURCE5} .
+cp %{SOURCE8} .
 sed -i 's/$/%{d_dist}/' VERSION
 
 # untar d-s-s
-tar zxf %{SOURCE8}
-
-# untar %%{repo}-utils
-tar zxf %{SOURCE9}
+tar zxf %{SOURCE1}
 
 %if 0%{?with_selinux}
 # unpack %%{repo}-selinux
-tar zxf %{SOURCE7}
+tar zxf %{SOURCE2}
 %endif # with_selinux
+
+# untar docker-utils
+tar zxf %{SOURCE3}
 
 %build
 # set up temporary build gopath, and put our directory there
@@ -347,10 +354,10 @@ mkdir _build
 pushd _build
 mkdir -p src/%{provider}.%{provider_tld}/{%{repo},vbatts}
 ln -s $(dirs +1 -l) src/%{import_path}
-ln -s $(dirs +1 -l)/%{repo}-utils-%{utils_commit} src/%{provider}.%{provider_tld}/vbatts/%{repo}-utils
+ln -s $(dirs +1 -l)/%{repo}-utils-%{commit3} src/%{provider}.%{provider_tld}/vbatts/%{repo}-utils
 popd
 
-export DOCKER_GITCOMMIT="%{d_shortcommit}/%{version}"
+export DOCKER_GITCOMMIT="%{shortcommit0}/%{version}"
 export DOCKER_BUILDTAGS="selinux journald"
 export GOPATH=$(pwd)/_build:$(pwd)/vendor:%{gopath}
 
@@ -366,7 +373,7 @@ popd
 
 %if 0%{?with_selinux}
 # build %%{repo}-selinux
-pushd %{repo}-selinux-%{ds_commit}
+pushd %{repo}-selinux-%{commit2}
 make SHARE="%{_datadir}" TARGETS="%{modulenames}"
 popd
 %endif # with_selinux
@@ -407,7 +414,7 @@ install -p -m 644 contrib/completion/fish/%{repo}.fish %{buildroot}%{_datadir}/f
 
 # install container logrotate cron script
 install -dp %{buildroot}%{_sysconfdir}/cron.daily/
-install -p -m 755 %{SOURCE4} %{buildroot}%{_sysconfdir}/cron.daily/%{repo}-logrotate
+install -p -m 755 %{SOURCE7} %{buildroot}%{_sysconfdir}/cron.daily/%{repo}-logrotate
 
 # install vim syntax highlighting
 install -d %{buildroot}%{_datadir}/vim/vimfiles/{doc,ftdetect,syntax}
@@ -428,18 +435,18 @@ install -d %{buildroot}%{_sharedstatedir}/%{repo}
 
 # install systemd/init scripts
 install -d %{buildroot}%{_unitdir}
-install -p -m 644 %{SOURCE1} %{buildroot}%{_unitdir}
+install -p -m 644 %{SOURCE4} %{buildroot}%{_unitdir}
 
 # for additional args
 install -d %{buildroot}%{_sysconfdir}/sysconfig/
-install -p -m 644 %{SOURCE2} %{buildroot}%{_sysconfdir}/sysconfig/%{repo}
-install -p -m 644 %{SOURCE6} %{buildroot}%{_sysconfdir}/sysconfig/%{repo}-network
-install -p -m 644 %{SOURCE3} %{buildroot}%{_sysconfdir}/sysconfig/%{repo}-storage
+install -p -m 644 %{SOURCE5} %{buildroot}%{_sysconfdir}/sysconfig/%{repo}
+install -p -m 644 %{SOURCE9} %{buildroot}%{_sysconfdir}/sysconfig/%{repo}-network
+install -p -m 644 %{SOURCE6} %{buildroot}%{_sysconfdir}/sysconfig/%{repo}-storage
 
 # install policy modules
 %_format MODULES $x.pp.bz2
 install -d %{buildroot}%{_datadir}/selinux/packages
-install -m 0644 %{repo}-selinux-%{ds_commit}/$MODULES %{buildroot}%{_datadir}/selinux/packages
+install -m 0644 %{repo}-selinux-%{commit2}/$MODULES %{buildroot}%{_datadir}/selinux/packages
 
 %if 0%{?with_unit_test}
 install -d -m 0755 %{buildroot}%{_sharedstatedir}/docker-unit-test/
@@ -466,13 +473,13 @@ done
 %endif
 
 # remove %%{repo}-selinux rpm spec file
-rm -rf %{repo}-selinux-%{ds_commit}/%{repo}-selinux.spec
+rm -rf %{repo}-selinux-%{commit2}/%{repo}-selinux.spec
 
 # install %%{repo} config directory
 install -dp %{buildroot}%{_sysconfdir}/%{repo}
 
 # install d-s-s
-pushd %{repo}-storage-setup-%{dss_commit}
+pushd %{repo}-storage-setup-%{commit1}
 install -d %{buildroot}%{_bindir}
 install -p -m 755 %{repo}-storage-setup.sh %{buildroot}%{_bindir}/%{repo}-storage-setup
 install -d %{buildroot}%{_unitdir}
@@ -584,7 +591,7 @@ fi
 
 %if 0%{?with_selinux}
 %files selinux
-%doc %{repo}-selinux-%{ds_commit}/README.md
+%doc %{repo}-selinux-%{commit2}/README.md
 %{_datadir}/selinux/*
 %endif # with_selinux
 
