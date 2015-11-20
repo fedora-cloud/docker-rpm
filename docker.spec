@@ -58,8 +58,8 @@
 
 Name: %{repo}
 Epoch: 0
-Version: 1.8.2
-Release: 8.git%{d_shortcommit}%{?dist}
+Version: 1.9.1
+Release: 1.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
