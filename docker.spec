@@ -347,7 +347,7 @@ ln -s $(dirs +1 -l)/%{repo}-utils-%{utils_commit} src/%{provider}.%{provider_tld
 popd
 
 export DOCKER_GITCOMMIT="%{d_shortcommit}/%{version}"
-export DOCKER_BUILDTAGS="selinux btrfs_noversion"
+export DOCKER_BUILDTAGS="selinux"
 export GOPATH=$(pwd)/_build:$(pwd)/vendor:%{gopath}
 
 DEBUG=1 hack/make.sh dynbinary
