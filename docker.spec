@@ -15,13 +15,13 @@
 %global import_path %{provider}.%{provider_tld}/%{project}/%{repo}
 
 # docker stuff (prefix with d_)
-%global d_commit 8f9eabcb5689a353bac2ce7e9b10e3298b43057f
+%global d_commit 78bc3eaee7a4639325ca103154a69f91ddb1a093
 %global d_shortcommit %(c=%{d_commit}; echo ${c:0:7})
 %global d_dist %(echo %{?dist} | sed 's/./-/')
 
 # d-s-s stuff (prefix with dss_)
 %global dss_libdir %{_exec_prefix}/lib/%{repo}-storage-setup
-%global dss_commit c638a6043e92cc388a9a852425e3961bbc6ad836
+%global dss_commit 0814c269bea1d0daf61c794ee8a48de582dd2658
 %global dss_shortcommit %(c=%{dss_commit}; echo ${c:0:7})
 
 %global utils_commit dab51acd1b1a77f7cb01a1b7e2129ec85c846b71
@@ -59,7 +59,7 @@
 Name: %{repo}
 Epoch: 0
 Version: 1.9.1
-Release: 1.git%{d_shortcommit}%{?dist}
+Release: 2.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: http://www.%{repo}.com
@@ -602,6 +602,12 @@ fi
 %{_bindir}/%{repo}tarsum
 
 %changelog
+* Fri Nov 20 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 0:1.9.1-2.git78bc3ea
+- built docker @projectatomic/fedora-1.9 commit#78bc3ea
+- built docker-selinux commit#dbfad05
+- built d-s-s commit#0814c26
+- built docker-utils commit#dab51ac
+
 * Fri Nov 13 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 0:1.8.2-8.git8f9eabc
 - built docker @rhatdan/fedora-1.8 commit#8f9eabc
 - built docker-selinux commit#dbfad05
