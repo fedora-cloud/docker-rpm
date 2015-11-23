@@ -20,7 +20,7 @@
 %global import_path %{provider}.%{provider_tld}/%{project}/%{repo}
 
 # docker stuff (prefix with d_)
-%global d_commit 0a9a75933b38f773ad0962075cf27b1eed0d5761
+%global d_commit 39f99b6222d6b9f7abb7baf2240cfd5620282cc9
 %global d_shortcommit %(c=%{d_commit}; echo ${c:0:7})
 %global d_dist %(echo %{?dist} | sed 's/./-/')
 
@@ -64,7 +64,7 @@
 Name: %{repo}
 Epoch: 1
 Version: 1.10.0
-Release: 5.git%{d_shortcommit}%{?dist}
+Release: 6.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -601,6 +601,12 @@ fi
 %{_bindir}/%{repo}tarsum
 
 %changelog
+* Mon Nov 23 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.10.0-6.git39f99b6
+- built docker @projectatomic/fedora-1.10 commit#39f99b6
+- built docker-selinux commit#e522191
+- built d-s-s commit#0814c26
+- built docker-utils commit#dab51ac
+
 * Fri Nov 20 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.10.0-5.git0a9a759
 - built docker @projectatomic/fedora-1.10 commit#0a9a759
 - built docker-selinux commit#e522191
