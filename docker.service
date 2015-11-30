@@ -21,9 +21,9 @@ LimitNOFILE=1048576
 LimitNPROC=1048576
 LimitCORE=infinity
 MountFlags=slave
-TimeoutStartSec=1min
 StandardOutput=null
 StandardError=null
+TimeoutStartSec=0
 
 [Install]
 WantedBy=multi-user.target
