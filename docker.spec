@@ -20,7 +20,7 @@
 %global import_path %{provider}.%{provider_tld}/%{project}/%{repo}
 
 # docker stuff (prefix with d_)
-%global d_commit 42850f5f016d3be4a27d602fdbb8e4ccff8333e6
+%global d_commit a7f4806032efa8a1e29636c20101cb0b3dfb1214
 %global d_shortcommit %(c=%{d_commit}; echo ${c:0:7})
 %global d_dist %(echo %{?dist} | sed 's/./-/')
 
@@ -39,7 +39,7 @@
 %if 0%{?with_selinux}
 # docker-selinux stuff (prefix with ds_ for version/release etc.)
 # Some bits borrowed from the openstack-selinux package
-%global ds_commit e5221913ecbc683b029d10128019b3da2d00138e
+%global ds_commit d9b67f9af50b3376ef362f3da314155667242cba
 %global ds_shortcommit %(c=%{ds_commit}; echo ${c:0:7})
 %global selinuxtype targeted
 %global moduletype services
@@ -64,7 +64,7 @@
 Name: %{repo}
 Epoch: 1
 Version: 1.10.0
-Release: 7.git%{d_shortcommit}%{?dist}
+Release: 8.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -601,6 +601,13 @@ fi
 %{_bindir}/%{repo}tarsum
 
 %changelog
+* Tue Dec 01 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.10.0-8.gita7f4806
+- use CAS for images and layers, upstream gh pr#17924
+- built docker @projectatomic/fedora-1.10 commit#a7f4806
+- built docker-selinux commit#d9b67f9
+- built d-s-s commit#0814c26
+- built docker-utils commit#dab51ac
+
 * Mon Nov 30 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.10.0-7.git42850f5
 - built docker @projectatomic/fedora-1.10 commit#42850f5
 - built docker-selinux commit#e522191
