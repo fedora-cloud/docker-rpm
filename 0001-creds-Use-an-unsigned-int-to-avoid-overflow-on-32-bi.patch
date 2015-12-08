@@ -1,0 +1,29 @@
+From 861f7017f67ee44fa5febde4686e85802630f390 Mon Sep 17 00:00:00 2001
+From: Colin Walters <walters@verbum.org>
+Date: Tue, 8 Dec 2015 11:11:15 -0500
+Subject: [PATCH] creds: Use an unsigned int to avoid overflow on 32 bit
+ architectures
+
+---
+ api/server/credentials_linux.go | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/api/server/credentials_linux.go b/api/server/credentials_linux.go
+index 3031911..276f96a 100644
+--- a/api/server/credentials_linux.go
++++ b/api/server/credentials_linux.go
+@@ -82,9 +82,9 @@ func getLoginUID(ucred *syscall.Ucred, fd int) (int, error) {
+ 		logrus.Errorf("Error reading loginuid: %v", err)
+ 		return -1, err
+ 	}
+-	loginuidInt, err := strconv.Atoi(string(loginuid))
++	loginuidInt, err := strconv.ParseUint(string(loginuid), 10, 32)
+ 	if err != nil {
+-		logrus.Errorf("Failed to convert loginuid to int: %v", err)
++		logrus.Errorf("Failed to convert loginuid to uint32: %v", err)
+ 	}
+ 	return loginuidInt, nil
+ }
+-- 
+1.8.3.1
+
