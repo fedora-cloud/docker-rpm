@@ -91,7 +91,7 @@ Source7: %{repo}-logrotate.sh
 Source8: README.%{repo}-logrotate
 Source9: %{repo}-network.sysconfig
 Patch0: muldefs.patch
-Patch1: 0001-creds-Use-an-unsigned-int-to-avoid-overflow-on-32-bi.patch
+Patch1: 0001-creds-Use-uint32-for-loginuid-to-not-overflow-32-bit.patch
 
 BuildRequires: git
 BuildRequires: glibc-static

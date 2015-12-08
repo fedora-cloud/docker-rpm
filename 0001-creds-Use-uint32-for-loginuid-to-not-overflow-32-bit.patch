@@ -1,0 +1,56 @@
+From 099131a5010c02a811deb5334709c01ad97ab1b8 Mon Sep 17 00:00:00 2001
+From: Colin Walters <walters@verbum.org>
+Date: Tue, 8 Dec 2015 11:11:15 -0500
+Subject: [PATCH] creds: Use uint32 for loginuid to not overflow 32 bit arches
+
+---
+ api/server/credentials_linux.go | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/api/server/credentials_linux.go b/api/server/credentials_linux.go
+index 3031911..6879721 100644
+--- a/api/server/credentials_linux.go
++++ b/api/server/credentials_linux.go
+@@ -72,7 +72,7 @@ func getUcred(fd int) (*syscall.Ucred, error) {
+ }
+ 
+ //Gets the client's loginuid
+-func getLoginUID(ucred *syscall.Ucred, fd int) (int, error) {
++func getLoginUID(ucred *syscall.Ucred, fd int) (uint32, error) {
+ 	if _, err := syscall.Getpeername(fd); err != nil {
+ 		logrus.Errorf("Socket appears to have closed: %v", err)
+ 		return -1, err
+@@ -82,16 +82,16 @@ func getLoginUID(ucred *syscall.Ucred, fd int) (int, error) {
+ 		logrus.Errorf("Error reading loginuid: %v", err)
+ 		return -1, err
+ 	}
+-	loginuidInt, err := strconv.Atoi(string(loginuid))
++	loginuidInt, err := strconv.ParseUint(string(loginuid), 10, 32)
+ 	if err != nil {
+-		logrus.Errorf("Failed to convert loginuid to int: %v", err)
++		logrus.Errorf("Failed to convert loginuid to uint32: %v", err)
+ 	}
+-	return loginuidInt, nil
++	return uint32(loginuidInt), nil
+ }
+ 
+ //Given a loginUID, retrieves the current username
+-func getpwuid(loginUID int) (string, error) {
+-	pwd, err := user.LookupId(strconv.Itoa(loginUID))
++func getpwuid(loginUID uint32) (string, error) {
++	pwd, err := user.LookupId(strconv.FormatUint(loginUID, 32))
+ 	if err != nil {
+ 		logrus.Errorf("Failed to get pwuid struct: %v", err)
+ 		return "", err
+@@ -255,7 +255,7 @@ func (s *Server) LogAction(w http.ResponseWriter, r *http.Request) error {
+ }
+ 
+ //Logs an API event to the audit log
+-func logAuditlog(c *container.Container, action string, username string, loginuid int, success bool) {
++func logAuditlog(c *container.Container, action string, username string, loginuid uint32, success bool) {
+ 	virt := audit.AuditVirtControl
+ 	vm := "?"
+ 	vmPid := "?"
+-- 
+1.8.3.1
+
