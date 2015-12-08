@@ -73,7 +73,7 @@
 Name: %{repo}
 Epoch: 1
 Version: 1.10.0
-Release: 9.git%{shortcommit0}%{?dist}
+Release: 10.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -608,6 +608,10 @@ fi
 %{_bindir}/%{repo}tarsum
 
 %changelog
+* Tue Dec 08 2015 Colin Walters <walters@redhat.com>- 1:1.10.0-10.git6d8d26a
+- Use new standardized source format
+- Resolves: https://bugzilla.redhat.com/1284150
+
 * Wed Dec 02 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.10.0-9.git6d8d26a
 - built docker @projectatomic/fedora-1.10 commit#6d8d26a
 - built docker-selinux commit#d9b67f9
