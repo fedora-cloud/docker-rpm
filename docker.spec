@@ -64,7 +64,7 @@
 Name: %{repo}
 Epoch: 1
 Version: 1.9.1
-Release: 3.git%{d_shortcommit}%{?dist}
+Release: 4.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -77,6 +77,7 @@ Source4: %{repo}-logrotate.sh
 Source5: README.%{repo}-logrotate
 Source6: %{repo}-network.sysconfig
 Patch0: muldefs.patch
+Patch1: compile-on-i686.patch
 
 %if 0%{?with_selinux}
 Source7: https://%{provider}.%{provider_tld}/fedora-cloud/%{repo}-selinux/archive/%{ds_commit}/%{repo}-selinux-%{ds_shortcommit}.tar.gz
@@ -599,6 +600,9 @@ fi
 %{_bindir}/%{repo}tarsum
 
 %changelog
+* Wed Dec 09 2015 Michal Minar <miminar@redhat.com> 1:1.9.1-4.git6ec29ef
+- Made it compilable on i686.
+
 * Wed Dec 02 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.9.1-3.git6ec29ef
 - built docker @projectatomic/fedora-1.9 commit#6ec29ef
 - built docker-selinux commit#441f312
