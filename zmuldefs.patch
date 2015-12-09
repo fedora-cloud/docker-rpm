@@ -1,0 +1,42 @@
+From 800505729b280a19fb0c2779b1081b6c4e20d43c Mon Sep 17 00:00:00 2001
+From: Nalin Dahyabhai <nalin@redhat.com>
+Date: Tue, 24 Nov 2015 15:19:16 -0500
+Subject: [PATCH] Use -z,muldefs on arm,x86
+
+Assume that the linker can make sense of us passing in the -z,muldefs
+option to tell it to ignore symbol-multiply-defined errors triggered by
+https://github.com/golang/go/issues/9510.  We should be able to stop
+doing this once we move to Go 1.6.
+
+Signed-off-by: Nalin Dahyabhai <nalin@redhat.com> (github: nalind)
+---
+ hack/make/binary | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/hack/make/binary b/hack/make/binary
+index 5ddce8d..584ab85 100644
+--- a/hack/make/binary
++++ b/hack/make/binary
+@@ -25,6 +25,22 @@ if [ "$(go env GOHOSTOS)/$(go env GOHOSTARCH)" == "windows/amd64" ] && [ "$(go e
+ 	export LDFLAGS_STATIC_DOCKER="$LDFLAGS_STATIC_DOCKER -linkmode=internal"
+ fi
+ 
++if [ "$(go env GOOS)" == "linux" ] ; then
++	case "$(go env GOARCH)" in
++		arm*|386)
++			# linking for Linux on arm or x86 needs external linking to avoid
++			# https://github.com/golang/go/issues/9510 until we move to Go 1.6
++			if [ "$IAMSTATIC" == "true" ] ; then
++				export EXTLDFLAGS_STATIC="$EXTLDFLAGS_STATIC -zmuldefs"
++				export LDFLAGS_STATIC_DOCKER="$LDFLAGS_STATIC -extldflags \"$EXTLDFLAGS_STATIC\""
++
++			else
++				export LDFLAGS="$LDFLAGS -extldflags -zmuldefs"
++			fi
++			;;
++	esac
++fi
++
+ if [ "$IAMSTATIC" == "true" ] && [ "$(go env GOHOSTOS)" == "linux" ] && [ "$DOCKER_EXPERIMENTAL" ]; then
+ 	if  [ "${GOOS}/${GOARCH}" == "darwin/amd64" ]; then
+ 		export CGO_ENABLED=1

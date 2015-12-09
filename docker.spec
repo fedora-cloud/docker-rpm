@@ -21,13 +21,13 @@
 
 # docker
 %global git0 https://github.com/projectatomic/docker
-%global commit0 6d8d26a7712ccb9d9121d24d9263d09d3a6830b8
+%global commit0 c3726aad4ad3225f8bc807b69fe1b02369ef2222
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 %global d_dist %(echo %{?dist} | sed 's/./-/')
 
 # d-s-s
 %global git1 https://github.com/projectatomic/docker-storage-setup/
-%global commit1 0814c269bea1d0daf61c794ee8a48de582dd2658
+%global commit1  e193b3b9914829496ee1e298b331f4a0a7453e70
 %global shortcommit1 %(c=%{commit1}; echo ${c:0:7})
 %global dss_libdir %{_exec_prefix}/lib/%{repo}-storage-setup
 
@@ -73,7 +73,7 @@
 Name: %{repo}
 Epoch: 1
 Version: 1.10.0
-Release: 10.git%{shortcommit0}%{?dist}
+Release: 11.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -90,8 +90,8 @@ Source6: %{repo}-storage.sysconfig
 Source7: %{repo}-logrotate.sh
 Source8: README.%{repo}-logrotate
 Source9: %{repo}-network.sysconfig
-Patch0: muldefs.patch
-Patch1: 0001-creds-Use-uint32-for-loginuid-to-not-overflow-32-bit.patch
+Patch0: zmuldefs.patch
+Patch1: prevent-journald-on-arm.patch
 
 BuildRequires: git
 BuildRequires: glibc-static
@@ -609,6 +609,12 @@ fi
 %{_bindir}/%{repo}tarsum
 
 %changelog
+* Wed Dec 09 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.10.0-11.gitc3726aa
+- built docker @projectatomic/fedora-1.10 commit#c3726aa
+- built docker-selinux commit#d9b67f9
+- built d-s-s commit#e193b3b
+- built docker-utils commit#dab51ac
+
 * Tue Dec 08 2015 Colin Walters <walters@redhat.com>- 1:1.10.0-10.git6d8d26a
 - Use new standardized source format
 - Resolves: https://bugzilla.redhat.com/1284150

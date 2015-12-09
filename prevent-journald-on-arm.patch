@@ -1,0 +1,56 @@
+From 0ca6d77e6e17ea378ff04b59f971dc1338e0ddc2 Mon Sep 17 00:00:00 2001
+From: Nalin Dahyabhai <nalin@redhat.com>
+Date: Tue, 24 Nov 2015 11:14:17 -0500
+Subject: [PATCH] Revert "prevent journald from being built on ARM"
+
+This reverts commit 6f6f10a75f8b447637e8a89d685452871899e9c0, so that we
+can apply a different workaround.
+
+Signed-off-by: Nalin Dahyabhai <nalin@redhat.com> (github: nalind)
+---
+ daemon/logger/journald/journald.go             | 2 +-
+ daemon/logger/journald/journald_unsupported.go | 2 +-
+ daemon/logger/journald/read.go                 | 2 +-
+ daemon/logger/journald/read_unsupported.go     | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/daemon/logger/journald/journald.go b/daemon/logger/journald/journald.go
+index 97c379c..c729b56 100644
+--- a/daemon/logger/journald/journald.go
++++ b/daemon/logger/journald/journald.go
+@@ -1,4 +1,4 @@
+-// +build linux,!arm
++// +build linux
+ 
+ // Package journald provides the log driver for forwarding server logs
+ // to endpoints that receive the systemd format.
+diff --git a/daemon/logger/journald/journald_unsupported.go b/daemon/logger/journald/journald_unsupported.go
+index 8e9034a..d52ca92 100644
+--- a/daemon/logger/journald/journald_unsupported.go
++++ b/daemon/logger/journald/journald_unsupported.go
+@@ -1,4 +1,4 @@
+-// +build !linux linux,arm
++// +build !linux
+ 
+ package journald
+ 
+diff --git a/daemon/logger/journald/read.go b/daemon/logger/journald/read.go
+index 0477c04..80c1fbd 100644
+--- a/daemon/logger/journald/read.go
++++ b/daemon/logger/journald/read.go
+@@ -1,4 +1,4 @@
+-// +build linux,cgo,!static_build,journald,!arm
++// +build linux,cgo,!static_build,journald
+ 
+ package journald
+ 
+diff --git a/daemon/logger/journald/read_unsupported.go b/daemon/logger/journald/read_unsupported.go
+index 35aa7c3..b43abdc 100644
+--- a/daemon/logger/journald/read_unsupported.go
++++ b/daemon/logger/journald/read_unsupported.go
+@@ -1,4 +1,4 @@
+-// +build !linux !cgo static_build !journald linux,arm
++// +build !linux !cgo static_build !journald
+ 
+ package journald
+ 
