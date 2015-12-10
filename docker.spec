@@ -27,7 +27,7 @@
 
 # d-s-s
 %global git1 https://github.com/projectatomic/docker-storage-setup/
-%global commit1  e193b3b9914829496ee1e298b331f4a0a7453e70
+%global commit1  f399708c5814df94947267380d604de1d78e8d5a
 %global shortcommit1 %(c=%{commit1}; echo ${c:0:7})
 %global dss_libdir %{_exec_prefix}/lib/%{repo}-storage-setup
 
@@ -73,7 +73,7 @@
 Name: %{repo}
 Epoch: 1
 Version: 1.10.0
-Release: 11.git%{shortcommit0}%{?dist}
+Release: 12.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -609,6 +609,12 @@ fi
 %{_bindir}/%{repo}tarsum
 
 %changelog
+* Thu Dec 10 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.10.0-12.gitc3726aa
+- built docker @projectatomic/fedora-1.10 commit#c3726aa
+- built docker-selinux commit#d9b67f9
+- built d-s-s commit#f399708
+- built docker-utils commit#dab51ac
+
 * Wed Dec 09 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.10.0-11.gitc3726aa
 - built docker @projectatomic/fedora-1.10 commit#c3726aa
 - built docker-selinux commit#d9b67f9
