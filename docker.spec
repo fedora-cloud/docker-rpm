@@ -90,8 +90,6 @@ Source6: %{repo}-storage.sysconfig
 Source7: %{repo}-logrotate.sh
 Source8: README.%{repo}-logrotate
 Source9: %{repo}-network.sysconfig
-Patch0: zmuldefs.patch
-Patch1: prevent-journald-on-arm.patch
 
 BuildRequires: git
 BuildRequires: glibc-static
