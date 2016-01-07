@@ -1,8 +1,10 @@
 %if 0%{?fedora}
 %global with_devel 1
+%global with_debug 1
 %global with_unit_test 1
 %else
 %global with_devel 0
+%global with_debug 0
 %global with_unit_test 0
 %endif
 
@@ -11,7 +13,12 @@
 
 # docker builds in a checksum of dockerinit into docker,
 # so stripping the binaries breaks docker
-%global debug_package %%{nil}
+%if 0%{?with_debug}
+# https://bugzilla.redhat.com/show_bug.cgi?id=995136#c12
+%global _dwz_low_mem_die_limit 0
+%else
+%global debug_package   %{nil}
+%endif
 %global provider github
 %global provider_tld com
 %global project docker
@@ -73,7 +80,7 @@
 Name: %{repo}
 Epoch: 1
 Version: 1.10.0
-Release: 12.git%{shortcommit0}%{?dist}
+Release: 13.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -90,6 +97,11 @@ Source6: %{repo}-storage.sysconfig
 Source7: %{repo}-logrotate.sh
 Source8: README.%{repo}-logrotate
 Source9: %{repo}-network.sysconfig
+
+%if 0%{?with_debug}
+# Build with debug
+Patch0:      build-with-debug-info.patch
+%endif
 
 BuildRequires: git
 BuildRequires: glibc-static
@@ -366,8 +378,8 @@ cp contrib/syntax/vim/LICENSE LICENSE-vim-syntax
 cp contrib/syntax/vim/README.md README-vim-syntax.md
 
 pushd $(pwd)/_build/src
-go build github.com/vbatts/%{repo}-utils/cmd/%{repo}-fetch
-go build github.com/vbatts/%{repo}-utils/cmd/%{repo}tarsum
+go build -ldflags "-B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d ' \n')" github.com/vbatts/%{repo}-utils/cmd/%{repo}-fetch
+go build -ldflags "-B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d ' \n')" github.com/vbatts/%{repo}-utils/cmd/%{repo}tarsum
 popd
 
 %if 0%{?with_selinux}
@@ -607,6 +619,10 @@ fi
 %{_bindir}/%{repo}tarsum
 
 %changelog
+* Thu Jan 07 2016 jchaloup <jchaloup@redhat.com> - 1:1.10.0-13.gitc3726aa
+- built with debug info
+  resolves: #1236317
+
 * Thu Dec 10 2015 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.10.0-12.gitc3726aa
 - built docker @projectatomic/fedora-1.10 commit#c3726aa
 - built docker-selinux commit#d9b67f9
