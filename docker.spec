@@ -17,7 +17,6 @@
 # docker stuff (prefix with d_)
 %global d_commit 64eb95eb1b218342a99203f95e6c5cea9e7a056e
 %global d_shortcommit %(c=%{d_commit}; echo ${c:0:7})
-%global d_dist %(echo %{?dist} | sed 's/./-/')
 
 # d-s-s stuff (prefix with dss_)
 %global dss_libdir %{_exec_prefix}/lib/%{name}-storage-setup
@@ -322,7 +321,6 @@ This package installs %{summary}.
 %setup -q -n %{name}-%{d_commit}
 %patch0 -p1
 cp %{SOURCE5} .
-sed -i 's/$/%{d_dist}/' VERSION
 
 # untar d-s-s
 tar zxf %{SOURCE8}
@@ -374,12 +372,12 @@ install -d %{buildroot}%{_libexecdir}/%{name}
 install -p -m 755 _build/src/%{name}-fetch %{buildroot}%{_bindir}
 install -p -m 755 _build/src/%{name}tarsum %{buildroot}%{_bindir}
 
-for x in bundles/*%{d_dist}; do
+for x in bundles/latest; do
     if ! test -d $x/dynbinary; then
     continue
     fi
-    install -p -m 755 $x/dynbinary/%{name}-*%{d_dist} %{buildroot}%{_bindir}/%{name}
-    install -p -m 755 $x/dynbinary/%{name}init-*%{d_dist} %{buildroot}%{_libexecdir}/%{name}/%{name}init
+    install -p -m 755 $x/dynbinary/%{name}-%{version} %{buildroot}%{_bindir}/%{name}
+    install -p -m 755 $x/dynbinary/%{name}init-%{version} %{buildroot}%{_libexecdir}/%{name}/%{name}init
     break
 done
 
