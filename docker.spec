@@ -601,6 +601,7 @@ fi
 
 %changelog
 * Mon Jan 25 2016 Lokesh Mandvekar <lsm5@fedoraproject.org> - 0:1.9.1-5.git64eb95e
+- Resolves: rhbz#1301198 - do not add distro tag to docker version
 - built docker @projectatomic/fedora-1.9 commit#001db93
 - built docker-selinux commit#e2e1f22
 - built d-s-s commit#1c2b95b
