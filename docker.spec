@@ -63,7 +63,7 @@
 Name: %{repo}
 Epoch: 1
 Version: 1.9.1
-Release: 5.git%{d_shortcommit}%{?dist}
+Release: 6.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{name}
@@ -598,6 +598,13 @@ fi
 %{_bindir}/%{name}tarsum
 
 %changelog
+* Mon Jan 25 2016 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.9.1-6.git6ec29ef
+- Resolves: rhbz#1301198 - do not add distro tag to docker version
+- built docker @projectatomic/fedora-1.9 commit#001db93
+- built docker-selinux commit#e2e1f22
+- built d-s-s commit#1c2b95b
+- built docker-utils commit#dab51ac
+
 * Wed Jan 20 2016 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.9.1-5.git6ec29ef
 - built docker @projectatomic/fedora-1.9 commit#2f940c1
 - built docker-selinux commit#e2e1f22
