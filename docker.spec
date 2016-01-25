@@ -30,7 +30,6 @@
 %global git0 https://github.com/projectatomic/docker
 %global commit0 5587979f3bbf5e4688e9e96c5c185ddec8e79e04
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
-%global d_dist %(echo %{?dist} | sed 's/./-/')
 
 # d-s-s
 %global git1 https://github.com/projectatomic/docker-storage-setup/
@@ -346,7 +345,6 @@ This package installs %{summary}.
 
 # here keep the new line above otherwise autosetup fails when applying patch
 cp %{SOURCE8} .
-sed -i 's/$/%{d_dist}/' VERSION
 
 # untar d-s-s
 tar zxf %{SOURCE1}
@@ -398,12 +396,12 @@ install -d %{buildroot}%{_libexecdir}/%{name}
 install -p -m 755 _build/src/%{name}-fetch %{buildroot}%{_bindir}
 install -p -m 755 _build/src/%{name}tarsum %{buildroot}%{_bindir}
 
-for x in bundles/*%{d_dist}; do
+for x in bundles/latest; do
     if ! test -d $x/dynbinary; then
     continue
     fi
-    install -p -m 755 $x/dynbinary/%{name}-*%{d_dist} %{buildroot}%{_bindir}/%{name}
-    install -p -m 755 $x/dynbinary/%{name}init-*%{d_dist} %{buildroot}%{_libexecdir}/%{name}/%{name}init
+    install -p -m 755 $x/dynbinary/%{name}-%{version}-dev %{buildroot}%{_bindir}/%{name}
+    install -p -m 755 $x/dynbinary/%{name}init-%{version}-dev %{buildroot}%{_libexecdir}/%{name}/%{name}init
     break
 done
 
