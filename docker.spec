@@ -69,7 +69,11 @@
 %global selinux_policyver 3.13.1-39
 %endif
 
+%if 0%{?centos}
+Name: %{repo}-master
+%else
 Name: %{repo}
+%endif
 Epoch: 1
 Version: 1.10.0
 Release: 19.git%{shortcommit0}%{?dist}
