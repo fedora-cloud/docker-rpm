@@ -48,12 +48,6 @@
 %global commit3 dab51acd1b1a77f7cb01a1b7e2129ec85c846b71
 %global shortcommit3 %(c=%{commit3}; echo ${c:0:7})
 
-# docker-selinux conditional
-%if 0%{?fedora} >= 22 || 0%{?centos} >= 7 || 0%{?rhel} >= 7
-%global with_selinux 1
-%endif
-
-%if 0%{?with_selinux}
 # docker-selinux stuff (prefix with ds_ for version/release etc.)
 # Some bits borrowed from the openstack-selinux package
 %global selinuxtype targeted
@@ -74,7 +68,6 @@
 %else
 %global selinux_policyver 3.13.1-39
 %endif
-%endif # with_selinux
 
 Name: %{repo}
 Epoch: 1
@@ -86,9 +79,7 @@ URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
 ExclusiveArch: %{go_arches}
 Source0: %{git0}/archive/%{commit0}/%{repo}-%{shortcommit0}.tar.gz
 Source1: %{git1}/archive/%{commit1}/%{repo}-storage-setup-%{shortcommit1}.tar.gz
-%if 0%{?with_selinux}
 Source2: %{git2}/archive/%{commit2}/%{repo}-selinux-%{shortcommit2}.tar.gz
-%endif # with_selinux
 Source3: %{git3}/archive/%{commit3}/%{repo}-utils-%{shortcommit3}.tar.gz
 Source4: %{repo}.service
 Source5: %{repo}.sysconfig
@@ -125,10 +116,8 @@ Requires: device-mapper-libs >= 1.02.90-1
 %endif
 
 # RE: rhbz#1195804 - ensure min NVR for selinux-policy
-%if 0%{?with_selinux}
 Requires: selinux-policy >= %{selinux_policyver}
 Requires: %{repo}-selinux = %{epoch}:%{version}-%{release}
-%endif # with_selinux
 
 # Resolves: rhbz#1045220
 Requires: xz
@@ -303,7 +292,6 @@ Provides: %{repo}-io-logrotate = %{epoch}:%{version}-%{release}
 This package installs %{summary}. logrotate is assumed to be installed on
 containers for this to work, failures are silently ignored.
 
-%if 0%{?with_selinux}
 %package selinux
 Summary: SELinux policies for Docker
 BuildRequires: selinux-policy
@@ -320,7 +308,6 @@ Provides: %{repo}-io-selinux = %{epoch}:%{version}-%{release}
 
 %description selinux
 SELinux policy modules for use with Docker.
-%endif # with_selinux
 
 %package vim
 Summary: vim syntax highlighting files for Docker
@@ -349,10 +336,8 @@ cp %{SOURCE8} .
 # untar d-s-s
 tar zxf %{SOURCE1}
 
-%if 0%{?with_selinux}
 # unpack %%{repo}-selinux
 tar zxf %{SOURCE2}
-%endif # with_selinux
 
 # untar docker-utils
 tar zxf %{SOURCE3}
@@ -380,12 +365,10 @@ go build -ldflags "-B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d ' \n')" githu
 go build -ldflags "-B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d ' \n')" github.com/vbatts/%{repo}-utils/cmd/%{repo}tarsum
 popd
 
-%if 0%{?with_selinux}
 # build %%{repo}-selinux
 pushd %{repo}-selinux-%{commit2}
 make SHARE="%{_datadir}" TARGETS="%{modulenames}"
 popd
-%endif # with_selinux
 
 %install
 # install binary
@@ -522,7 +505,6 @@ exit 0
 %post
 %systemd_post %{repo}
 
-%if 0%{?with_selinux}
 %post selinux
 # Install all modules in a single transaction
 if [ $1 -eq 1 ]; then
@@ -537,7 +519,6 @@ if %{_sbindir}/selinuxenabled ; then
     restorecon -R %{_sharedstatedir}/%{repo} &> /dev/null || :
     fi
 fi
-%endif # with_selinux
 
 %preun
 %systemd_preun %{repo}
@@ -545,7 +526,6 @@ fi
 %postun
 %systemd_postun_with_restart %{repo}
 
-%if 0%{?with_selinux}
 %postun selinux
 if [ $1 -eq 0 ]; then
 %{_sbindir}/semodule -n -r %{modulenames} &> /dev/null || :
@@ -554,7 +534,6 @@ if %{_sbindir}/selinuxenabled ; then
 %relabel_files
 fi
 fi
-%endif # with_selinux
 
 %files
 %doc AUTHORS CHANGELOG.md CONTRIBUTING.md LICENSE MAINTAINERS NOTICE README.md 
@@ -598,11 +577,9 @@ fi
 %doc README.%{repo}-logrotate
 %{_sysconfdir}/cron.daily/%{repo}-logrotate
 
-%if 0%{?with_selinux}
 %files selinux
 %doc %{repo}-selinux-%{commit2}/README.md
 %{_datadir}/selinux/*
-%endif # with_selinux
 
 %files vim
 %{_datadir}/vim/vimfiles/doc/%{repo}file.txt
