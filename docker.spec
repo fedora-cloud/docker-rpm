@@ -28,7 +28,7 @@
 
 # docker
 %global git0 https://github.com/projectatomic/docker
-%global commit0 314b2a0464df2459d3eb9bd7900f3312efd848e2
+%global commit0 b8b115302d58f8157b7c76f2f36bb5bbbc9b73f5
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 
 # d-s-s
@@ -79,7 +79,7 @@
 Name: %{repo}
 Epoch: 1
 Version: 1.10.0
-Release: 18.git%{shortcommit0}%{?dist}
+Release: 19.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{name}
@@ -617,6 +617,12 @@ fi
 %{_bindir}/%{name}tarsum
 
 %changelog
+* Wed Jan 27 2016 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.10.0-19.gitb8b1153
+- built docker @projectatomic/fedora-1.10 commit#b8b1153
+- built docker-selinux commit#d9b67f9
+- built d-s-s commit#1c2b95b
+- built docker-utils commit#dab51ac
+
 * Mon Jan 25 2016 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.10.0-18.git314b2a0
 - Resolves: rhbz#1301198 - do not append distro tag to docker version
 - built docker @projectatomic/fedora-1.10 commit#314b2a0
