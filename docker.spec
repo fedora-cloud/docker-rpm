@@ -581,9 +581,13 @@ if %{_sbindir}/selinuxenabled ; then
 fi
 fi
 
+#define license tag if not already defined
+%{!?_licensedir:%global license %doc}
+
 %files
-%doc AUTHORS CHANGELOG.md CONTRIBUTING.md LICENSE MAINTAINERS NOTICE README.md 
-%doc LICENSE-vim-syntax README-vim-syntax.md
+%license LICENSE LICENSE-novolume-plugin LICENSE-vim-syntax
+%doc AUTHORS CHANGELOG.md CONTRIBUTING.md MAINTAINERS NOTICE README.md 
+%doc README-novolume-plugin.md README-vim-syntax.md
 %config(noreplace) %{_sysconfdir}/sysconfig/%{repo}
 %config(noreplace) %{_sysconfdir}/sysconfig/%{repo}-network
 %config(noreplace) %{_sysconfdir}/sysconfig/%{repo}-storage
@@ -605,7 +609,8 @@ fi
 
 %if 0%{?with_devel}
 %files devel
-%doc AUTHORS CHANGELOG.md CONTRIBUTING.md LICENSE MAINTAINERS NOTICE README.md 
+%license LICENSE
+%doc AUTHORS CHANGELOG.md CONTRIBUTING.md MAINTAINERS NOTICE README.md 
 %dir %{gopath}/src/%{provider}.%{provider_tld}/%{project}
 %{gopath}/src/%{import_path}
 %endif
@@ -624,7 +629,8 @@ fi
 %{_sysconfdir}/cron.daily/%{repo}-logrotate
 
 %files novolume-plugin
-%doc LICENSE-novolume-plugin README-novolume-plugin.md
+%license LICENSE-novolume-plugin
+%doc README-novolume-plugin.md
 %{_bindir}/%{repo}-novolume-plugin
 %{_unitdir}/%{repo}-novolume-plugin.service
 
