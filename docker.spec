@@ -27,26 +27,30 @@
 %global import_path %{provider}.%{provider_tld}/%{project}/%{repo}
 
 # docker
-%global git0 https://github.com/projectatomic/docker
+%global git0 https://github.com/projectatomic/%{repo}
 %global commit0 b8b115302d58f8157b7c76f2f36bb5bbbc9b73f5
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 
 # d-s-s
-%global git1 https://github.com/projectatomic/docker-storage-setup/
+%global git1 https://github.com/projectatomic/%{repo}-storage-setup/
 %global commit1  1c2b95b33b917adb9b681a953f2c6b6b2befae6d
 %global shortcommit1 %(c=%{commit1}; echo ${c:0:7})
 %global dss_libdir %{_exec_prefix}/lib/%{repo}-storage-setup
 
 # docker-selinux
-%global git2 https://github.com/fedora-cloud/docker-selinux
+%global git2 https://github.com/fedora-cloud/%{repo}-selinux
 %global commit2 d9b67f9af50b3376ef362f3da314155667242cba
 %global shortcommit2 %(c=%{commit2}; echo ${c:0:7})
 
 # docker-utils
-#  https://github.com/vbatts/docker-utils
-%global git3 https://github.com/vbatts/docker-utils
+%global git3 https://github.com/vbatts/%{repo}-utils
 %global commit3 dab51acd1b1a77f7cb01a1b7e2129ec85c846b71
 %global shortcommit3 %(c=%{commit3}; echo ${c:0:7})
+
+# docker-novolume-plugin
+%global git4 https://github.com/projectatomic/%{repo}-novolume-plugin
+%global commit4 2ca381ee0b3e3d7469e5377c5a83eef6b8df4457
+%global shortcommit4 %(c=%{commit4}; echo ${c:0:7})
 
 # docker-selinux stuff (prefix with ds_ for version/release etc.)
 # Some bits borrowed from the openstack-selinux package
@@ -85,12 +89,13 @@ Source0: %{git0}/archive/%{commit0}/%{repo}-%{shortcommit0}.tar.gz
 Source1: %{git1}/archive/%{commit1}/%{repo}-storage-setup-%{shortcommit1}.tar.gz
 Source2: %{git2}/archive/%{commit2}/%{repo}-selinux-%{shortcommit2}.tar.gz
 Source3: %{git3}/archive/%{commit3}/%{repo}-utils-%{shortcommit3}.tar.gz
-Source4: %{repo}.service
-Source5: %{repo}.sysconfig
-Source6: %{repo}-storage.sysconfig
-Source7: %{repo}-logrotate.sh
-Source8: README.%{repo}-logrotate
-Source9: %{repo}-network.sysconfig
+Source4: %{git4}/archive/%{commit4}/%{repo}-novolume-plugin-%{shortcommit4}.tar.gz
+Source5: %{repo}.service
+Source6: %{repo}.sysconfig
+Source7: %{repo}-storage.sysconfig
+Source8: %{repo}-logrotate.sh
+Source9: README.%{repo}-logrotate
+Source10: %{repo}-network.sysconfig
 
 %if 0%{?with_debug}
 # Build with debug
@@ -296,6 +301,31 @@ Provides: %{repo}-io-logrotate = %{epoch}:%{version}-%{release}
 This package installs %{summary}. logrotate is assumed to be installed on
 containers for this to work, failures are silently ignored.
 
+%package novolume-plugin
+License: MIT
+Summary: Block container starts with local volumes defined
+Requires: %{repo} = %{epoch}:%{version}-%{release}
+
+
+%description novolume-plugin
+When a volume in provisioned via the `VOLUME` instruction in a Dockerfile or
+via `docker run -v volumename`, host's storage space is used. This could lead to
+an unexpected out of space issue which could bring down everything.
+There are situations where this is not an accepted behavior. PAAS, for
+instance, can't allow their users to run their own images without the risk of
+filling the entire storage space on a server. One solution to this is to deny users
+from running images with volumes. This way the only storage a user gets can be limited
+and PAAS can assign quota to it.
+
+This plugin solves this issue by disallowing starting a container with
+local volumes defined. In particular, the plugin will block `docker run` with:
+
+- `--volumes-from`
+- images that have `VOLUME`(s) defined
+- volumes early provisioned with `docker volume` command
+
+The only thing allowed will be just bind mounts.
+
 %package selinux
 Summary: SELinux policies for Docker
 BuildRequires: selinux-policy
@@ -335,7 +365,7 @@ This package installs %{summary}.
 %autosetup -Sgit -n %{repo}-%{commit0}
 
 # here keep the new line above otherwise autosetup fails when applying patch
-cp %{SOURCE8} .
+cp %{SOURCE9} .
 
 # untar d-s-s
 tar zxf %{SOURCE1}
@@ -346,28 +376,36 @@ tar zxf %{SOURCE2}
 # untar docker-utils
 tar zxf %{SOURCE3}
 
+# untar docker-novolume-plugin
+tar zxf %{SOURCE4}
+
 %build
 # set up temporary build gopath, and put our directory there
 mkdir _build
 pushd _build
-mkdir -p src/%{provider}.%{provider_tld}/{%{repo},vbatts}
+mkdir -p src/%{provider}.%{provider_tld}/{%{repo},projectatomic,vbatts}
 ln -s $(dirs +1 -l) src/%{import_path}
 ln -s $(dirs +1 -l)/%{repo}-utils-%{commit3} src/%{provider}.%{provider_tld}/vbatts/%{repo}-utils
+ln -s $(dirs +1 -l)/%{repo}-novolume-plugin-%{commit4} src/%{provider}.%{provider_tld}/projectatomic/%{repo}-novolume-plugin
 popd
 
 export DOCKER_GITCOMMIT="%{shortcommit0}/%{version}"
 export DOCKER_BUILDTAGS="selinux journald"
-export GOPATH=$(pwd)/_build:$(pwd)/vendor:%{gopath}
+export GOPATH=$(pwd)/_build:$(pwd)/vendor:%{gopath}:$(pwd)/%{repo}-novolume-plugin-%{commit4}/Godeps/_workspace
 
 DEBUG=1 bash -x hack/make.sh dynbinary
 man/md2man-all.sh
 cp contrib/syntax/vim/LICENSE LICENSE-vim-syntax
 cp contrib/syntax/vim/README.md README-vim-syntax.md
+cp %{repo}-novolume-plugin-%{commit4}/LICENSE LICENSE-novolume-plugin
+cp %{repo}-novolume-plugin-%{commit4}/README.md README-novolume-plugin.md
 
 pushd $(pwd)/_build/src
 go build -ldflags "-B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d ' \n')" github.com/vbatts/%{repo}-utils/cmd/%{repo}-fetch
 go build -ldflags "-B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d ' \n')" github.com/vbatts/%{repo}-utils/cmd/%{repo}tarsum
+go build -ldflags "-B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d ' \n')" github.com/projectatomic/%{repo}-novolume-plugin
 popd
+
 
 # build %%{repo}-selinux
 pushd %{repo}-selinux-%{commit2}
@@ -410,7 +448,7 @@ install -p -m 644 contrib/completion/fish/%{repo}.fish %{buildroot}%{_datadir}/f
 
 # install container logrotate cron script
 install -dp %{buildroot}%{_sysconfdir}/cron.daily/
-install -p -m 755 %{SOURCE7} %{buildroot}%{_sysconfdir}/cron.daily/%{repo}-logrotate
+install -p -m 755 %{SOURCE8} %{buildroot}%{_sysconfdir}/cron.daily/%{repo}-logrotate
 
 # install vim syntax highlighting
 install -d %{buildroot}%{_datadir}/vim/vimfiles/{doc,ftdetect,syntax}
@@ -431,13 +469,17 @@ install -d %{buildroot}%{_sharedstatedir}/%{repo}
 
 # install systemd/init scripts
 install -d %{buildroot}%{_unitdir}
-install -p -m 644 %{SOURCE4} %{buildroot}%{_unitdir}
+install -p -m 644 %{SOURCE5} %{buildroot}%{_unitdir}
+
+# install novolume-plugin executable and unitfile
+install -p -m 755 _build/src/%{repo}-novolume-plugin %{buildroot}%{_bindir}
+install -p -m 644 %{repo}-novolume-plugin-%{commit4}/%{repo}-novolume-plugin.service %{buildroot}%{_unitdir}
 
 # for additional args
 install -d %{buildroot}%{_sysconfdir}/sysconfig/
-install -p -m 644 %{SOURCE5} %{buildroot}%{_sysconfdir}/sysconfig/%{repo}
-install -p -m 644 %{SOURCE9} %{buildroot}%{_sysconfdir}/sysconfig/%{repo}-network
-install -p -m 644 %{SOURCE6} %{buildroot}%{_sysconfdir}/sysconfig/%{repo}-storage
+install -p -m 644 %{SOURCE6} %{buildroot}%{_sysconfdir}/sysconfig/%{repo}
+install -p -m 644 %{SOURCE10} %{buildroot}%{_sysconfdir}/sysconfig/%{repo}-network
+install -p -m 644 %{SOURCE7} %{buildroot}%{_sysconfdir}/sysconfig/%{repo}-storage
 
 # install policy modules
 %_format MODULES $x.pp.bz2
@@ -580,6 +622,11 @@ fi
 %files logrotate
 %doc README.%{repo}-logrotate
 %{_sysconfdir}/cron.daily/%{repo}-logrotate
+
+%files novolume-plugin
+%doc LICENSE-novolume-plugin README-novolume-plugin.md
+%{_bindir}/%{repo}-novolume-plugin
+%{_unitdir}/%{repo}-novolume-plugin.service
 
 %files selinux
 %doc %{repo}-selinux-%{commit2}/README.md
