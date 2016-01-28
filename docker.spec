@@ -425,8 +425,9 @@ for x in bundles/latest; do
     if ! test -d $x/dynbinary; then
     continue
     fi
-    install -p -m 755 $x/dynbinary/%{repo}-%{version}-dev %{buildroot}%{_bindir}/%{repo}
-    install -p -m 755 $x/dynbinary/%{repo}init-%{version}-dev %{buildroot}%{_libexecdir}/%{repo}/%{repo}init
+    rm $x/dynbinary/*.md5 $x/dynbinary/*.sha256
+    install -p -m 755 $x/dynbinary/%{repo}-%{version}-* %{buildroot}%{_bindir}/%{repo}
+    install -p -m 755 $x/dynbinary/%{repo}init-%{version}-* %{buildroot}%{_libexecdir}/%{repo}/%{repo}init
     break
 done
 
