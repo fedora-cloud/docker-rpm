@@ -28,7 +28,7 @@
 
 # docker
 %global git0 https://github.com/projectatomic/%{repo}
-%global commit0 b8b115302d58f8157b7c76f2f36bb5bbbc9b73f5
+%global commit0 d3f4a34e910c1cde31f031f3ad83ce212462556a
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 
 # d-s-s
@@ -39,17 +39,17 @@
 
 # docker-selinux
 %global git2 https://github.com/fedora-cloud/%{repo}-selinux
-%global commit2 d9b67f9af50b3376ef362f3da314155667242cba
+%global commit2 be16da77f1009337fecc1972a39611ccd393ab4d
 %global shortcommit2 %(c=%{commit2}; echo ${c:0:7})
 
 # docker-utils
 %global git3 https://github.com/vbatts/%{repo}-utils
-%global commit3 dab51acd1b1a77f7cb01a1b7e2129ec85c846b71
+%global commit3  dab51acd1b1a77f7cb01a1b7e2129ec85c846b71
 %global shortcommit3 %(c=%{commit3}; echo ${c:0:7})
 
 # docker-novolume-plugin
 %global git4 https://github.com/projectatomic/%{repo}-novolume-plugin
-%global commit4 2ca381ee0b3e3d7469e5377c5a83eef6b8df4457
+%global commit4  2ca381ee0b3e3d7469e5377c5a83eef6b8df4457
 %global shortcommit4 %(c=%{commit4}; echo ${c:0:7})
 
 # docker-selinux stuff (prefix with ds_ for version/release etc.)
@@ -80,7 +80,7 @@ Name: %{repo}
 %endif
 Epoch: 1
 Version: 1.10.0
-Release: 19.git%{shortcommit0}%{?dist}
+Release: 20.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -302,6 +302,7 @@ This package installs %{summary}. logrotate is assumed to be installed on
 containers for this to work, failures are silently ignored.
 
 %package novolume-plugin
+URL: %{git4}
 License: MIT
 Summary: Block container starts with local volumes defined
 Requires: %{repo} = %{epoch}:%{version}-%{release}
@@ -327,6 +328,7 @@ local volumes defined. In particular, the plugin will block `docker run` with:
 The only thing allowed will be just bind mounts.
 
 %package selinux
+URL: %{git2} 
 Summary: SELinux policies for Docker
 BuildRequires: selinux-policy
 BuildRequires: selinux-policy-devel
@@ -651,6 +653,15 @@ fi
 %{_bindir}/%{repo}tarsum
 
 %changelog
+* Fri Jan 29 2016 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.10.0-20.gitd3f4a34
+- Resolves: rhbz#1303105 - own /usr/lib/docker-storage-setup
+- create docker-novolume-plugin subpackage
+- built docker @projectatomic/fedora-1.10 commit#d3f4a34
+- built docker-selinux commit#be16da7
+- built d-s-s commit#1c2b95b
+- built docker-utils commit#dab51ac
+- built docker-novolume-plugin commit#dab51ac
+
 * Wed Jan 27 2016 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.10.0-19.gitb8b1153
 - built docker @projectatomic/fedora-1.10 commit#b8b1153
 - built docker-selinux commit#d9b67f9
