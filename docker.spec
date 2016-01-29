@@ -30,12 +30,6 @@
 
 %global utils_commit dab51acd1b1a77f7cb01a1b7e2129ec85c846b71
 
-# docker-selinux conditional
-%if 0%{?fedora} >= 22 || 0%{?centos} >= 7 || 0%{?rhel} >= 7
-%global with_selinux 1
-%endif
-
-%if 0%{?with_selinux}
 # docker-selinux stuff (prefix with ds_ for version/release etc.)
 # Some bits borrowed from the openstack-selinux package
 %global ds_commit 441f312c8f1b7fd4fdc21c007bee6091374d3b99
@@ -58,7 +52,6 @@
 %else
 %global selinux_policyver 3.13.1-23
 %endif # fedora >= 22 or not
-%endif # with_selinux
 
 Name: %{repo}
 Epoch: 1
@@ -78,9 +71,7 @@ Source6: %{name}-network.sysconfig
 Patch0: muldefs.patch
 Patch1: compile-on-i686.patch
 
-%if 0%{?with_selinux}
 Source7: https://%{provider}.%{provider_tld}/fedora-cloud/%{name}-selinux/archive/%{ds_commit}/%{name}-selinux-%{ds_shortcommit}.tar.gz
-%endif # with_selinux
 # Source8 is the source tarball for docker-storage-setup
 Source8: https://%{provider}.%{provider_tld}/projectatomic/%{name}-storage-setup/archive/%{dss_commit}/%{name}-storage-setup-%{dss_shortcommit}.tar.gz
 # Source9 is the source tarball for docker-utils
@@ -108,10 +99,8 @@ Requires: device-mapper-libs >= 1.02.90-1
 %endif
 
 # RE: rhbz#1195804 - ensure min NVR for selinux-policy
-%if 0%{?with_selinux}
 Requires: selinux-policy >= 3.13.1-114
 Requires: %{name}-selinux >= %{epoch}:%{version}-%{release}
-%endif # with_selinux
 
 # Resolves: rhbz#1045220
 Requires: xz
@@ -283,7 +272,6 @@ Provides: %{name}-io-logrotate = %{epoch}:%{version}-%{release}
 This package installs %{summary}. logrotate is assumed to be installed on
 containers for this to work, failures are silently ignored.
 
-%if 0%{?with_selinux}
 %package selinux
 Summary: SELinux policies for Docker
 BuildRequires: selinux-policy
@@ -296,7 +284,6 @@ Provides: %{name}-io-selinux = %{epoch}:%{version}-%{release}
 
 %description selinux
 SELinux policy modules for use with Docker.
-%endif # with_selinux
 
 %package vim
 Summary: vim syntax highlighting files for Docker
@@ -326,10 +313,8 @@ tar zxf %{SOURCE8}
 # untar %%{name}-utils
 tar zxf %{SOURCE9}
 
-%if 0%{?with_selinux}
 # unpack %%{name}-selinux
 tar zxf %{SOURCE7}
-%endif # with_selinux
 
 %build
 # set up temporary build gopath, and put our directory there
@@ -354,12 +339,10 @@ go build github.com/vbatts/%{name}-utils/cmd/%{name}-fetch
 go build github.com/vbatts/%{name}-utils/cmd/%{name}tarsum
 popd
 
-%if 0%{?with_selinux}
 # build %%{name}-selinux
 pushd %{name}-selinux-%{ds_commit}
 make SHARE="%{_datadir}" TARGETS="%{modulenames}"
 popd
-%endif # with_selinux
 
 %install
 # install binary
@@ -426,7 +409,6 @@ install -p -m 644 %{SOURCE2} %{buildroot}%{_sysconfdir}/sysconfig/%{name}
 install -p -m 644 %{SOURCE6} %{buildroot}%{_sysconfdir}/sysconfig/%{name}-network
 install -p -m 644 %{SOURCE3} %{buildroot}%{_sysconfdir}/sysconfig/%{name}-storage
 
-%if 0%{?with_selinux}
 # install SELinux interfaces
 %_format INTERFACES $x.if
 install -d %{buildroot}%{_datadir}/selinux/devel/include/%{moduletype}
@@ -436,7 +418,6 @@ install -p -m 644 %{name}-selinux-%{ds_commit}/$INTERFACES %{buildroot}%{_datadi
 %_format MODULES $x.pp.bz2
 install -d %{buildroot}%{_datadir}/selinux/packages
 install -m 0644 %{name}-selinux-%{ds_commit}/$MODULES %{buildroot}%{_datadir}/selinux/packages
-%endif # with_selinux
 
 %if 0%{?with_unit_test}
 install -d -m 0755 %{buildroot}%{_sharedstatedir}/docker-unit-test/
@@ -503,7 +484,6 @@ exit 0
 %post
 %systemd_post %{name}
 
-%if 0%{?with_selinux}
 %post selinux
 # Install all modules in a single transaction
 if [ $1 -eq 1 ]; then
@@ -518,7 +498,6 @@ if %{_sbindir}/selinuxenabled ; then
     restorecon -R %{_sharedstatedir}/%{name} &> /dev/null || :
     fi
 fi
-%endif # with_selinux
 
 %preun
 %systemd_preun %{name}
@@ -526,7 +505,6 @@ fi
 %postun
 %systemd_postun_with_restart %{name}
 
-%if 0%{?with_selinux}
 %postun selinux
 if [ $1 -eq 0 ]; then
 %{_sbindir}/semodule -n -r %{modulenames} &> /dev/null || :
@@ -535,7 +513,6 @@ if %{_sbindir}/selinuxenabled ; then
 %relabel_files
 fi
 fi
-%endif # with_selinux
 
 #define license tag if not already defined
 %{!?_licensedir:%global license %doc}
@@ -584,11 +561,9 @@ fi
 %doc README.%{name}-logrotate
 %{_sysconfdir}/cron.daily/%{name}-logrotate
 
-%if 0%{?with_selinux}
 %files selinux
 %doc %{name}-selinux-%{ds_commit}/README.md
 %{_datadir}/selinux/*
-%endif # with_selinux
 
 %files vim
 %{_datadir}/vim/vimfiles/doc/%{name}file.txt
