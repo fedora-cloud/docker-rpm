@@ -538,8 +538,7 @@ fi
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}-storage-setup
 %{_unitdir}/%{name}-storage-setup.service
 %{_bindir}/%{name}-storage-setup
-%{dss_libdir}/%{name}-storage-setup
-%{dss_libdir}/libdss.sh
+%dir %{dss_libdir}
 
 %if 0%{?with_devel}
 %files devel
