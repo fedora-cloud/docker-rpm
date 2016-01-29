@@ -605,8 +605,7 @@ fi
 %config(noreplace) %{_sysconfdir}/sysconfig/%{repo}-storage-setup
 %{_unitdir}/%{repo}-storage-setup.service
 %{_bindir}/%{repo}-storage-setup
-%{dss_libdir}/%{repo}-storage-setup
-%{dss_libdir}/libdss.sh
+%{dss_libdir}/*
 
 %if 0%{?with_devel}
 %files devel
