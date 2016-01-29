@@ -537,9 +537,13 @@ fi
 fi
 %endif # with_selinux
 
+#define license tag if not already defined
+%{!?_licensedir:%global license %doc}
+
 %files
-%doc AUTHORS CHANGELOG.md CONTRIBUTING.md LICENSE MAINTAINERS NOTICE README.md 
-%doc LICENSE-vim-syntax README-vim-syntax.md
+%license LICENSE LICENSE-vim-syntax
+%doc AUTHORS CHANGELOG.md CONTRIBUTING.md MAINTAINERS NOTICE README.md 
+%doc README-vim-syntax.md
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}-network
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}-storage
@@ -561,7 +565,8 @@ fi
 
 %if 0%{?with_devel}
 %files devel
-%doc AUTHORS CHANGELOG.md CONTRIBUTING.md LICENSE MAINTAINERS NOTICE README.md 
+%license LICENSE
+%doc AUTHORS CHANGELOG.md CONTRIBUTING.md MAINTAINERS NOTICE README.md 
 %dir %{gopath}/src/%{provider}.%{provider_tld}/%{project}
 %{gopath}/src/%{import_path}
 %endif
