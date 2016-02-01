@@ -80,7 +80,7 @@ Name: %{repo}
 %endif
 Epoch: 1
 Version: 1.10.0
-Release: 20.git%{shortcommit0}%{?dist}
+Release: 21.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -653,6 +653,13 @@ fi
 %{_bindir}/%{repo}tarsum
 
 %changelog
+* Mon Feb 01 2016 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.10.0-21.gitd3f4a34
+- built docker @projectatomic/fedora-1.10 commit#d3f4a34
+- built docker-selinux commit#be16da7
+- built d-s-s commit#1c2b95b
+- built docker-utils commit#dab51ac
+- built docker-novolume-plugin commit#dab51ac
+
 * Fri Jan 29 2016 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.10.0-20.gitd3f4a34
 - Resolves: rhbz#1303105 - own /usr/lib/docker-storage-setup
 - create docker-novolume-plugin subpackage
