@@ -39,7 +39,7 @@
 
 # docker-selinux
 %global git2 https://github.com/projectatomic/%{repo}-selinux
-%global commit2 b8aae8f17a90585d7d448f30332f3303ba270a1b
+%global commit2 afc876c0e8828cc0b73cf76bbf550e30b5e627aa
 %global shortcommit2 %(c=%{commit2}; echo ${c:0:7})
 
 # docker-utils
@@ -99,7 +99,7 @@ Source10: %{repo}-network.sysconfig
 
 %if 0%{?with_debug}
 # Build with debug
-Patch0:      build-with-debug-info.patch
+#Patch0:      build-with-debug-info.patch
 %endif
 
 BuildRequires: git
