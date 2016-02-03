@@ -28,28 +28,28 @@
 
 # docker
 %global git0 https://github.com/projectatomic/%{repo}
-%global commit0 d3f4a34e910c1cde31f031f3ad83ce212462556a
+%global commit0 fb1a123b707249b13d0bafc44b51026ab9e1a394
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 
 # d-s-s
 %global git1 https://github.com/projectatomic/%{repo}-storage-setup/
-%global commit1  1c2b95b33b917adb9b681a953f2c6b6b2befae6d
+%global commit1 1c2b95b33b917adb9b681a953f2c6b6b2befae6d
 %global shortcommit1 %(c=%{commit1}; echo ${c:0:7})
 %global dss_libdir %{_exec_prefix}/lib/%{repo}-storage-setup
 
 # docker-selinux
-%global git2 https://github.com/fedora-cloud/%{repo}-selinux
-%global commit2 be16da77f1009337fecc1972a39611ccd393ab4d
+%global git2 https://github.com/projectatomic/%{repo}-selinux
+%global commit2 b8aae8f17a90585d7d448f30332f3303ba270a1b
 %global shortcommit2 %(c=%{commit2}; echo ${c:0:7})
 
 # docker-utils
 %global git3 https://github.com/vbatts/%{repo}-utils
-%global commit3  dab51acd1b1a77f7cb01a1b7e2129ec85c846b71
+%global commit3 dab51acd1b1a77f7cb01a1b7e2129ec85c846b71
 %global shortcommit3 %(c=%{commit3}; echo ${c:0:7})
 
 # docker-novolume-plugin
 %global git4 https://github.com/projectatomic/%{repo}-novolume-plugin
-%global commit4  2ca381ee0b3e3d7469e5377c5a83eef6b8df4457
+%global commit4 2ca381ee0b3e3d7469e5377c5a83eef6b8df4457
 %global shortcommit4 %(c=%{commit4}; echo ${c:0:7})
 
 # docker-selinux stuff (prefix with ds_ for version/release etc.)
@@ -80,7 +80,7 @@ Name: %{repo}
 %endif
 Epoch: 1
 Version: 1.10.0
-Release: 21.git%{shortcommit0}%{?dist}
+Release: 22.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -653,6 +653,13 @@ fi
 %{_bindir}/%{repo}tarsum
 
 %changelog
+* Wed Feb 03 2016 Antonio Murdaca <runcom@redhat.com> - 1:1.10.0-22.gitfb1a123
+- built docker @projectatomic/fedora-1.10 commit#fb1a123
+- built d-s-s commit#1c2b95b
+- built docker-selinux commit#b8aae8f
+- built docker-utils commit#dab51ac
+- built docker-novolume-plugin commit#dab51ac
+
 * Mon Feb 01 2016 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.10.0-21.gitd3f4a34
 - built docker @projectatomic/fedora-1.10 commit#d3f4a34
 - built docker-selinux commit#be16da7
