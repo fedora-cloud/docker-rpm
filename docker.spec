@@ -80,7 +80,7 @@ Name: %{repo}
 %endif
 Epoch: 1
 Version: 1.10.0
-Release: 22.git%{shortcommit0}%{?dist}
+Release: 23.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -653,6 +653,9 @@ fi
 %{_bindir}/%{repo}tarsum
 
 %changelog
+* Wed Feb 03 2016 Fedora Release Engineering <releng@fedoraproject.org> - 1:1.10.0-23.gitfb1a123
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
+
 * Wed Feb 03 2016 Antonio Murdaca <runcom@redhat.com> - 1:1.10.0-22.gitfb1a123
 - built docker @projectatomic/fedora-1.10 commit#fb1a123
 - built d-s-s commit#1c2b95b
