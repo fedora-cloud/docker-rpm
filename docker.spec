@@ -52,6 +52,11 @@
 %global commit4 2ca381ee0b3e3d7469e5377c5a83eef6b8df4457
 %global shortcommit4 %(c=%{commit4}; echo ${c:0:7})
 
+# v1.10-migrator
+%global git5 https://github.com/%{repo}/v1.10-migrator
+%global commit5 994c35cbf7ae094d4cb1230b85631ecedd77b0d8
+%global shortcommit5 %(c=%{commit5}; echo ${c:0:7})
+
 # docker-selinux stuff (prefix with ds_ for version/release etc.)
 # Some bits borrowed from the openstack-selinux package
 %global selinuxtype targeted
@@ -80,7 +85,7 @@ Name: %{repo}
 %endif
 Epoch: 1
 Version: 1.10.0
-Release: 24.git%{shortcommit0}%{?dist}
+Release: 25.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -96,6 +101,7 @@ Source7: %{repo}-storage.sysconfig
 Source8: %{repo}-logrotate.sh
 Source9: README.%{repo}-logrotate
 Source10: %{repo}-network.sysconfig
+Source11: %{git5}/archive/%{commit5}/v1.10-migrator-%{shortcommit5}.tar.gz
 
 %if 0%{?with_debug}
 # Build with debug
@@ -105,6 +111,7 @@ Source10: %{repo}-network.sysconfig
 BuildRequires: git
 BuildRequires: glibc-static
 BuildRequires: go-md2man
+BuildRequires: godep
 BuildRequires: device-mapper-devel
 BuildRequires: pkgconfig(audit)
 BuildRequires: btrfs-progs-devel
@@ -151,6 +158,8 @@ Obsoletes: %{repo}-io <= 1.5.0-19
 Requires: lvm2
 Requires: xfsprogs
 Obsoletes: %{repo}-storage-setup <= 0.5-3
+
+Requires(pre): %{repo}-v1.10-migrator
 
 %description
 Docker is an open-source engine that automates the deployment of any
@@ -363,6 +372,21 @@ Provides: %{repo}-io-zsh-completion = %{epoch}:%{version}-%{release}
 %description zsh-completion
 This package installs %{summary}.
 
+%package v1.10-migrator
+Summary: Calculates SHA256 checksums for docker layer content
+License: ASL 2.0 and CC-BY-SA
+
+%description v1.10-migrator
+Starting from v1.10 docker uses content addressable IDs for the images and
+layers instead of using generated ones. This tool calculates SHA256 checksums
+for docker layer content, so that they don't need to be recalculated when the
+daemon starts for the first time.
+
+The migration usually runs on daemon startup but it can be quite slow(usually
+100-200MB/s) and daemon will not be able to accept requests during
+that time. You can run this tool instead while the old daemon is still
+running and skip checksum calculation on startup.
+
 %prep
 %autosetup -Sgit -n %{repo}-%{commit0}
 
@@ -380,6 +404,9 @@ tar zxf %{SOURCE3}
 
 # untar docker-novolume-plugin
 tar zxf %{SOURCE4}
+
+# untar v1.10-migrator
+tar zxf %{SOURCE11}
 
 %build
 # set up temporary build gopath, and put our directory there
@@ -408,10 +435,14 @@ go build -ldflags "-B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d ' \n')" githu
 go build -ldflags "-B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d ' \n')" github.com/projectatomic/%{repo}-novolume-plugin
 popd
 
-
 # build %%{repo}-selinux
 pushd %{repo}-selinux-%{commit2}
 make SHARE="%{_datadir}" TARGETS="%{modulenames}"
+popd
+
+# build v1.10-migrator
+pushd v1.10-migrator-%{commit5}
+make v1.10-migrator-local
 popd
 
 %install
@@ -534,6 +565,14 @@ install -d %{buildroot}%{_sysconfdir}/sysconfig
 install -p -m 644 %{repo}-storage-setup-override.conf %{buildroot}%{_sysconfdir}/sysconfig/%{repo}-storage-setup
 popd
 
+# install v1.10-migrator
+install -d %{buildroot}%{_bindir}
+install -p -m 700 v1.10-migrator-%{commit5}/v1.10-migrator-local %{buildroot}%{_bindir}
+cp v1.10-migrator-%{commit5}/CONTRIBUTING.md CONTRIBUTING-v1.10-migrator.md
+cp v1.10-migrator-%{commit5}/README.md README-v1.10-migrator.md
+cp v1.10-migrator-%{commit5}/LICENSE.code LICENSE-v1.10-migrator.code
+cp v1.10-migrator-%{commit5}/LICENSE.docs LICENSE-v1.10-migrator.docs
+
 %check
 [ ! -w /run/%{repo}.sock ] || {
     mkdir test_dir
@@ -583,6 +622,10 @@ if %{_sbindir}/selinuxenabled ; then
 %relabel_files
 fi
 fi
+
+%triggerpost -n %{repo}-v1.10-migrator -- %{repo} < %{version}
+%{_bindir}/v1.10-migrator-local 2>/dev/null
+exit 0
 
 #define license tag if not already defined
 %{!?_licensedir:%global license %doc}
@@ -652,7 +695,20 @@ fi
 %{_bindir}/%{repo}-fetch
 %{_bindir}/%{repo}tarsum
 
+%files v1.10-migrator
+%license LICENSE-v1.10-migrator.{code,docs}
+%doc CONTRIBUTING-v1.10-migrator.md README-v1.10-migrator.md
+%{_bindir}/v1.10-migrator-local
+
 %changelog
+* Thu Feb 04 2016 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.10.0-24.gitd25c9e5
+- built docker @projectatomic/fedora-1.10 commit#d25c9e5
+- built d-s-s commit#1c2b95b
+- built docker-selinux commit#b8aae8f
+- built docker-utils commit#dab51ac
+- built docker-novolume-plugin commit#1c2b95b
+- built docker-v1.10-migrator commit#994c35c
+
 * Thu Feb 04 2016 Antonio Murdaca <runcom@fedoraproject.org> - 1:1.10.0-24.gitd25c9e5
 - built docker @projectatomic/fedora-1.10 commit#d25c9e5
 - built d-s-s commit#1c2b95b
