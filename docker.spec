@@ -28,7 +28,7 @@
 
 # docker
 %global git0 https://github.com/projectatomic/%{repo}
-%global commit0 fb1a123b707249b13d0bafc44b51026ab9e1a394
+%global commit0 d25c9e5f47d079255e8a2cc4dab31bc0c233a145
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 
 # d-s-s
@@ -80,7 +80,7 @@ Name: %{repo}
 %endif
 Epoch: 1
 Version: 1.10.0
-Release: 23.git%{shortcommit0}%{?dist}
+Release: 24.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -653,6 +653,13 @@ fi
 %{_bindir}/%{repo}tarsum
 
 %changelog
+* Thu Feb 04 2016 Antonio Murdaca <runcom@fedoraproject.org> - 1:1.10.0-24.gitd25c9e5
+- built docker @projectatomic/fedora-1.10 commit#d25c9e5
+- built d-s-s commit#1c2b95b
+- built docker-selinux commit#b8aae8f
+- built docker-utils commit#dab51ac
+- built docker-novolume-plugin commit#dab51ac
+
 * Wed Feb 03 2016 Fedora Release Engineering <releng@fedoraproject.org> - 1:1.10.0-23.gitfb1a123
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
 
