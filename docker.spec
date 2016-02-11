@@ -28,7 +28,7 @@
 
 # docker
 %global git0 https://github.com/projectatomic/%{repo}
-%global commit0 f3924518ad0ba0e98a4f4225daf54d045f050d02
+%global commit0 1b79038561738830cb571563bf35405b10572de9
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 
 # d-s-s
@@ -47,9 +47,9 @@
 %global commit3 dab51acd1b1a77f7cb01a1b7e2129ec85c846b71
 %global shortcommit3 %(c=%{commit3}; echo ${c:0:7})
 
-# docker-novolume-plugin
+# docker-novolume-plugin v1.0.2
 %global git4 https://github.com/projectatomic/%{repo}-novolume-plugin
-%global commit4 60b3a944eac611d75d9f964612f231d054fb9401
+%global commit4 04307f5bcaf6a294bec304fff611cec142cf0474
 %global shortcommit4 %(c=%{commit4}; echo ${c:0:7})
 
 # v1.10-migrator
@@ -85,7 +85,7 @@ Name: %{repo}
 %endif
 Epoch: 1
 Version: 1.10.0
-Release: 28.git%{shortcommit0}%{?dist}
+Release: 29.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -505,9 +505,10 @@ install -d %{buildroot}%{_sharedstatedir}/%{repo}
 install -d %{buildroot}%{_unitdir}
 install -p -m 644 %{SOURCE5} %{buildroot}%{_unitdir}
 
-# install novolume-plugin executable and unitfile
+# install novolume-plugin executable, unitfile and socket
 install -p -m 755 _build/src/%{repo}-novolume-plugin %{buildroot}%{_bindir}
 install -p -m 644 %{repo}-novolume-plugin-%{commit4}/%{repo}-novolume-plugin.service %{buildroot}%{_unitdir}
+install -p -m 644 %{repo}-novolume-plugin-%{commit4}/%{repo}-novolume-plugin.socket %{buildroot}%{_unitdir}
 
 # for additional args
 install -d %{buildroot}%{_sysconfdir}/sysconfig/
@@ -701,6 +702,14 @@ exit 0
 %{_bindir}/v1.10-migrator-local
 
 %changelog
+* Thu Feb 11 2016 Antonio Murdaca <runcom@fedoraproject.org> - 1:1.10.0-29.git1b79038
+- built docker @projectatomic/fedora-1.10.1 commit#1b79038
+- built d-s-s commit#1c2b95b
+- built docker-selinux commit#b8aae8f
+- built docker-utils commit#dab51ac
+- built docker-novolume-plugin commit#04307f5b
+- built docker-v1.10-migrator commit#994c35
+
 * Sat Feb 06 2016 Antonio Murdaca <runcom@fedoraproject.org> - 1:1.10.0-28.gitf392451
 - built docker @projectatomic/fedora-1.10 commit#f392451
 - built d-s-s commit#1c2b95b
