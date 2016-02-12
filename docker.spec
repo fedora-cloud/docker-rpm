@@ -28,7 +28,7 @@
 
 # docker
 %global git0 https://github.com/projectatomic/%{repo}
-%global commit0 9c1310f7a34de726ca5c1dde327e00eda5d0f667
+%global commit0 49805e47702e7b5f91db0f47a26279e017e55956
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 
 # d-s-s
@@ -85,7 +85,7 @@ Name: %{repo}
 %endif
 Epoch: 1
 Version: 1.10.1
-Release: 2.git%{shortcommit0}%{?dist}
+Release: 3.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -315,7 +315,6 @@ URL: %{git4}
 License: MIT
 Summary: Block container starts with local volumes defined
 Requires: %{repo} = %{epoch}:%{version}-%{release}
-
 
 %description novolume-plugin
 When a volume in provisioned via the `VOLUME` instruction in a Dockerfile or
@@ -645,7 +644,6 @@ exit 0
 %{_bindir}/%{repo}
 %{_libexecdir}/%{repo}
 %{_unitdir}/%{repo}.service
-%{_unitdir}/%{repo}-novolume-plugin.socket
 %{_datadir}/bash-completion/completions/%{repo}
 %dir %{_sharedstatedir}/%{repo}
 %{_udevrulesdir}/80-%{repo}.rules
@@ -682,6 +680,7 @@ exit 0
 %doc README-novolume-plugin.md
 %{_bindir}/%{repo}-novolume-plugin
 %{_unitdir}/%{repo}-novolume-plugin.service
+%{_unitdir}/%{repo}-novolume-plugin.socket
 
 %files selinux
 %doc %{repo}-selinux-%{commit2}/README.md
@@ -705,6 +704,14 @@ exit 0
 %{_bindir}/v1.10-migrator-local
 
 %changelog
+* Fri Feb 12 2016 Antonio Murdaca <runcom@fedoraproject.org> - 1:1.10.1-3.git49805e4
+- built docker @projectatomic/fedora-1.10.1 commit#49805e4
+- built d-s-s commit#1c2b95b
+- built docker-selinux commit#b8aae8f
+- built docker-utils commit#dab51ac
+- built docker-novolume-plugin commit#d1a7f4a
+- built docker-v1.10-migrator commit#994c35
+
 * Fri Feb 12 2016 Antonio Murdaca <runcom@fedoraproject.org> - 1:1.10.1-2.git9c1310f
 - built docker @projectatomic/fedora-1.10.1 commit#9c1310f
 - built d-s-s commit#1c2b95b
