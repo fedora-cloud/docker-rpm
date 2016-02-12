@@ -74,7 +74,7 @@
 Name: %{repo}
 Epoch: 1
 Version: 1.10.1
-Release: 2.git%{shortcommit0}%{?dist}
+Release: 3.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{name}
@@ -680,6 +680,9 @@ exit 0
 %{_bindir}/v1.10-migrator-local
 
 %changelog
+* Fri Feb 12 2016 Antonio Murdaca <runcom@fedoraproject.org> - 1:1.10.1-3.git49805e4
+- rebuilt, no change
+
 * Fri Feb 12 2016 Antonio Murdaca <runcom@fedoraproject.org> - 1:1.10.1-2.git49805e4
 - built docker @projectatomic/fedora-1.10.1 commit#49805e4
 - built d-s-s commit#1c2b95b
