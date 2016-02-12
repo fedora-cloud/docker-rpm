@@ -681,7 +681,12 @@ exit 0
 
 %changelog
 * Fri Feb 12 2016 Antonio Murdaca <runcom@fedoraproject.org> - 1:1.10.1-2.git49805e4
-- rebuilt
+- built docker @projectatomic/fedora-1.10.1 commit#49805e4
+- built d-s-s commit#1c2b95b
+- built docker-selinux commit#b8aae8f
+- built docker-utils commit#dab51ac
+- built docker-novolume-plugin commit#d1a7f4a
+- built docker-v1.10-migrator commit#994c35
 
 * Mon Jan 25 2016 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.9.1-6.git6ec29ef
 - Resolves: rhbz#1301198 - do not add distro tag to docker version
