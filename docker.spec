@@ -19,21 +19,39 @@
 
 %global import_path %{provider}.%{provider_tld}/%{project}/%{name}
 
-# docker stuff (prefix with d_)
-%global d_commit 6ec29ef9a2d48a6ccd716a2bbb00a1ed07412d6a
-%global d_shortcommit %(c=%{d_commit}; echo ${c:0:7})
+# docker
+%global git0 https://github.com/projectatomic/%{repo}
+%global commit0 49805e47702e7b5f91db0f47a26279e017e55956
+%global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 
-# d-s-s stuff (prefix with dss_)
-%global dss_libdir %{_exec_prefix}/lib/%{name}-storage-setup
-%global dss_commit 0814c269bea1d0daf61c794ee8a48de582dd2658
-%global dss_shortcommit %(c=%{dss_commit}; echo ${c:0:7})
+# d-s-s
+%global git1 https://github.com/projectatomic/%{repo}-storage-setup/
+%global commit1 1c2b95b33b917adb9b681a953f2c6b6b2befae6d
+%global shortcommit1 %(c=%{commit1}; echo ${c:0:7})
+%global dss_libdir %{_exec_prefix}/lib/%{repo}-storage-setup
 
-%global utils_commit dab51acd1b1a77f7cb01a1b7e2129ec85c846b71
+# docker-selinux
+%global git2 https://github.com/projectatomic/%{repo}-selinux
+%global commit2 afc876c0e8828cc0b73cf76bbf550e30b5e627aa
+%global shortcommit2 %(c=%{commit2}; echo ${c:0:7})
+
+# docker-utils
+%global git3 https://github.com/vbatts/%{repo}-utils
+%global commit3 dab51acd1b1a77f7cb01a1b7e2129ec85c846b71
+%global shortcommit3 %(c=%{commit3}; echo ${c:0:7})
+
+# docker-novolume-plugin
+%global git4 https://github.com/projectatomic/%{repo}-novolume-plugin
+%global commit4 d1a7f4a16542d8e379ff266e68dccda3c0b7e4cf
+%global shortcommit4 %(c=%{commit4}; echo ${c:0:7})
+
+# v1.10-migrator
+%global git5 https://github.com/%{repo}/v1.10-migrator
+%global commit5 994c35cbf7ae094d4cb1230b85631ecedd77b0d8
+%global shortcommit5 %(c=%{commit5}; echo ${c:0:7})
 
 # docker-selinux stuff (prefix with ds_ for version/release etc.)
 # Some bits borrowed from the openstack-selinux package
-%global ds_commit 441f312c8f1b7fd4fdc21c007bee6091374d3b99
-%global ds_shortcommit %(c=%{ds_commit}; echo ${c:0:7})
 %global selinuxtype targeted
 %global moduletype services
 %global modulenames %{name}
@@ -48,37 +66,37 @@
 
 # Version of SELinux we were using
 %if 0%{?fedora} >= 22
-%global selinux_policyver 3.13.1-119
+%global selinux_policyver 3.13.1-155
 %else
-%global selinux_policyver 3.13.1-23
-%endif # fedora >= 22 or not
+%global selinux_policyver 3.13.1-39
+%endif
 
 Name: %{repo}
 Epoch: 1
-Version: 1.9.1
-Release: 6.git%{d_shortcommit}%{?dist}
+Version: 1.10.1
+Release: 2.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{name}
 ExclusiveArch: %{go_arches}
-Source0: https://%{provider}.%{provider_tld}/rhatdan/%{name}/archive/%{d_commit}/%{name}-%{d_shortcommit}.tar.gz
-Source1: %{name}.service
-Source2: %{name}.sysconfig
-Source3: %{name}-storage.sysconfig
-Source4: %{name}-logrotate.sh
-Source5: README.%{name}-logrotate
-Source6: %{name}-network.sysconfig
-Patch0: muldefs.patch
-Patch1: compile-on-i686.patch
 
-Source7: https://%{provider}.%{provider_tld}/fedora-cloud/%{name}-selinux/archive/%{ds_commit}/%{name}-selinux-%{ds_shortcommit}.tar.gz
-# Source8 is the source tarball for docker-storage-setup
-Source8: https://%{provider}.%{provider_tld}/projectatomic/%{name}-storage-setup/archive/%{dss_commit}/%{name}-storage-setup-%{dss_shortcommit}.tar.gz
-# Source9 is the source tarball for docker-utils
-Source9: https://%{provider}.%{provider_tld}/vbatts/%{name}-utils/archive/%{utils_commit}.tar.gz
+Source0: %{git0}/archive/%{commit0}/%{repo}-%{shortcommit0}.tar.gz
+Source1: %{git1}/archive/%{commit1}/%{repo}-storage-setup-%{shortcommit1}.tar.gz
+Source2: %{git2}/archive/%{commit2}/%{repo}-selinux-%{shortcommit2}.tar.gz
+Source3: %{git3}/archive/%{commit3}/%{repo}-utils-%{shortcommit3}.tar.gz
+Source4: %{git4}/archive/%{commit4}/%{repo}-novolume-plugin-%{shortcommit4}.tar.gz
+Source5: %{repo}.service
+Source6: %{repo}.sysconfig
+Source7: %{repo}-storage.sysconfig
+Source8: %{repo}-logrotate.sh
+Source9: README.%{repo}-logrotate
+Source10: %{repo}-network.sysconfig
+Source11: %{git5}/archive/%{commit5}/v1.10-migrator-%{shortcommit5}.tar.gz
+
 BuildRequires: git
 BuildRequires: glibc-static
 BuildRequires: go-md2man
+BuildRequires: godep
 BuildRequires: device-mapper-devel
 BuildRequires: pkgconfig(audit)
 BuildRequires: btrfs-progs-devel
@@ -140,9 +158,9 @@ BuildRequires: golang >= 1.2.1-3
 %else
 BuildRequires: gcc-go >= %{gccgo_min_vers}
 %endif
-Provides: %{name}-io-devel = %{epoch}:%{version}-%{release}
-Provides: %{name}-pkg-devel = %{epoch}:%{version}-%{release}
-Provides: %{name}-io-pkg-devel = %{epoch}:%{version}-%{release}
+Provides: %{repo}-io-devel = %{epoch}:%{version}-%{release}
+Provides: %{repo}-pkg-devel = %{epoch}:%{version}-%{release}
+Provides: %{repo}-io-pkg-devel = %{epoch}:%{version}-%{release}
 Summary:  A golang registry for global request variables (source libraries)
 Provides: golang(%{import_path}) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/builder) = %{epoch}:%{version}-%{release}
@@ -272,6 +290,31 @@ Provides: %{name}-io-logrotate = %{epoch}:%{version}-%{release}
 This package installs %{summary}. logrotate is assumed to be installed on
 containers for this to work, failures are silently ignored.
 
+%package novolume-plugin
+URL: %{git4}
+License: MIT
+Summary: Block container starts with local volumes defined
+Requires: %{repo} = %{epoch}:%{version}-%{release}
+
+%description novolume-plugin
+When a volume in provisioned via the `VOLUME` instruction in a Dockerfile or
+via `docker run -v volumename`, host's storage space is used. This could lead to
+an unexpected out of space issue which could bring down everything.
+There are situations where this is not an accepted behavior. PAAS, for
+instance, can't allow their users to run their own images without the risk of
+filling the entire storage space on a server. One solution to this is to deny users
+from running images with volumes. This way the only storage a user gets can be limited
+and PAAS can assign quota to it.
+
+This plugin solves this issue by disallowing starting a container with
+local volumes defined. In particular, the plugin will block `docker run` with:
+
+- `--volumes-from`
+- images that have `VOLUME`(s) defined
+- volumes early provisioned with `docker volume` command
+
+The only thing allowed will be just bind mounts.
+
 %package selinux
 Summary: SELinux policies for Docker
 BuildRequires: selinux-policy
@@ -303,122 +346,156 @@ Provides: %{name}-io-zsh-completion = %{epoch}:%{version}-%{release}
 %description zsh-completion
 This package installs %{summary}.
 
+%package v1.10-migrator
+Summary: Calculates SHA256 checksums for docker layer content
+License: ASL 2.0 and CC-BY-SA
+
+%description v1.10-migrator
+Starting from v1.10 docker uses content addressable IDs for the images and
+layers instead of using generated ones. This tool calculates SHA256 checksums
+for docker layer content, so that they don't need to be recalculated when the
+daemon starts for the first time.
+
+The migration usually runs on daemon startup but it can be quite slow(usually
+100-200MB/s) and daemon will not be able to accept requests during
+that time. You can run this tool instead while the old daemon is still
+running and skip checksum calculation on startup.
+
 %prep
-%autosetup -Sgit -n %{name}-%{d_commit}
-cp %{SOURCE5} .
+%autosetup -Sgit -n %{repo}-%{commit0}
+
+# here keep the new line above otherwise autosetup fails when applying patch
+cp %{SOURCE9} .
 
 # untar d-s-s
-tar zxf %{SOURCE8}
+tar zxf %{SOURCE1}
 
-# untar %%{name}-utils
-tar zxf %{SOURCE9}
+# unpack %%{repo}-selinux
+tar zxf %{SOURCE2}
 
-# unpack %%{name}-selinux
-tar zxf %{SOURCE7}
+# untar docker-utils
+tar zxf %{SOURCE3}
+
+# untar docker-novolume-plugin
+tar zxf %{SOURCE4}
+
+# untar v1.10-migrator
+tar zxf %{SOURCE11}
 
 %build
 # set up temporary build gopath, and put our directory there
 mkdir _build
 pushd _build
-mkdir -p src/%{provider}.%{provider_tld}/{%{name},vbatts}
+mkdir -p src/%{provider}.%{provider_tld}/{%{repo},projectatomic,vbatts}
 ln -s $(dirs +1 -l) src/%{import_path}
-ln -s $(dirs +1 -l)/%{name}-utils-%{utils_commit} src/%{provider}.%{provider_tld}/vbatts/%{name}-utils
+ln -s $(dirs +1 -l)/%{repo}-utils-%{commit3} src/%{provider}.%{provider_tld}/vbatts/%{repo}-utils
+ln -s $(dirs +1 -l)/%{repo}-novolume-plugin-%{commit4} src/%{provider}.%{provider_tld}/projectatomic/%{repo}-novolume-plugin
 popd
 
-export DOCKER_GITCOMMIT="%{d_shortcommit}/%{version}"
+export DOCKER_GITCOMMIT="%{shortcommit0}/%{version}"
 export DOCKER_BUILDTAGS="selinux journald"
-export GOPATH=$(pwd)/_build:$(pwd)/vendor:%{gopath}
+export GOPATH=$(pwd)/_build:$(pwd)/vendor:%{gopath}:$(pwd)/%{repo}-novolume-plugin-%{commit4}/Godeps/_workspace
 
 DEBUG=1 bash -x hack/make.sh dynbinary
 man/md2man-all.sh
 cp contrib/syntax/vim/LICENSE LICENSE-vim-syntax
 cp contrib/syntax/vim/README.md README-vim-syntax.md
+cp %{repo}-novolume-plugin-%{commit4}/LICENSE LICENSE-novolume-plugin
+cp %{repo}-novolume-plugin-%{commit4}/README.md README-novolume-plugin.md
+go-md2man -in %{repo}-novolume-plugin-%{commit4}/man/docker-novolume-plugin.1.md -out docker-novolume-plugin.1
 
 pushd $(pwd)/_build/src
-go build github.com/vbatts/%{name}-utils/cmd/%{name}-fetch
-go build github.com/vbatts/%{name}-utils/cmd/%{name}tarsum
+go build -ldflags "-B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d ' \n')" github.com/vbatts/%{repo}-utils/cmd/%{repo}-fetch
+go build -ldflags "-B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d ' \n')" github.com/vbatts/%{repo}-utils/cmd/%{repo}tarsum
+go build -ldflags "-B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d ' \n')" github.com/projectatomic/%{repo}-novolume-plugin
 popd
 
-# build %%{name}-selinux
-pushd %{name}-selinux-%{ds_commit}
+# build %%{repo}-selinux
+pushd %{repo}-selinux-%{commit2}
 make SHARE="%{_datadir}" TARGETS="%{modulenames}"
+popd
+
+# build v1.10-migrator
+pushd v1.10-migrator-%{commit5}
+make v1.10-migrator-local
 popd
 
 %install
 # install binary
 install -d %{buildroot}%{_bindir}
-install -d %{buildroot}%{_libexecdir}/%{name}
+install -d %{buildroot}%{_libexecdir}/%{repo}
 
 # install utils
-install -p -m 755 _build/src/%{name}-fetch %{buildroot}%{_bindir}
-install -p -m 755 _build/src/%{name}tarsum %{buildroot}%{_bindir}
+install -p -m 755 _build/src/%{repo}-fetch %{buildroot}%{_bindir}
+install -p -m 755 _build/src/%{repo}tarsum %{buildroot}%{_bindir}
 
 for x in bundles/latest; do
     if ! test -d $x/dynbinary; then
     continue
     fi
     rm $x/dynbinary/*.md5 $x/dynbinary/*.sha256
-    install -p -m 755 $x/dynbinary/%{name}-%{version}* %{buildroot}%{_bindir}/%{name}
-    install -p -m 755 $x/dynbinary/%{name}init-%{version}* %{buildroot}%{_libexecdir}/%{name}/%{name}init
+    install -p -m 755 $x/dynbinary/%{repo}-%{version}* %{buildroot}%{_bindir}/%{repo}
+    install -p -m 755 $x/dynbinary/%{repo}init-%{version}* %{buildroot}%{_libexecdir}/%{repo}/%{repo}init
     break
 done
 
 # install manpages
 install -d %{buildroot}%{_mandir}/man1
-install -p -m 644 man/man1/%{name}*.1 %{buildroot}%{_mandir}/man1
+install -p -m 644 man/man1/%{repo}*.1 %{buildroot}%{_mandir}/man1
 install -d %{buildroot}%{_mandir}/man5
 install -p -m 644 man/man5/Dockerfile.5 %{buildroot}%{_mandir}/man5
 
 # install bash completion
 install -dp %{buildroot}%{_datadir}/bash-completion/completions
-install -p -m 644 contrib/completion/bash/%{name} %{buildroot}%{_datadir}/bash-completion/completions
+install -p -m 644 contrib/completion/bash/%{repo} %{buildroot}%{_datadir}/bash-completion/completions
 
 # install fish completion
 # create, install and own /usr/share/fish/vendor_completions.d until
 # upstream fish provides it
 install -dp %{buildroot}%{_datadir}/fish/vendor_completions.d
-install -p -m 644 contrib/completion/fish/%{name}.fish %{buildroot}%{_datadir}/fish/vendor_completions.d
+install -p -m 644 contrib/completion/fish/%{repo}.fish %{buildroot}%{_datadir}/fish/vendor_completions.d
 
 # install container logrotate cron script
 install -dp %{buildroot}%{_sysconfdir}/cron.daily/
-install -p -m 755 %{SOURCE4} %{buildroot}%{_sysconfdir}/cron.daily/%{name}-logrotate
+install -p -m 755 %{SOURCE8} %{buildroot}%{_sysconfdir}/cron.daily/%{repo}-logrotate
 
 # install vim syntax highlighting
 install -d %{buildroot}%{_datadir}/vim/vimfiles/{doc,ftdetect,syntax}
-install -p -m 644 contrib/syntax/vim/doc/%{name}file.txt %{buildroot}%{_datadir}/vim/vimfiles/doc
-install -p -m 644 contrib/syntax/vim/ftdetect/%{name}file.vim %{buildroot}%{_datadir}/vim/vimfiles/ftdetect
-install -p -m 644 contrib/syntax/vim/syntax/%{name}file.vim %{buildroot}%{_datadir}/vim/vimfiles/syntax
+install -p -m 644 contrib/syntax/vim/doc/%{repo}file.txt %{buildroot}%{_datadir}/vim/vimfiles/doc
+install -p -m 644 contrib/syntax/vim/ftdetect/%{repo}file.vim %{buildroot}%{_datadir}/vim/vimfiles/ftdetect
+install -p -m 644 contrib/syntax/vim/syntax/%{repo}file.vim %{buildroot}%{_datadir}/vim/vimfiles/syntax
 
 # install zsh completion
 install -d %{buildroot}%{_datadir}/zsh/site-functions
-install -p -m 644 contrib/completion/zsh/_%{name} %{buildroot}%{_datadir}/zsh/site-functions
+install -p -m 644 contrib/completion/zsh/_%{repo} %{buildroot}%{_datadir}/zsh/site-functions
 
 # install udev rules
 install -d %{buildroot}%{_udevrulesdir}
-install -p contrib/udev/80-%{name}.rules %{buildroot}%{_udevrulesdir}
+install -p contrib/udev/80-%{repo}.rules %{buildroot}%{_udevrulesdir}
 
 # install storage dir
-install -d %{buildroot}%{_sharedstatedir}/%{name}
+install -d %{buildroot}%{_sharedstatedir}/%{repo}
 
 # install systemd/init scripts
 install -d %{buildroot}%{_unitdir}
-install -p -m 644 %{SOURCE1} %{buildroot}%{_unitdir}
+install -p -m 644 %{SOURCE5} %{buildroot}%{_unitdir}
+
+# install novolume-plugin executable, unitfile, socket and man
+install -p -m 755 _build/src/%{repo}-novolume-plugin %{buildroot}%{_bindir}
+install -p -m 644 %{repo}-novolume-plugin-%{commit4}/systemd/%{repo}-novolume-plugin.service %{buildroot}%{_unitdir}
+install -p -m 644 %{repo}-novolume-plugin-%{commit4}/systemd/%{repo}-novolume-plugin.socket %{buildroot}%{_unitdir}
+install -p -m 644 %{repo}-novolume-plugin.1 %{buildroot}%{_mandir}/man1
 
 # for additional args
 install -d %{buildroot}%{_sysconfdir}/sysconfig/
-install -p -m 644 %{SOURCE2} %{buildroot}%{_sysconfdir}/sysconfig/%{name}
-install -p -m 644 %{SOURCE6} %{buildroot}%{_sysconfdir}/sysconfig/%{name}-network
-install -p -m 644 %{SOURCE3} %{buildroot}%{_sysconfdir}/sysconfig/%{name}-storage
-
-# install SELinux interfaces
-%_format INTERFACES $x.if
-install -d %{buildroot}%{_datadir}/selinux/devel/include/%{moduletype}
-install -p -m 644 %{name}-selinux-%{ds_commit}/$INTERFACES %{buildroot}%{_datadir}/selinux/devel/include/%{moduletype}
+install -p -m 644 %{SOURCE6} %{buildroot}%{_sysconfdir}/sysconfig/%{repo}
+install -p -m 644 %{SOURCE10} %{buildroot}%{_sysconfdir}/sysconfig/%{repo}-network
+install -p -m 644 %{SOURCE7} %{buildroot}%{_sysconfdir}/sysconfig/%{repo}-storage
 
 # install policy modules
 %_format MODULES $x.pp.bz2
 install -d %{buildroot}%{_datadir}/selinux/packages
-install -m 0644 %{name}-selinux-%{ds_commit}/$MODULES %{buildroot}%{_datadir}/selinux/packages
+install -m 0644 %{name}-selinux-%{commit2}/$MODULES %{buildroot}%{_datadir}/selinux/packages
 
 %if 0%{?with_unit_test}
 install -d -m 0755 %{buildroot}%{_sharedstatedir}/docker-unit-test/
@@ -445,25 +522,33 @@ done
 %endif
 
 # remove %%{name}-selinux rpm spec file
-rm -rf %{name}-selinux-%{ds_commit}/%{name}-selinux.spec
+rm -rf %{name}-selinux-%{commit2}/%{name}-selinux.spec
 
 # install %%{name} config directory
 install -dp %{buildroot}%{_sysconfdir}/%{name}
 
 # install d-s-s
-pushd %{name}-storage-setup-%{dss_commit}
+pushd %{repo}-storage-setup-%{commit1}
 install -d %{buildroot}%{_bindir}
-install -p -m 755 %{name}-storage-setup.sh %{buildroot}%{_bindir}/%{name}-storage-setup
+install -p -m 755 %{repo}-storage-setup.sh %{buildroot}%{_bindir}/%{repo}-storage-setup
 install -d %{buildroot}%{_unitdir}
-install -p -m 644 %{name}-storage-setup.service %{buildroot}%{_unitdir}
+install -p -m 644 %{repo}-storage-setup.service %{buildroot}%{_unitdir}
 install -d %{buildroot}%{dss_libdir}
-install -p -m 644 %{name}-storage-setup.conf %{buildroot}%{dss_libdir}/%{name}-storage-setup
+install -p -m 644 %{repo}-storage-setup.conf %{buildroot}%{dss_libdir}/%{repo}-storage-setup
 install -p -m 755 libdss.sh %{buildroot}%{dss_libdir}
 install -d %{buildroot}%{_mandir}/man1
-install -p -m 644 %{name}-storage-setup.1 %{buildroot}%{_mandir}/man1
+install -p -m 644 %{repo}-storage-setup.1 %{buildroot}%{_mandir}/man1
 install -d %{buildroot}%{_sysconfdir}/sysconfig
-install -p -m 644 %{name}-storage-setup-override.conf %{buildroot}%{_sysconfdir}/sysconfig/%{name}-storage-setup
+install -p -m 644 %{repo}-storage-setup-override.conf %{buildroot}%{_sysconfdir}/sysconfig/%{repo}-storage-setup
 popd
+
+# install v1.10-migrator
+install -d %{buildroot}%{_bindir}
+install -p -m 700 v1.10-migrator-%{commit5}/v1.10-migrator-local %{buildroot}%{_bindir}
+cp v1.10-migrator-%{commit5}/CONTRIBUTING.md CONTRIBUTING-v1.10-migrator.md
+cp v1.10-migrator-%{commit5}/README.md README-v1.10-migrator.md
+cp v1.10-migrator-%{commit5}/LICENSE.code LICENSE-v1.10-migrator.code
+cp v1.10-migrator-%{commit5}/LICENSE.docs LICENSE-v1.10-migrator.docs
 
 %check
 [ ! -w /run/%{name}.sock ] || {
@@ -477,13 +562,13 @@ popd
 }
 
 %pre
-getent passwd %{name}root > /dev/null || %{_sbindir}/useradd -r \
-           -d %{_sharedstatedir}/%{name} -s /sbin/nologin \
-           -c "Docker User" %{name}root
+getent passwd %{repo}root > /dev/null || %{_sbindir}/useradd -r \
+           -d %{_sharedstatedir}/%{repo} -s /sbin/nologin \
+           -c "Docker User" %{repo}root
 exit 0
 
 %post
-%systemd_post %{name}
+%systemd_post %{repo}
 
 %post selinux
 # Install all modules in a single transaction
@@ -496,15 +581,15 @@ if %{_sbindir}/selinuxenabled ; then
     %{_sbindir}/load_policy
     %relabel_files
     if [ $1 -eq 1 ]; then
-    restorecon -R %{_sharedstatedir}/%{name} &> /dev/null || :
+    restorecon -R %{_sharedstatedir}/%{repo} &> /dev/null || :
     fi
 fi
 
 %preun
-%systemd_preun %{name}
+%systemd_preun %{repo}
 
 %postun
-%systemd_postun_with_restart %{name}
+%systemd_postun_with_restart %{repo}
 
 %postun selinux
 if [ $1 -eq 0 ]; then
@@ -515,30 +600,35 @@ if %{_sbindir}/selinuxenabled ; then
 fi
 fi
 
+%triggerpost -n %{repo}-v1.10-migrator -- %{repo} < %{version}
+%{_bindir}/v1.10-migrator-local 2>/dev/null
+exit 0
+
 #define license tag if not already defined
 %{!?_licensedir:%global license %doc}
 
 %files
-%license LICENSE LICENSE-vim-syntax
+%license LICENSE LICENSE-novolume-plugin LICENSE-vim-syntax
 %doc AUTHORS CHANGELOG.md CONTRIBUTING.md MAINTAINERS NOTICE README.md 
-%doc README-vim-syntax.md
-%config(noreplace) %{_sysconfdir}/sysconfig/%{name}
-%config(noreplace) %{_sysconfdir}/sysconfig/%{name}-network
-%config(noreplace) %{_sysconfdir}/sysconfig/%{name}-storage
-%{_mandir}/man1/%{name}*.1.gz
+%doc README-novolume-plugin.md README-vim-syntax.md
+%config(noreplace) %{_sysconfdir}/sysconfig/%{repo}
+%config(noreplace) %{_sysconfdir}/sysconfig/%{repo}-network
+%config(noreplace) %{_sysconfdir}/sysconfig/%{repo}-storage
+%{_mandir}/man1/%{repo}*.1.gz
 %{_mandir}/man5/Dockerfile.5.gz
-%{_bindir}/%{name}
-%{_libexecdir}/%{name}
-%{_unitdir}/%{name}.service
-%{_datadir}/bash-completion/completions/%{name}
-%dir %{_sharedstatedir}/%{name}
-%{_udevrulesdir}/80-%{name}.rules
-%{_sysconfdir}/%{name}
+%{_bindir}/%{repo}
+%{_libexecdir}/%{repo}
+%{_unitdir}/%{repo}.service
+%{_unitdir}/%{repo}-novolume-plugin.socket
+%{_datadir}/bash-completion/completions/%{repo}
+%dir %{_sharedstatedir}/%{repo}
+%{_udevrulesdir}/80-%{repo}.rules
+%{_sysconfdir}/%{repo}
 # d-s-s specific
-%config(noreplace) %{_sysconfdir}/sysconfig/%{name}-storage-setup
-%{_unitdir}/%{name}-storage-setup.service
-%{_bindir}/%{name}-storage-setup
-%dir %{dss_libdir}
+%config(noreplace) %{_sysconfdir}/sysconfig/%{repo}-storage-setup
+%{_unitdir}/%{repo}-storage-setup.service
+%{_bindir}/%{repo}-storage-setup
+%{dss_libdir}/*
 
 %if 0%{?with_devel}
 %files devel
@@ -561,23 +651,38 @@ fi
 %doc README.%{name}-logrotate
 %{_sysconfdir}/cron.daily/%{name}-logrotate
 
+%files novolume-plugin
+%license LICENSE-novolume-plugin
+%doc README-novolume-plugin.md
+%{_bindir}/%{repo}-novolume-plugin
+%{_unitdir}/%{repo}-novolume-plugin.service
+%{_unitdir}/%{repo}-novolume-plugin.socket
+
 %files selinux
-%doc %{name}-selinux-%{ds_commit}/README.md
+%doc %{repo}-selinux-%{commit2}/README.md
 %{_datadir}/selinux/*
 
 %files vim
-%{_datadir}/vim/vimfiles/doc/%{name}file.txt
-%{_datadir}/vim/vimfiles/ftdetect/%{name}file.vim
-%{_datadir}/vim/vimfiles/syntax/%{name}file.vim
+%{_datadir}/vim/vimfiles/doc/%{repo}file.txt
+%{_datadir}/vim/vimfiles/ftdetect/%{repo}file.vim
+%{_datadir}/vim/vimfiles/syntax/%{repo}file.vim
 
 %files zsh-completion
-%{_datadir}/zsh/site-functions/_%{name}
+%{_datadir}/zsh/site-functions/_%{repo}
 
 %files utils
-%{_bindir}/%{name}-fetch
-%{_bindir}/%{name}tarsum
+%{_bindir}/%{repo}-fetch
+%{_bindir}/%{repo}tarsum
+
+%files v1.10-migrator
+%license LICENSE-v1.10-migrator.{code,docs}
+%doc CONTRIBUTING-v1.10-migrator.md README-v1.10-migrator.md
+%{_bindir}/v1.10-migrator-local
 
 %changelog
+* Fri Feb 12 2016 Antonio Murdaca <runcom@fedoraproject.org> - 1:1.10.1-2.git49805e4
+- rebuilt
+
 * Mon Jan 25 2016 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.9.1-6.git6ec29ef
 - Resolves: rhbz#1301198 - do not add distro tag to docker version
 - built docker @projectatomic/fedora-1.9 commit#001db93
