@@ -42,7 +42,7 @@
 
 # docker-novolume-plugin
 %global git4 https://github.com/projectatomic/%{repo}-novolume-plugin
-%global commit4 2103b9ee80f75606910383a219241fe764a56b24
+%global commit4 e478a5c2605e67d60620150da4b39685c3d34e00
 %global shortcommit4 %(c=%{commit4}; echo ${c:0:7})
 
 # v1.10-migrator
@@ -74,7 +74,7 @@
 Name: %{repo}
 Epoch: 1
 Version: 1.10.1
-Release: 4.git%{shortcommit0}%{?dist}
+Release: 5.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{name}
@@ -402,7 +402,7 @@ cp contrib/syntax/vim/LICENSE LICENSE-vim-syntax
 cp contrib/syntax/vim/README.md README-vim-syntax.md
 cp %{repo}-novolume-plugin-%{commit4}/LICENSE LICENSE-novolume-plugin
 cp %{repo}-novolume-plugin-%{commit4}/README.md README-novolume-plugin.md
-go-md2man -in %{repo}-novolume-plugin-%{commit4}/man/docker-novolume-plugin.1.md -out docker-novolume-plugin.1
+go-md2man -in %{repo}-novolume-plugin-%{commit4}/man/docker-novolume-plugin.8.md -out docker-novolume-plugin.8
 
 pushd $(pwd)/_build/src
 go build -ldflags "-B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d ' \n')" github.com/vbatts/%{repo}-utils/cmd/%{repo}-fetch
@@ -481,10 +481,12 @@ install -d %{buildroot}%{_unitdir}
 install -p -m 644 %{SOURCE5} %{buildroot}%{_unitdir}
 
 # install novolume-plugin executable, unitfile, socket and man
-install -p -m 755 _build/src/%{repo}-novolume-plugin %{buildroot}%{_bindir}
+install -d %{buildroot}/usr/lib/docker
+install -p -m 755 _build/src/%{repo}-novolume-plugin %{buildroot}/usr/lib/docker
 install -p -m 644 %{repo}-novolume-plugin-%{commit4}/systemd/%{repo}-novolume-plugin.service %{buildroot}%{_unitdir}
 install -p -m 644 %{repo}-novolume-plugin-%{commit4}/systemd/%{repo}-novolume-plugin.socket %{buildroot}%{_unitdir}
-install -p -m 644 %{repo}-novolume-plugin.1 %{buildroot}%{_mandir}/man1
+install -d %{buildroot}%{_mandir}/man8
+install -p -m 644 %{repo}-novolume-plugin.8 %{buildroot}%{_mandir}/man8
 
 # for additional args
 install -d %{buildroot}%{_sysconfdir}/sysconfig/
@@ -616,6 +618,7 @@ exit 0
 %config(noreplace) %{_sysconfdir}/sysconfig/%{repo}-storage
 %{_mandir}/man1/%{repo}*.1.gz
 %{_mandir}/man5/Dockerfile.5.gz
+%{_mandir}/man8/%{repo}*.8.gz
 %{_bindir}/%{repo}
 %{_libexecdir}/%{repo}
 %{_unitdir}/%{repo}.service
@@ -654,7 +657,7 @@ exit 0
 %files novolume-plugin
 %license LICENSE-novolume-plugin
 %doc README-novolume-plugin.md
-%{_bindir}/%{repo}-novolume-plugin
+/usr/lib/docker/%{repo}-novolume-plugin
 %{_unitdir}/%{repo}-novolume-plugin.service
 %{_unitdir}/%{repo}-novolume-plugin.socket
 
@@ -680,6 +683,14 @@ exit 0
 %{_bindir}/v1.10-migrator-local
 
 %changelog
+* Tue Feb 16 2016 Antonio Murdaca <runcom@fedoraproject.org> - 1:1.10.1-5.git6c71d8f
+- built docker @projectatomic/fedora-1.10.1 commit#6c71d8f
+- built d-s-s commit#1c2b95b
+- built docker-selinux commit#b8aae8f
+- built docker-utils commit#dab51ac
+- built docker-novolume-plugin commit#e478a5c
+- built docker-v1.10-migrator commit#994c35
+
 * Tue Feb 16 2016 Antonio Murdaca <runcom@fedoraproject.org> - 1:1.10.1-4.git6c71d8f
 - built docker @projectatomic/fedora-1.10.1 commit#6c71d8f
 - built d-s-s commit#1c2b95b
