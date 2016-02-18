@@ -85,7 +85,7 @@ Name: %{repo}
 %endif
 Epoch: 1
 Version: 1.10.1
-Release: 5.git%{shortcommit0}%{?dist}
+Release: 6.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -418,7 +418,7 @@ ln -s $(dirs +1 -l)/%{repo}-novolume-plugin-%{commit4} src/%{provider}.%{provide
 popd
 
 export DOCKER_GITCOMMIT="%{shortcommit0}/%{version}"
-export DOCKER_BUILDTAGS="selinux journald"
+export DOCKER_BUILDTAGS="selinux journald seccomp"
 export GOPATH=$(pwd)/_build:$(pwd)/vendor:%{gopath}:$(pwd)/%{repo}-novolume-plugin-%{commit4}/Godeps/_workspace
 
 DEBUG=1 bash -x hack/make.sh dynbinary
@@ -707,6 +707,9 @@ exit 0
 %{_bindir}/v1.10-migrator-local
 
 %changelog
+* Thu Feb 18 2016 Antonio Murdaca <runcom@fedoraproject.org> - 1:1.10.1-6.git6c71d8f
+- enable seccomp
+
 * Tue Feb 16 2016 Antonio Murdaca <runcom@fedoraproject.org> - 1:1.10.1-5.git6c71d8f
 - built docker @projectatomic/fedora-1.10.1 commit#6c71d8f
 - built d-s-s commit#1c2b95b
