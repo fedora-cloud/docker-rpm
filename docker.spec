@@ -74,7 +74,7 @@
 Name: %{repo}
 Epoch: 1
 Version: 1.10.1
-Release: 5.git%{shortcommit0}%{?dist}
+Release: 6.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{name}
@@ -98,6 +98,7 @@ BuildRequires: glibc-static
 BuildRequires: go-md2man
 BuildRequires: godep
 BuildRequires: device-mapper-devel
+BuildRequires: libseccomp-static >= 2.2.1
 BuildRequires: pkgconfig(audit)
 BuildRequires: btrfs-progs-devel
 BuildRequires: sqlite-devel
@@ -140,6 +141,8 @@ Obsoletes: %{name}-io <= 1.5.0-19
 Requires: lvm2
 Requires: xfsprogs
 Obsoletes: %{name}-storage-setup <= 0.5-3
+
+Requires: libseccomp >= 2.2.1
 
 %description
 Docker is an open-source engine that automates the deployment of any
@@ -393,7 +396,7 @@ ln -s $(dirs +1 -l)/%{repo}-novolume-plugin-%{commit4} src/%{provider}.%{provide
 popd
 
 export DOCKER_GITCOMMIT="%{shortcommit0}/%{version}"
-export DOCKER_BUILDTAGS="selinux journald"
+export DOCKER_BUILDTAGS="selinux seccomp"
 export GOPATH=$(pwd)/_build:$(pwd)/vendor:%{gopath}:$(pwd)/%{repo}-novolume-plugin-%{commit4}/Godeps/_workspace
 
 DEBUG=1 bash -x hack/make.sh dynbinary
@@ -683,6 +686,9 @@ exit 0
 %{_bindir}/v1.10-migrator-local
 
 %changelog
+* Thu Feb 18 2016 Antonio Murdaca <runcom@fedoraproject.org> - 1:1.10.1-6.git6c71d8f
+- rebuilt with seccomp enabled
+
 * Tue Feb 16 2016 Antonio Murdaca <runcom@fedoraproject.org> - 1:1.10.1-5.git6c71d8f
 - built docker @projectatomic/fedora-1.10.1 commit#6c71d8f
 - built d-s-s commit#1c2b95b
