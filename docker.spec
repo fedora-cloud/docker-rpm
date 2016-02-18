@@ -85,7 +85,7 @@ Name: %{repo}
 %endif
 Epoch: 1
 Version: 1.10.1
-Release: 6.git%{shortcommit0}%{?dist}
+Release: 7.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -113,6 +113,7 @@ BuildRequires: glibc-static
 BuildRequires: go-md2man
 BuildRequires: godep
 BuildRequires: device-mapper-devel
+BuildRequires: libseccomp-static >= 2.2.1
 BuildRequires: pkgconfig(audit)
 BuildRequires: btrfs-progs-devel
 BuildRequires: sqlite-devel
@@ -160,6 +161,8 @@ Requires: xfsprogs
 Obsoletes: %{repo}-storage-setup <= 0.5-3
 
 Requires(pre): %{repo}-v1.10-migrator
+
+Requires: libseccomp >= 2.2.1
 
 %description
 Docker is an open-source engine that automates the deployment of any
@@ -707,6 +710,10 @@ exit 0
 %{_bindir}/v1.10-migrator-local
 
 %changelog
+* Thu Feb 18 2016 Antonio Murdaca <runcom@fedoraproject.org> - 1:1.10.1-7.git6c71d8f
+- BuildRequires libseccomp-static to compile
+- Requires libseccomp
+
 * Thu Feb 18 2016 Antonio Murdaca <runcom@fedoraproject.org> - 1:1.10.1-6.git6c71d8f
 - enable seccomp
 
