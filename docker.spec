@@ -74,7 +74,7 @@
 Name: %{repo}
 Epoch: 1
 Version: 1.10.2
-Release: 1.git%{shortcommit0}%{?dist}
+Release: 2.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{name}
@@ -479,6 +479,9 @@ install -p contrib/udev/80-%{repo}.rules %{buildroot}%{_udevrulesdir}
 # install storage dir
 install -d %{buildroot}%{_sharedstatedir}/%{repo}
 
+# install secret patch directory
+install -d %{buildroot}%{_datadir}/rhel/secrets
+
 # install systemd/init scripts
 install -d %{buildroot}%{_unitdir}
 install -p -m 644 %{SOURCE5} %{buildroot}%{_unitdir}
@@ -627,6 +630,7 @@ exit 0
 %{_unitdir}/%{repo}.service
 %{_unitdir}/%{repo}-novolume-plugin.socket
 %{_datadir}/bash-completion/completions/%{repo}
+%dir %{_datadir}/rhel/secrets
 %dir %{_sharedstatedir}/%{repo}
 %{_udevrulesdir}/80-%{repo}.rules
 %{_sysconfdir}/%{repo}
@@ -686,6 +690,9 @@ exit 0
 %{_bindir}/v1.10-migrator-local
 
 %changelog
+* Mon Feb 22 2016 Antonio Murdaca <runcom@fedoraproject.org> - 1:1.10.2-2.git86e59a5
+- rebuilt to include /usr/share/rhel/secrets for the secret patch we're carrying
+
 * Mon Feb 22 2016 Antonio Murdaca <runcom@fedoraproject.org> - 1:1.10.2-1.git86e59a5
 - built docker @projectatomic/fedora-1.10.2 commit#86e59a5
 - built d-s-s commit#1c2b95b
