@@ -85,7 +85,7 @@ Name: %{repo}
 %endif
 Epoch: 1
 Version: 1.10.2
-Release: 3.git%{shortcommit0}%{?dist}
+Release: 4.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -506,6 +506,9 @@ install -p contrib/udev/80-%{repo}.rules %{buildroot}%{_udevrulesdir}
 # install storage dir
 install -d %{buildroot}%{_sharedstatedir}/%{repo}
 
+# install secret patch directory
+install -d %{buildroot}%{_datadir}/rhel/secrets
+
 # install systemd/init scripts
 install -d %{buildroot}%{_unitdir}
 install -p -m 644 %{SOURCE5} %{buildroot}%{_unitdir}
@@ -653,6 +656,7 @@ exit 0
 %{_libexecdir}/%{repo}
 %{_unitdir}/%{repo}.service
 %{_datadir}/bash-completion/completions/%{repo}
+%dir %{_datadir}/rhel/secrets
 %dir %{_sharedstatedir}/%{repo}
 %{_udevrulesdir}/80-%{repo}.rules
 %{_sysconfdir}/%{repo}
@@ -712,6 +716,9 @@ exit 0
 %{_bindir}/v1.10-migrator-local
 
 %changelog
+* Mon Feb 22 2016 Antonio Murdaca <runcom@fedoraproject.org> - 1:1.10.2-4.git86e59a5
+- rebuilt to include /usr/share/rhel/secrets for the secret patch we're carrying
+
 * Mon Feb 22 2016 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1:1.10.2-3.git86e59a5
 - https://fedoraproject.org/wiki/Changes/golang1.6
 
