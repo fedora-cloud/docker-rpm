@@ -28,7 +28,7 @@
 
 # docker
 %global git0 https://github.com/projectatomic/%{repo}
-%global commit0 86e59a52d84c5688ef220df604ff5deb62d10288
+%global commit0 0f5ac89062e1f80bd87e7db9a94859adf7a188a7
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 
 # d-s-s
@@ -85,7 +85,7 @@ Name: %{repo}
 %endif
 Epoch: 1
 Version: 1.10.2
-Release: 4.git%{shortcommit0}%{?dist}
+Release: 5.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -716,6 +716,14 @@ exit 0
 %{_bindir}/v1.10-migrator-local
 
 %changelog
+* Mon Feb 22 2016 Antonio Murdaca <runcom@fedoraproject.org> - 1:1.10.2-5.git0f5ac89
+- built docker @projectatomic/fedora-1.10.2 commit#0f5ac89
+- built d-s-s commit#1c2b95b
+- built docker-selinux commit#b8aae8f
+- built docker-utils commit#dab51ac
+- built docker-novolume-plugin commit#e478a5c
+- built docker-v1.10-migrator commit#994c35
+
 * Mon Feb 22 2016 Antonio Murdaca <runcom@fedoraproject.org> - 1:1.10.2-4.git86e59a5
 - rebuilt to include /usr/share/rhel/secrets for the secret patch we're carrying
 
