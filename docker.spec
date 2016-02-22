@@ -21,7 +21,7 @@
 
 # docker
 %global git0 https://github.com/projectatomic/%{repo}
-%global commit0 6c71d8f14afc5f1d172084ea5b110b6ae852297a
+%global commit0 86e59a52d84c5688ef220df604ff5deb62d10288
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 
 # d-s-s
@@ -73,8 +73,8 @@
 
 Name: %{repo}
 Epoch: 1
-Version: 1.10.1
-Release: 6.git%{shortcommit0}%{?dist}
+Version: 1.10.2
+Release: 1.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{name}
@@ -365,7 +365,7 @@ that time. You can run this tool instead while the old daemon is still
 running and skip checksum calculation on startup.
 
 %prep
-%autosetup -Sgit -n %{repo}-%{commit0}
+%setup -q -n %{repo}-%{commit0}
 
 # here keep the new line above otherwise autosetup fails when applying patch
 cp %{SOURCE9} .
@@ -559,8 +559,8 @@ cp v1.10-migrator-%{commit5}/LICENSE.docs LICENSE-v1.10-migrator.docs
 [ ! -w /run/%{name}.sock ] || {
     mkdir test_dir
     pushd test_dir
-    git clone https://github.com/lsm5/docker.git -b fedora-1.8
-    pushd %{name}
+    git clone https://github.com/projectatomic/docker.git -b fedora-1.10.2
+    pushd %{repo}
     make test
     popd
     popd
@@ -686,6 +686,14 @@ exit 0
 %{_bindir}/v1.10-migrator-local
 
 %changelog
+* Mon Feb 22 2016 Antonio Murdaca <runcom@fedoraproject.org> - 1:1.10.2-1.git86e59a5
+- built docker @projectatomic/fedora-1.10.2 commit#86e59a5
+- built d-s-s commit#1c2b95b
+- built docker-selinux commit#b8aae8f
+- built docker-utils commit#dab51ac
+- built docker-novolume-plugin commit#e478a5c
+- built docker-v1.10-migrator commit#994c35
+
 * Thu Feb 18 2016 Antonio Murdaca <runcom@fedoraproject.org> - 1:1.10.1-6.git6c71d8f
 - rebuilt with seccomp enabled
 
