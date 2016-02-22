@@ -85,7 +85,7 @@ Name: %{repo}
 %endif
 Epoch: 1
 Version: 1.10.2
-Release: 1.git%{shortcommit0}%{?dist}
+Release: 2.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -163,6 +163,8 @@ Obsoletes: %{repo}-storage-setup <= 0.5-3
 Requires(pre): %{repo}-v1.10-migrator
 
 Requires: libseccomp >= 2.2.1
+
+Recommends: oci-register-machine
 
 %description
 Docker is an open-source engine that automates the deployment of any
@@ -710,6 +712,9 @@ exit 0
 %{_bindir}/v1.10-migrator-local
 
 %changelog
+* Mon Feb 22 2016 Antonio Murdaca <runcom@fedoraproject.org> - 1:1.10.2-2.git86e59a5
+- rebuilt with Recommends: oci-register-machine
+
 * Mon Feb 22 2016 Antonio Murdaca <runcom@fedoraproject.org> - 1:1.10.2-1.git86e59a5
 - built docker @projectatomic/fedora-1.10.2 commit#86e59a5
 - built d-s-s commit#1c2b95b
