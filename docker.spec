@@ -74,7 +74,7 @@
 Name: %{repo}
 Epoch: 1
 Version: 1.10.2
-Release: 3.git%{shortcommit0}%{?dist}
+Release: 4.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{name}
@@ -638,6 +638,7 @@ exit 0
 %config(noreplace) %{_sysconfdir}/sysconfig/%{repo}-storage-setup
 %{_unitdir}/%{repo}-storage-setup.service
 %{_bindir}/%{repo}-storage-setup
+%dir %{dss_libdir}
 %{dss_libdir}/*
 
 %if 0%{?with_devel}
@@ -690,6 +691,9 @@ exit 0
 %{_bindir}/v1.10-migrator-local
 
 %changelog
+* Wed Feb 24 2016 Antonio Murdaca <runcom@fedoraproject.org> - 1:1.10.2-4.git0f5ac89
+- rebuilt to include dss_libdir directory
+
 * Mon Feb 22 2016 Antonio Murdaca <runcom@fedoraproject.org> - 1:1.10.2-3.git0f5ac89
 - built docker @projectatomic/fedora-1.10.2 commit#0f5ac89
 - built d-s-s commit#1c2b95b
