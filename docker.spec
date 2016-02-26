@@ -85,7 +85,7 @@ Name: %{repo}
 %endif
 Epoch: 1
 Version: 1.10.2
-Release: 6.git%{shortcommit0}%{?dist}
+Release: 7.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -596,12 +596,6 @@ cp v1.10-migrator-%{commit5}/LICENSE.docs LICENSE-v1.10-migrator.docs
     popd
 }
 
-%pre
-getent passwd %{repo}root > /dev/null || %{_sbindir}/useradd -r \
-           -d %{_sharedstatedir}/%{repo} -s /sbin/nologin \
-           -c "Docker User" %{repo}root
-exit 0
-
 %post
 %systemd_post %{repo}
 
@@ -717,6 +711,9 @@ exit 0
 %{_bindir}/v1.10-migrator-local
 
 %changelog
+* Fri Feb 26 2016 Antonio Murdaca <runcom@fedoraproject.org> - 1:1.10.2-7.git0f5ac89
+- rebuilt to remove dockerroot user creation
+
 * Tue Feb 23 2016 Antonio Murdaca <runcom@fedoraproject.org> - 1:1.10.2-6.git0f5ac89
 - rebuilt to include dss_libdir directory
 
