@@ -6,20 +6,24 @@ Wants=docker-storage-setup.service
 
 [Service]
 Type=notify
+NotifyAccess=all
 EnvironmentFile=-/etc/sysconfig/docker
 EnvironmentFile=-/etc/sysconfig/docker-storage
 EnvironmentFile=-/etc/sysconfig/docker-network
 Environment=GOTRACEBACK=crash
-ExecStart=/usr/bin/docker daemon \
+ExecStart=/bin/sh -c '/usr/bin/docker daemon \
           $OPTIONS \
           $DOCKER_STORAGE_OPTIONS \
           $DOCKER_NETWORK_OPTIONS \
-          $INSECURE_REGISTRY
+          $INSECURE_REGISTRY \
+          2>&1 | /usr/bin/forward-journald -filter docker'
 LimitNOFILE=1048576
 LimitNPROC=1048576
 LimitCORE=infinity
 MountFlags=slave
 TimeoutStartSec=1min
+StandardOutput=null
+StandardError=null
 
 [Install]
 WantedBy=multi-user.target
