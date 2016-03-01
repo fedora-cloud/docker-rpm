@@ -65,16 +65,16 @@
 %global relabel_files() %{_sbindir}/restorecon -R %{_bindir}/%{name} %{_localstatedir}/run/%{name}.sock %{_localstatedir}/run/%{name}.pid %{_sysconfdir}/%{name} %{_localstatedir}/log/%{name} %{_localstatedir}/log/lxc %{_localstatedir}/lock/lxc %{_unitdir}/%{name}.service %{_sysconfdir}/%{name} &> /dev/null || :
 
 # Version of SELinux we were using
-%if 0%{?fedora} >= 22
-%global selinux_policyver 3.13.1-155
+%if 0%{?centos}
+%global selinux_policyver 3.13.1-60
 %else
-%global selinux_policyver 3.13.1-39
+%global selinux_policyver 3.13.1-155
 %endif
 
 Name: %{repo}
 Epoch: 1
 Version: 1.10.2
-Release: 5.git%{shortcommit0}%{?dist}
+Release: 6.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{name}
@@ -103,22 +103,18 @@ BuildRequires: pkgconfig(audit)
 BuildRequires: btrfs-progs-devel
 BuildRequires: sqlite-devel
 BuildRequires: pkgconfig(systemd)
-%if %{go_compiler}
-BuildRequires: compiler(go-compiler)
-%else
-%ifarch %{golang_arches}
-BuildRequires: golang >= 1.4.2
-%else
-BuildRequires: gcc-go >= %{gccgo_min_vers}
-%endif
-%endif
+BuildRequires: %{?go_compiler:compiler(go-compiler)}%{!?go_compiler:golang}
 %if 0%{?fedora} >= 21
 # Resolves: rhbz#1165615
 Requires: device-mapper-libs >= 1.02.90-1
 %endif
 
 # RE: rhbz#1195804 - ensure min NVR for selinux-policy
+%if 0%{?centos}
+Requires: selinux-policy >= %{selinux_policyver}
+%else
 Requires: selinux-policy >= 3.13.1-114
+%endif
 Requires: %{name}-selinux >= %{epoch}:%{version}-%{release}
 
 # Resolves: rhbz#1045220
@@ -324,7 +320,11 @@ BuildRequires: selinux-policy
 BuildRequires: selinux-policy-devel
 Requires(post): selinux-policy-base >= %{selinux_policyver}
 Requires(post): policycoreutils
+%if 0%{?centos}
+Requires(post): policycoreutils-python
+%else
 Requires(post): policycoreutils-python-utils
+%endif
 Requires(post): libselinux-utils
 Provides: %{name}-io-selinux = %{epoch}:%{version}-%{release}
 
