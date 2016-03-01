@@ -85,7 +85,7 @@ Name: %{repo}
 %endif
 Epoch: 1
 Version: 1.10.2
-Release: 7.git%{shortcommit0}%{?dist}
+Release: 8.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -113,7 +113,7 @@ BuildRequires: glibc-static
 BuildRequires: go-md2man
 BuildRequires: godep
 BuildRequires: device-mapper-devel
-BuildRequires: libseccomp-static >= 2.2.1
+BuildRequires: libseccomp-static >= 2.3.0
 BuildRequires: pkgconfig(audit)
 BuildRequires: btrfs-progs-devel
 BuildRequires: sqlite-devel
@@ -162,7 +162,7 @@ Obsoletes: %{repo}-storage-setup <= 0.5-3
 
 Requires(pre): %{repo}-v1.10-migrator
 
-Requires: libseccomp >= 2.2.1
+Requires: libseccomp >= 2.3.0
 
 Recommends: oci-register-machine
 
@@ -711,6 +711,9 @@ exit 0
 %{_bindir}/v1.10-migrator-local
 
 %changelog
+* Tue Mar  1 2016 Peter Robinson <pbrobinson@fedoraproject.org> 1:1.10.2-8.git0f5ac89
+- Power64 and s390(x) now have libseccomp support
+
 * Fri Feb 26 2016 Antonio Murdaca <runcom@fedoraproject.org> - 1:1.10.2-7.git0f5ac89
 - rebuilt to remove dockerroot user creation
 
