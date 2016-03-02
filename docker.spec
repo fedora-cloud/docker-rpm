@@ -766,7 +766,7 @@ exit 0
 %{_bindir}/v1.10-migrator-local
 
 %changelog
-* Wed Mar 02 2016 jchaloup <jchaloup@redhat.com>
+* Wed Mar 02 2016 jchaloup <jchaloup@redhat.com> 1:1.10.2-9.git0f5ac89
 - Update list of provided packages in devel subpackage
 
 * Tue Mar  1 2016 Peter Robinson <pbrobinson@fedoraproject.org> 1:1.10.2-8.git0f5ac89
