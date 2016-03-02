@@ -85,7 +85,7 @@ Name: %{repo}
 %endif
 Epoch: 1
 Version: 1.10.2
-Release: 8.git%{shortcommit0}%{?dist}
+Release: 9.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -187,95 +187,150 @@ Provides: %{repo}-io-devel = %{epoch}:%{version}-%{release}
 Provides: %{repo}-pkg-devel = %{epoch}:%{version}-%{release}
 Provides: %{repo}-io-pkg-devel = %{epoch}:%{version}-%{release}
 Summary:  A golang registry for global request variables (source libraries)
-Provides: golang(%{import_path}) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/builder) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/builder/parser) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/builder/parser/dumper) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/builder/command) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/nat) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/utils) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/integration-cli) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/trust) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/events) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/volumes) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/dockerinit) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/engine) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/registry) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/registry/v2) = %{epoch}:%{version}-%{release}
+
 Provides: golang(%{import_path}/api) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/api/client) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/api/stats) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/api/client/formatter) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/api/client/inspect) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/api/server) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/opts) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/builtins) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/runconfig) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/docker) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/contrib/docker-device-tool) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/contrib/host-integration) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/api/server/httputils) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/api/server/router) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/api/server/router/build) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/api/server/router/container) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/api/server/router/local) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/api/server/router/network) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/api/server/router/system) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/api/server/router/volume) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/builder) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/builder/dockerfile) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/builder/dockerfile/command) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/builder/dockerfile/parser) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/builder/dockerignore) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/cli) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/cliconfig) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/container) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/daemon) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/daemon/graphdriver) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/daemon/graphdriver/devmapper) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/daemon/graphdriver/aufs) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/daemon/graphdriver/overlay) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/daemon/graphdriver/vfs) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/daemon/graphdriver/btrfs) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/daemon/graphdriver/graphtest) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/daemon/networkdriver) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/daemon/networkdriver/ipallocator) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/daemon/networkdriver/portmapper) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/daemon/networkdriver/bridge) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/daemon/networkdriver/portallocator) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/daemon/daemonbuilder) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/daemon/events) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/daemon/exec) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/daemon/execdriver) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/daemon/execdriver/dockerhooks) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/daemon/execdriver/execdrivers) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/daemon/execdriver/lxc) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/daemon/execdriver/native) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/daemon/execdriver/native/template) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/pkg/devicemapper) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/pkg/units) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/daemon/execdriver/windows) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/daemon/graphdriver) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/daemon/graphdriver/aufs) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/daemon/graphdriver/btrfs) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/daemon/graphdriver/devmapper) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/daemon/graphdriver/graphtest) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/daemon/graphdriver/overlay) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/daemon/graphdriver/register) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/daemon/graphdriver/vfs) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/daemon/graphdriver/windows) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/daemon/graphdriver/zfs) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/daemon/links) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/daemon/logger) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/daemon/logger/awslogs) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/daemon/logger/fluentd) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/daemon/logger/gelf) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/daemon/logger/journald) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/daemon/logger/jsonfilelog) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/daemon/logger/loggerutils) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/daemon/logger/splunk) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/daemon/logger/syslog) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/daemon/network) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/distribution) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/distribution/metadata) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/distribution/xfer) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/docker-utils-dab51acd1b1a77f7cb01a1b7e2129ec85c846b71/dockerfile) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/docker-utils-dab51acd1b1a77f7cb01a1b7e2129ec85c846b71/opts) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/docker-utils-dab51acd1b1a77f7cb01a1b7e2129ec85c846b71/registry) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/docker-utils-dab51acd1b1a77f7cb01a1b7e2129ec85c846b71/registry/fetch) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/docker-utils-dab51acd1b1a77f7cb01a1b7e2129ec85c846b71/sum) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/docker-utils-dab51acd1b1a77f7cb01a1b7e2129ec85c846b71/version) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/dockerversion) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/errors) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/image) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/image/tarexport) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/image/v1) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/layer) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/migrate/v1) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/opts) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/aaparser) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/archive) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/audit) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/authorization) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/broadcaster) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/pkg/chrootarchive) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/devicemapper) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/directory) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/discovery) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/discovery/file) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/discovery/kv) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/discovery/memory) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/discovery/nodes) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/filenotify) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/fileutils) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/gitutils) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/graphdb) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/homedir) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/httputils) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/idtools) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/integration) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/integration/checker) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/ioutils) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/jsonlog) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/jsonmessage) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/locker) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/longpath) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/loopback) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/mflag) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/pkg/mount) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/pkg/systemd) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/namesgenerator) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/pkg/parsers) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/pkg/parsers/kernel) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/pkg/parsers/operatingsystem) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/pkg/parsers/filters) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/pkg/broadcastwriter) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/pkg/stdcopy) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/pkg/proxy) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/pkg/promise) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/pidfile) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/platform) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/plugins) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/plugins/pluginrpc-gen/fixtures) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/pkg/pools) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/pkg/system) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/pkg/fileutils) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/pkg/mflag) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/pkg/mflag/example) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/pkg/timeutils) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/pkg/ioutils) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/progress) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/promise) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/proxy) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/pkg/pubsub) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/pkg/signal) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/pkg/listenbuffer) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/pkg/version) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/pkg/httputils) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/pkg/urlutil) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/pkg/sysinfo) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/pkg/archive) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/pkg/iptables) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/pkg/tailfile) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/pkg/graphdb) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/pkg/tarsum) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/pkg/namesgenerator) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/pkg/jsonlog) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/pkg/testutils) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/pkg/truncindex) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/pkg/homedir) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/pkg/symlink) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/pkg/networkfs/resolvconf) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/pkg/networkfs/etchosts) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/pkg/term) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/random) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/pkg/reexec) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/integration) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/links) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/image) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/graph) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/registrar) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/rpm) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/signal) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/stdcopy) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/streamformatter) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/stringid) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/stringutils) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/symlink) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/sysinfo) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/system) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/tailfile) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/tarsum) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/term) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/term/windows) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/tlsconfig) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/truncindex) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/urlutil) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/useragent) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/version) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/reference) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/registry) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/runconfig) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/runconfig/opts) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/utils) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/volume) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/volume/drivers) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/volume/local) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/volume/store) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/volume/testutils) = %{epoch}:%{version}-%{release}
 
 %description devel
 %{summary}
@@ -711,6 +766,9 @@ exit 0
 %{_bindir}/v1.10-migrator-local
 
 %changelog
+* Wed Mar 02 2016 jchaloup <jchaloup@redhat.com>
+- Update list of provided packages in devel subpackage
+
 * Tue Mar  1 2016 Peter Robinson <pbrobinson@fedoraproject.org> 1:1.10.2-8.git0f5ac89
 - Power64 and s390(x) now have libseccomp support
 
