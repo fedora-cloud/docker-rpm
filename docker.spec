@@ -28,7 +28,7 @@
 
 # docker
 %global git0 https://github.com/projectatomic/%{repo}
-%global commit0 0f5ac89062e1f80bd87e7db9a94859adf7a188a7
+%global commit0 ddbb15a9aa96ea6bac380ba56c067843d866b7df
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 
 # d-s-s
@@ -85,7 +85,7 @@ Name: %{repo}
 %endif
 Epoch: 1
 Version: 1.10.2
-Release: 9.git%{shortcommit0}%{?dist}
+Release: 10.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -766,6 +766,14 @@ exit 0
 %{_bindir}/v1.10-migrator-local
 
 %changelog
+* Thu Mar 03 2016 Antonio Murdaca <runcom@fedoraproject.org> - 1:1.10.2-10.gitddbb15a
+- built docker @projectatomic/fedora-1.10.2 commit#ddbb15a
+- built d-s-s commit#1c2b95b
+- built docker-selinux commit#afc876c
+- built docker-utils commit#dab51ac
+- built docker-novolume-plugin commit#e478a5c
+- built docker-v1.10-migrator commit#994c35
+
 * Wed Mar 02 2016 jchaloup <jchaloup@redhat.com> 1:1.10.2-9.git0f5ac89
 - Update list of provided packages in devel subpackage
 
