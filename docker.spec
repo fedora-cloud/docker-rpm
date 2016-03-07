@@ -49,7 +49,7 @@
 
 # docker-novolume-plugin
 %global git4 https://github.com/projectatomic/%{repo}-novolume-plugin
-%global commit4 e478a5c2605e67d60620150da4b39685c3d34e00
+%global commit4 77a55c1e22563a4b87d426bb89e7c9144c966742
 %global shortcommit4 %(c=%{commit4}; echo ${c:0:7})
 
 # v1.10-migrator
@@ -85,7 +85,7 @@ Name: %{repo}
 %endif
 Epoch: 1
 Version: 1.10.2
-Release: 10.git%{shortcommit0}%{?dist}
+Release: 11.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -766,6 +766,14 @@ exit 0
 %{_bindir}/v1.10-migrator-local
 
 %changelog
+* Mon Mar 07 2016 Antonio Murdaca <runcom@fedoraproject.org> - 1:1.10.2-11.gitddbb15a
+- built docker @projectatomic/fedora-1.10.2 commit#ddbb15a
+- built d-s-s commit#1c2b95b
+- built docker-selinux commit#afc876c
+- built docker-utils commit#dab51ac
+- built docker-novolume-plugin commit#77a55c1
+- built docker-v1.10-migrator commit#994c35
+
 * Thu Mar 03 2016 Antonio Murdaca <runcom@fedoraproject.org> - 1:1.10.2-10.gitddbb15a
 - built docker @projectatomic/fedora-1.10.2 commit#ddbb15a
 - built d-s-s commit#1c2b95b
