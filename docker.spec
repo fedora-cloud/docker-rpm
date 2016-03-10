@@ -50,6 +50,11 @@
 %global commit5 994c35cbf7ae094d4cb1230b85631ecedd77b0d8
 %global shortcommit5 %(c=%{commit5}; echo ${c:0:7})
 
+# forward-journald
+%global git6 https://github.com/projectatomic/forward-journald
+%global commit6 3b80098e33db819718544a02ad2f3f3289c23f99
+%global shortcommit6 %(c=%{commit6}; echo ${c:0:7})
+
 # docker-selinux stuff (prefix with ds_ for version/release etc.)
 # Some bits borrowed from the openstack-selinux package
 %global selinuxtype targeted
@@ -74,7 +79,7 @@
 Name: %{repo}
 Epoch: 1
 Version: 1.10.2
-Release: 6.git%{shortcommit0}%{?dist}
+Release: 7.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{name}
@@ -92,6 +97,7 @@ Source8: %{repo}-logrotate.sh
 Source9: README.%{repo}-logrotate
 Source10: %{repo}-network.sysconfig
 Source11: %{git5}/archive/%{commit5}/v1.10-migrator-%{shortcommit5}.tar.gz
+Source12: %{git6}/archive/%{commit6}/forward-journald-%{shortcommit6}.tar.gz
 
 BuildRequires: git
 BuildRequires: glibc-static
@@ -364,6 +370,19 @@ The migration usually runs on daemon startup but it can be quite slow(usually
 that time. You can run this tool instead while the old daemon is still
 running and skip checksum calculation on startup.
 
+%package forward-journald
+Summary: Forward stdin to journald
+License: ASL 2.0
+BuildRequires: golang(github.com/coreos/go-systemd/journal)
+
+%description forward-journald
+Forward stdin to journald
+
+The main driver for this program is < go 1.6rc2 has a issue where 10
+SIGPIPE's on stdout or stderr cause go to generate a non-trappable SIGPIPE
+killing the process. This happens when journald is restarted while docker is
+running under systemd.
+
 %prep
 %setup -q -n %{repo}-%{commit0}
 
@@ -385,6 +404,9 @@ tar zxf %{SOURCE4}
 # untar v1.10-migrator
 tar zxf %{SOURCE11}
 
+# untar forward-journald
+tar zxf %{SOURCE12}
+
 %build
 # set up temporary build gopath, and put our directory there
 mkdir _build
@@ -393,11 +415,12 @@ mkdir -p src/%{provider}.%{provider_tld}/{%{repo},projectatomic,vbatts}
 ln -s $(dirs +1 -l) src/%{import_path}
 ln -s $(dirs +1 -l)/%{repo}-utils-%{commit3} src/%{provider}.%{provider_tld}/vbatts/%{repo}-utils
 ln -s $(dirs +1 -l)/%{repo}-novolume-plugin-%{commit4} src/%{provider}.%{provider_tld}/projectatomic/%{repo}-novolume-plugin
+ln -s $(dirs +1 -l)/forward-journald-%{commit6} src/%{provider}.%{provider_tld}/projectatomic/forward-journald
 popd
 
 export DOCKER_GITCOMMIT="%{shortcommit0}/%{version}"
 export DOCKER_BUILDTAGS="selinux seccomp"
-export GOPATH=$(pwd)/_build:$(pwd)/vendor:%{gopath}:$(pwd)/%{repo}-novolume-plugin-%{commit4}/Godeps/_workspace
+export GOPATH=$(pwd)/_build:$(pwd)/vendor:%{gopath}:$(pwd)/%{repo}-novolume-plugin-%{commit4}/Godeps/_workspace:$(pwd)/forward-journald-%{commit6}/vendor
 
 DEBUG=1 bash -x hack/make.sh dynbinary
 man/md2man-all.sh
@@ -411,6 +434,7 @@ pushd $(pwd)/_build/src
 go build -ldflags "-B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d ' \n')" github.com/vbatts/%{repo}-utils/cmd/%{repo}-fetch
 go build -ldflags "-B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d ' \n')" github.com/vbatts/%{repo}-utils/cmd/%{repo}tarsum
 go build -ldflags "-B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d ' \n')" github.com/projectatomic/%{repo}-novolume-plugin
+go build -ldflags "-B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d ' \n')" github.com/projectatomic/forward-journald
 popd
 
 # build %%{repo}-selinux
@@ -428,9 +452,10 @@ popd
 install -d %{buildroot}%{_bindir}
 install -d %{buildroot}%{_libexecdir}/%{repo}
 
-# install utils
+# install utils and forward-journald
 install -p -m 755 _build/src/%{repo}-fetch %{buildroot}%{_bindir}
 install -p -m 755 _build/src/%{repo}tarsum %{buildroot}%{_bindir}
+install -p -m 700 _build/src/forward-journald %{buildroot}%{_bindir}
 
 for x in bundles/latest; do
     if ! test -d $x/dynbinary; then
@@ -618,7 +643,6 @@ exit 0
 %config(noreplace) %{_sysconfdir}/sysconfig/%{repo}-storage
 %{_mandir}/man1/%{repo}*.1.gz
 %{_mandir}/man5/Dockerfile.5.gz
-%{_mandir}/man8/%{repo}*.8.gz
 %{_bindir}/%{repo}
 %{_libexecdir}/%{repo}
 %{_unitdir}/%{repo}.service
@@ -662,6 +686,7 @@ exit 0
 /usr/lib/docker/%{repo}-novolume-plugin
 %{_unitdir}/%{repo}-novolume-plugin.service
 %{_unitdir}/%{repo}-novolume-plugin.socket
+%{_mandir}/man8/%{repo}-novolume-plugin.8.gz
 
 %files selinux
 %doc %{repo}-selinux-%{commit2}/README.md
@@ -684,7 +709,19 @@ exit 0
 %doc CONTRIBUTING-v1.10-migrator.md README-v1.10-migrator.md
 %{_bindir}/v1.10-migrator-local
 
+%files forward-journald
+%license forward-journald-%{commit6}/LICENSE
+%doc forward-journald-%{commit6}/README.md
+%{_bindir}/forward-journald
+
 %changelog
+* Wed Mar 16 2016 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.10.2-7.git0f5ac89
+- Resolves: rhbz#1318361 - include docker-forward-journald subpackage
+- bump release tag, -6 already built
+
+* Fri Mar 04 2016 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.10.2-6.git0f5ac89
+- include docker-forward-journald subpackage commit#3b80098
+
 * Fri Feb 26 2016 Antonio Murdaca <runcom@fedoraproject.org> - 1:1.10.2-5.git0f5ac89
 - rebuilt to remove dockerroot user creation
 
