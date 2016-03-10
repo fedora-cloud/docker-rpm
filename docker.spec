@@ -85,7 +85,7 @@ Name: %{repo}
 %endif
 Epoch: 1
 Version: 1.10.2
-Release: 11.git%{shortcommit0}%{?dist}
+Release: 12.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -768,6 +768,9 @@ exit 0
 %{_bindir}/v1.10-migrator-local
 
 %changelog
+* Thu Mar 10 2016 Lokesh Mandvekar <lsm5fedoraproject.org> - 1:1.10.2-12.gitddbb15a
+- Tmp Resolves: rhbz#1315903 - disable ppc64 build
+
 * Mon Mar 07 2016 Antonio Murdaca <runcom@fedoraproject.org> - 1:1.10.2-11.gitddbb15a
 - built docker @projectatomic/fedora-1.10.2 commit#ddbb15a
 - built d-s-s commit#1c2b95b
