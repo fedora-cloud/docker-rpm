@@ -28,7 +28,7 @@
 
 # docker
 %global git0 https://github.com/projectatomic/%{repo}
-%global commit0 ddbb15a9aa96ea6bac380ba56c067843d866b7df
+%global commit0 e949a8110b4c50217bc550cbf9fa4323193f8a8d
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 
 # d-s-s
@@ -84,8 +84,8 @@ Name: %{repo}-master
 Name: %{repo}
 %endif
 Epoch: 1
-Version: 1.10.2
-Release: 12.git%{shortcommit0}%{?dist}
+Version: 1.10.3
+Release: 1.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -167,6 +167,7 @@ Requires(pre): %{repo}-v1.10-migrator
 Requires: libseccomp >= 2.3.0
 
 Recommends: oci-register-machine
+Recommends: oci-systemd-hook
 
 %description
 Docker is an open-source engine that automates the deployment of any
@@ -768,6 +769,14 @@ exit 0
 %{_bindir}/v1.10-migrator-local
 
 %changelog
+* Fri Mar 11 2016 Antonio Murdaca <runcom@fedoraproject.org> - 1:1.10.3-1.gite949a81
+- built docker @projectatomic/fedora-1.10.3 commit#e949a81
+- built d-s-s commit#1c2b95b
+- built docker-selinux commit#afc876c
+- built docker-utils commit#dab51ac
+- built docker-novolume-plugin commit#77a55c1
+- built docker-v1.10-migrator commit#994c35
+
 * Thu Mar 10 2016 Lokesh Mandvekar <lsm5fedoraproject.org> - 1:1.10.2-12.gitddbb15a
 - Tmp Resolves: rhbz#1315903 - disable ppc64 build
 
