@@ -647,7 +647,7 @@ cp v1.10-migrator-%{commit5}/LICENSE.docs LICENSE-v1.10-migrator.docs
 [ ! -w /run/%{repo}.sock ] || {
     mkdir test_dir
     pushd test_dir
-    git clone https://github.com/projectatomic/docker.git -b fedora-1.10.2
+    git clone https://github.com/projectatomic/docker.git -b fedora-1.10.3
     pushd %{repo}
     make test
     popd
