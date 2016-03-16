@@ -79,7 +79,7 @@
 Name: %{repo}
 Epoch: 1
 Version: 1.10.2
-Release: 7.git%{shortcommit0}%{?dist}
+Release: 8.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{name}
@@ -145,6 +145,7 @@ Requires: xfsprogs
 Obsoletes: %{name}-storage-setup <= 0.5-3
 
 Requires: libseccomp >= 2.2.1
+Requires: %{repo}-forward-journald = %{epoch}:%{version}-%{release}
 
 %description
 Docker is an open-source engine that automates the deployment of any
@@ -715,6 +716,9 @@ exit 0
 %{_bindir}/forward-journald
 
 %changelog
+* Wed Mar 16 2016 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.10.2-8.git0f5ac89
+- docker package runtime depends on docker-forward-journald
+
 * Wed Mar 16 2016 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.10.2-7.git0f5ac89
 - Resolves: rhbz#1318361 - include docker-forward-journald subpackage
 - bump release tag, -6 already built
