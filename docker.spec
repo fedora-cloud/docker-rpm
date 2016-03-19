@@ -42,7 +42,7 @@
 
 # docker-novolume-plugin
 %global git4 https://github.com/projectatomic/%{repo}-novolume-plugin
-%global commit4 e478a5c2605e67d60620150da4b39685c3d34e00
+%global commit4 77a55c1e22563a4b87d426bb89e7c9144c966742
 %global shortcommit4 %(c=%{commit4}; echo ${c:0:7})
 
 # v1.10-migrator
@@ -79,7 +79,7 @@
 Name: %{repo}
 Epoch: 1
 Version: 1.10.2
-Release: 8.git%{shortcommit0}%{?dist}
+Release: 9.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{name}
@@ -716,6 +716,9 @@ exit 0
 %{_bindir}/forward-journald
 
 %changelog
+* Sat Mar 19 2016 Antonio Murdaca <runcom@fedoraproject.org> - 1:1.10.2-9.git0f5ac89
+- update docker-novolume-plugin to v1.0.8
+
 * Wed Mar 16 2016 Lokesh Mandvekar <lsm5@fedoraproject.org> - 1:1.10.2-8.git0f5ac89
 - docker package runtime depends on docker-forward-journald
 
