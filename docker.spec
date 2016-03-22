@@ -40,11 +40,6 @@
 %global commit3 dab51acd1b1a77f7cb01a1b7e2129ec85c846b71
 %global shortcommit3 %(c=%{commit3}; echo ${c:0:7})
 
-# docker-novolume-plugin
-%global git4 https://github.com/projectatomic/%{repo}-novolume-plugin
-%global commit4 77a55c1e22563a4b87d426bb89e7c9144c966742
-%global shortcommit4 %(c=%{commit4}; echo ${c:0:7})
-
 # v1.10-migrator
 %global git5 https://github.com/%{repo}/v1.10-migrator
 %global commit5 994c35cbf7ae094d4cb1230b85631ecedd77b0d8
@@ -89,7 +84,6 @@ Source0: %{git0}/archive/%{commit0}/%{repo}-%{shortcommit0}.tar.gz
 Source1: %{git1}/archive/%{commit1}/%{repo}-storage-setup-%{shortcommit1}.tar.gz
 Source2: %{git2}/archive/%{commit2}/%{repo}-selinux-%{shortcommit2}.tar.gz
 Source3: %{git3}/archive/%{commit3}/%{repo}-utils-%{shortcommit3}.tar.gz
-Source4: %{git4}/archive/%{commit4}/%{repo}-novolume-plugin-%{shortcommit4}.tar.gz
 Source5: %{repo}.service
 Source6: %{repo}.sysconfig
 Source7: %{repo}-storage.sysconfig
@@ -296,31 +290,6 @@ Provides: %{name}-io-logrotate = %{epoch}:%{version}-%{release}
 This package installs %{summary}. logrotate is assumed to be installed on
 containers for this to work, failures are silently ignored.
 
-%package novolume-plugin
-URL: %{git4}
-License: MIT
-Summary: Block container starts with local volumes defined
-Requires: %{repo} = %{epoch}:%{version}-%{release}
-
-%description novolume-plugin
-When a volume in provisioned via the `VOLUME` instruction in a Dockerfile or
-via `docker run -v volumename`, host's storage space is used. This could lead to
-an unexpected out of space issue which could bring down everything.
-There are situations where this is not an accepted behavior. PAAS, for
-instance, can't allow their users to run their own images without the risk of
-filling the entire storage space on a server. One solution to this is to deny users
-from running images with volumes. This way the only storage a user gets can be limited
-and PAAS can assign quota to it.
-
-This plugin solves this issue by disallowing starting a container with
-local volumes defined. In particular, the plugin will block `docker run` with:
-
-- `--volumes-from`
-- images that have `VOLUME`(s) defined
-- volumes early provisioned with `docker volume` command
-
-The only thing allowed will be just bind mounts.
-
 %package selinux
 Summary: SELinux policies for Docker
 BuildRequires: selinux-policy
@@ -399,9 +368,6 @@ tar zxf %{SOURCE2}
 # untar docker-utils
 tar zxf %{SOURCE3}
 
-# untar docker-novolume-plugin
-tar zxf %{SOURCE4}
-
 # untar v1.10-migrator
 tar zxf %{SOURCE11}
 
@@ -415,26 +381,21 @@ pushd _build
 mkdir -p src/%{provider}.%{provider_tld}/{%{repo},projectatomic,vbatts}
 ln -s $(dirs +1 -l) src/%{import_path}
 ln -s $(dirs +1 -l)/%{repo}-utils-%{commit3} src/%{provider}.%{provider_tld}/vbatts/%{repo}-utils
-ln -s $(dirs +1 -l)/%{repo}-novolume-plugin-%{commit4} src/%{provider}.%{provider_tld}/projectatomic/%{repo}-novolume-plugin
 ln -s $(dirs +1 -l)/forward-journald-%{commit6} src/%{provider}.%{provider_tld}/projectatomic/forward-journald
 popd
 
 export DOCKER_GITCOMMIT="%{shortcommit0}/%{version}"
 export DOCKER_BUILDTAGS="selinux seccomp"
-export GOPATH=$(pwd)/_build:$(pwd)/vendor:%{gopath}:$(pwd)/%{repo}-novolume-plugin-%{commit4}/Godeps/_workspace:$(pwd)/forward-journald-%{commit6}/vendor
+export GOPATH=$(pwd)/_build:$(pwd)/vendor:%{gopath}:$(pwd)/forward-journald-%{commit6}/vendor
 
 DEBUG=1 bash -x hack/make.sh dynbinary
 man/md2man-all.sh
 cp contrib/syntax/vim/LICENSE LICENSE-vim-syntax
 cp contrib/syntax/vim/README.md README-vim-syntax.md
-cp %{repo}-novolume-plugin-%{commit4}/LICENSE LICENSE-novolume-plugin
-cp %{repo}-novolume-plugin-%{commit4}/README.md README-novolume-plugin.md
-go-md2man -in %{repo}-novolume-plugin-%{commit4}/man/docker-novolume-plugin.8.md -out docker-novolume-plugin.8
 
 pushd $(pwd)/_build/src
 go build -ldflags "-B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d ' \n')" github.com/vbatts/%{repo}-utils/cmd/%{repo}-fetch
 go build -ldflags "-B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d ' \n')" github.com/vbatts/%{repo}-utils/cmd/%{repo}tarsum
-go build -ldflags "-B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d ' \n')" github.com/projectatomic/%{repo}-novolume-plugin
 go build -ldflags "-B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d ' \n')" github.com/projectatomic/forward-journald
 popd
 
@@ -511,14 +472,6 @@ install -d %{buildroot}%{_datadir}/rhel/secrets
 # install systemd/init scripts
 install -d %{buildroot}%{_unitdir}
 install -p -m 644 %{SOURCE5} %{buildroot}%{_unitdir}
-
-# install novolume-plugin executable, unitfile, socket and man
-install -d %{buildroot}/usr/lib/docker
-install -p -m 755 _build/src/%{repo}-novolume-plugin %{buildroot}/usr/lib/docker
-install -p -m 644 %{repo}-novolume-plugin-%{commit4}/systemd/%{repo}-novolume-plugin.service %{buildroot}%{_unitdir}
-install -p -m 644 %{repo}-novolume-plugin-%{commit4}/systemd/%{repo}-novolume-plugin.socket %{buildroot}%{_unitdir}
-install -d %{buildroot}%{_mandir}/man8
-install -p -m 644 %{repo}-novolume-plugin.8 %{buildroot}%{_mandir}/man8
 
 # for additional args
 install -d %{buildroot}%{_sysconfdir}/sysconfig/
@@ -636,9 +589,9 @@ exit 0
 %{!?_licensedir:%global license %doc}
 
 %files
-%license LICENSE LICENSE-novolume-plugin LICENSE-vim-syntax
+%license LICENSE LICENSE-vim-syntax
 %doc AUTHORS CHANGELOG.md CONTRIBUTING.md MAINTAINERS NOTICE README.md 
-%doc README-novolume-plugin.md README-vim-syntax.md
+%doc README-vim-syntax.md
 %config(noreplace) %{_sysconfdir}/sysconfig/%{repo}
 %config(noreplace) %{_sysconfdir}/sysconfig/%{repo}-network
 %config(noreplace) %{_sysconfdir}/sysconfig/%{repo}-storage
@@ -647,7 +600,6 @@ exit 0
 %{_bindir}/%{repo}
 %{_libexecdir}/%{repo}
 %{_unitdir}/%{repo}.service
-%{_unitdir}/%{repo}-novolume-plugin.socket
 %{_datadir}/bash-completion/completions/%{repo}
 %dir %{_datadir}/rhel/secrets
 %dir %{_sharedstatedir}/%{repo}
@@ -680,14 +632,6 @@ exit 0
 %files logrotate
 %doc README.%{name}-logrotate
 %{_sysconfdir}/cron.daily/%{name}-logrotate
-
-%files novolume-plugin
-%license LICENSE-novolume-plugin
-%doc README-novolume-plugin.md
-/usr/lib/docker/%{repo}-novolume-plugin
-%{_unitdir}/%{repo}-novolume-plugin.service
-%{_unitdir}/%{repo}-novolume-plugin.socket
-%{_mandir}/man8/%{repo}-novolume-plugin.8.gz
 
 %files selinux
 %doc %{repo}-selinux-%{commit2}/README.md
