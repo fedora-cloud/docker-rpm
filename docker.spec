@@ -78,8 +78,8 @@
 
 Name: %{repo}
 Epoch: 2
-Version: 1.10.2
-Release: 9.git%{shortcommit0}%{?dist}
+Version: 1.9.1
+Release: 6.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{name}
