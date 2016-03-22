@@ -24,6 +24,7 @@ MountFlags=slave
 StandardOutput=null
 StandardError=null
 TimeoutStartSec=0
+Restart=on-abnormal
 
 [Install]
 WantedBy=multi-user.target
