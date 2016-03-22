@@ -579,10 +579,6 @@ if %{_sbindir}/selinuxenabled ; then
 fi
 fi
 
-%triggerpost -n %{repo}-v1.10-migrator -- %{repo} < %{version}
-%{_bindir}/v1.10-migrator-local 2>/dev/null
-exit 0
-
 #define license tag if not already defined
 %{!?_licensedir:%global license %doc}
 
