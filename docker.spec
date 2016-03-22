@@ -83,7 +83,7 @@ Name: %{repo}-master
 %else
 Name: %{repo}
 %endif
-Epoch: 1
+Epoch: 2
 Version: 1.10.3
 Release: 3.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
