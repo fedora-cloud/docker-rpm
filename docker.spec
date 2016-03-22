@@ -77,7 +77,7 @@
 %endif
 
 Name: %{repo}
-Epoch: 1
+Epoch: 2
 Version: 1.10.2
 Release: 9.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
