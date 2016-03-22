@@ -98,7 +98,6 @@ BuildRequires: glibc-static
 BuildRequires: go-md2man
 BuildRequires: godep
 BuildRequires: device-mapper-devel
-BuildRequires: libseccomp-static >= 2.2.1
 BuildRequires: pkgconfig(audit)
 BuildRequires: btrfs-progs-devel
 BuildRequires: sqlite-devel
@@ -138,7 +137,6 @@ Requires: lvm2
 Requires: xfsprogs
 Obsoletes: %{name}-storage-setup <= 0.5-3
 
-Requires: libseccomp >= 2.2.1
 Requires: %{repo}-forward-journald = %{epoch}:%{version}-%{release}
 
 %description
@@ -385,7 +383,7 @@ ln -s $(dirs +1 -l)/forward-journald-%{commit6} src/%{provider}.%{provider_tld}/
 popd
 
 export DOCKER_GITCOMMIT="%{shortcommit0}/%{version}"
-export DOCKER_BUILDTAGS="selinux seccomp"
+export DOCKER_BUILDTAGS="selinux"
 export GOPATH=$(pwd)/_build:$(pwd)/vendor:%{gopath}:$(pwd)/forward-journald-%{commit6}/vendor
 
 DEBUG=1 bash -x hack/make.sh dynbinary
