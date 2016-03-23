@@ -1,7 +1,6 @@
-54bfe7e747b01b85345232f8541eb1aa  docker-0f5ac89.tar.gz
-03b40ac0202501bd25cf8365cc2aeaff  docker-novolume-plugin-77a55c1.tar.gz
+b19eab2fe8eb72f50767aec919fd3c1e  docker-c6607d2.tar.gz
 c2a5d34f07c9abd474dca95deab58f73  docker-selinux-afc876c.tar.gz
-3cdff1d3539b5bbb8e84700a59dc26be  docker-storage-setup-1c2b95b.tar.gz
-41de66f15f8151b1cb81b8d88c14d0e1  docker-utils-dab51ac.tar.gz
-3c2ad0a601717cf736c05b99061f5790  forward-journald-3b80098.tar.gz
+22cdd0064577027e18225c7da47a2d05  docker-storage-setup-c6f0553.tar.gz
+694649f5366c89286543a228567d28f7  docker-utils-b851c03.tar.gz
+364a0e680725ef42fe776d9496302e56  forward-journald-77e02a9.tar.gz
 1f7d112be5ba2380804762d965f9954d  v1.10-migrator-994c35c.tar.gz
