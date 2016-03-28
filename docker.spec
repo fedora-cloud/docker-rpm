@@ -511,7 +511,6 @@ popd
 %install
 # install binary
 install -d %{buildroot}%{_bindir}
-install -d %{buildroot}%{_libexecdir}/%{repo}
 
 # install utils
 install -p -m 755 _build/src/%{repo}-fetch %{buildroot}%{_bindir}
@@ -523,7 +522,6 @@ for x in bundles/latest; do
     fi
     rm $x/dynbinary/*.md5 $x/dynbinary/*.sha256
     install -p -m 755 $x/dynbinary/%{repo}-%{version}* %{buildroot}%{_bindir}/%{repo}
-    install -p -m 755 $x/dynbinary/%{repo}init-%{version}* %{buildroot}%{_libexecdir}/%{repo}/%{repo}init
     break
 done
 
@@ -705,7 +703,6 @@ exit 0
 %{_mandir}/man5/Dockerfile.5.gz
 %{_mandir}/man8/%{repo}*.8.gz
 %{_bindir}/%{repo}
-%{_libexecdir}/%{repo}
 %{_unitdir}/%{repo}.service
 %{_datadir}/bash-completion/completions/%{repo}
 %dir %{_datadir}/rhel/secrets
