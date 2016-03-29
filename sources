@@ -1,6 +1,6 @@
-e982b0a38b0eb0378f6010286f60748b  docker-d93ee51.tar.gz
+78e0bbc23573a18a7417135f388192bf  docker-f8a9a2a.tar.gz
 03b40ac0202501bd25cf8365cc2aeaff  docker-novolume-plugin-77a55c1.tar.gz
-c2a5d34f07c9abd474dca95deab58f73  docker-selinux-afc876c.tar.gz
-3cdff1d3539b5bbb8e84700a59dc26be  docker-storage-setup-1c2b95b.tar.gz
-41de66f15f8151b1cb81b8d88c14d0e1  docker-utils-dab51ac.tar.gz
+e7d73a44821c762d479aa13cc18407d9  docker-selinux-2bc84ec.tar.gz
+323ce761db7f8b23f991341e4c995f31  docker-storage-setup-f087cb1.tar.gz
+694649f5366c89286543a228567d28f7  docker-utils-b851c03.tar.gz
 1f7d112be5ba2380804762d965f9954d  v1.10-migrator-994c35c.tar.gz

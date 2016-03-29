@@ -28,23 +28,23 @@
 
 # docker
 %global git0 https://github.com/projectatomic/%{repo}
-%global commit0 d93ee5133f00f269e737d91a519c250e82c4e4b5
+%global commit0 f8a9a2a9fee151828f9deed04cb40e88bc3b2f56
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 
 # d-s-s
 %global git1 https://github.com/projectatomic/%{repo}-storage-setup/
-%global commit1 1c2b95b33b917adb9b681a953f2c6b6b2befae6d
+%global commit1 f087cb16d6751d29821494a86b9ff2f302ae9ea7
 %global shortcommit1 %(c=%{commit1}; echo ${c:0:7})
 %global dss_libdir %{_exec_prefix}/lib/%{repo}-storage-setup
 
 # docker-selinux
 %global git2 https://github.com/projectatomic/%{repo}-selinux
-%global commit2 afc876c0e8828cc0b73cf76bbf550e30b5e627aa
+%global commit2 2bc84ec693a96150b08468d5a337f1a3a702e80b
 %global shortcommit2 %(c=%{commit2}; echo ${c:0:7})
 
 # docker-utils
 %global git3 https://github.com/vbatts/%{repo}-utils
-%global commit3 dab51acd1b1a77f7cb01a1b7e2129ec85c846b71
+%global commit3 b851c03ddae1db30a4acf5e4cc5e31b6a671af35
 %global shortcommit3 %(c=%{commit3}; echo ${c:0:7})
 
 # docker-novolume-plugin
@@ -85,7 +85,7 @@ Name: %{repo}
 %endif
 Epoch: 2
 Version: 1.10.3
-Release: 3.git%{shortcommit0}%{?dist}
+Release: 4.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -768,6 +768,13 @@ exit 0
 %{_bindir}/v1.10-migrator-local
 
 %changelog
+* Tue Mar 29 2016 Lokesh Mandvekar <lsm5@fedoraproject.org> - 2:1.10.3-4.gitf8a9a2a
+- built docker @projectatomic/fedora-1.10.3 commit#f8a9a2a
+- built docker-selinux commit#2bc84ec
+- built d-s-s commit#f087cb1
+- built docker-utils commit#b851c03
+- built forward-journald commit#77e02a9
+
 * Wed Mar 16 2016 Antonio Murdaca <runcom@fedoraproject.org> - 1:1.10.3-3.gitd93ee51
 - built docker @projectatomic/fedora-1.10.3 commit#d93ee51
 - built d-s-s commit#1c2b95b
