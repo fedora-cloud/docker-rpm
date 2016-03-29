@@ -21,18 +21,18 @@
 
 # docker
 %global git0 https://github.com/projectatomic/%{repo}
-%global commit0 c6607d2dbbca0f870b63c70e5f379b690dd336fe
+%global commit0 ee06d03a4f2e006d94e5de3d246b84713d66daee
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 
 # d-s-s
 %global git1 https://github.com/projectatomic/%{repo}-storage-setup/
-%global commit1 c6f0553f248be2523a8b1bf345529d9958e1b82e
+%global commit1 f087cb16d6751d29821494a86b9ff2f302ae9ea7
 %global shortcommit1 %(c=%{commit1}; echo ${c:0:7})
 %global dss_libdir %{_exec_prefix}/lib/%{repo}-storage-setup
 
 # docker-selinux
 %global git2 https://github.com/projectatomic/%{repo}-selinux
-%global commit2 afc876c0e8828cc0b73cf76bbf550e30b5e627aa
+%global commit2 2bc84ec693a96150b08468d5a337f1a3a702e80b
 %global shortcommit2 %(c=%{commit2}; echo ${c:0:7})
 
 # docker-utils
@@ -74,7 +74,7 @@
 Name: %{repo}
 Epoch: 2
 Version: 1.9.1
-Release: 7.git%{shortcommit0}%{?dist}
+Release: 8.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{name}
@@ -656,6 +656,13 @@ fi
 %{_bindir}/forward-journald
 
 %changelog
+* Tue Mar 29 2016 Lokesh Mandvekar <lsm5@fedoraproject.org> - 2:1.9.1-8.gitee06d03
+- built docker @projectatomic/fedora-1.9 commit#ee06d03
+- built docker-selinux commit#2bc84ec
+- built d-s-s commit#f087cb1
+- built docker-utils commit#b851c03
+- built forward-journald commit#77e02a9
+
 * Tue Mar 22 2016 Lokesh Mandvekar <lsm5@fedoraproject.org> - 2:1.9.1-7.gitc6607d2
 - built docker @projectatomic/fedora-1.9 commit#c6607d2
 - built docker-selinux commit#afc876c

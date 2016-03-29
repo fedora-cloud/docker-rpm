@@ -1,6 +1,6 @@
-b19eab2fe8eb72f50767aec919fd3c1e  docker-c6607d2.tar.gz
-c2a5d34f07c9abd474dca95deab58f73  docker-selinux-afc876c.tar.gz
-22cdd0064577027e18225c7da47a2d05  docker-storage-setup-c6f0553.tar.gz
+014d760a6cf773b242e4e7cfcacdf484  docker-ee06d03.tar.gz
+e7d73a44821c762d479aa13cc18407d9  docker-selinux-2bc84ec.tar.gz
+323ce761db7f8b23f991341e4c995f31  docker-storage-setup-f087cb1.tar.gz
 694649f5366c89286543a228567d28f7  docker-utils-b851c03.tar.gz
 364a0e680725ef42fe776d9496302e56  forward-journald-77e02a9.tar.gz
 1f7d112be5ba2380804762d965f9954d  v1.10-migrator-994c35c.tar.gz
