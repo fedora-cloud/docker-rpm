@@ -73,8 +73,8 @@
 
 Name: %{repo}
 Epoch: 2
-Version: 1.9.1
-Release: 9.git%{shortcommit0}%{?dist}
+Version: 1.10.3
+Release: 10.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{name}
@@ -530,16 +530,12 @@ popd
 # install v1.10-migrator
 install -d %{buildroot}%{_bindir}
 install -p -m 700 v1.10-migrator-%{commit5}/v1.10-migrator-local %{buildroot}%{_bindir}
-cp v1.10-migrator-%{commit5}/CONTRIBUTING.md CONTRIBUTING-v1.10-migrator.md
-cp v1.10-migrator-%{commit5}/README.md README-v1.10-migrator.md
-cp v1.10-migrator-%{commit5}/LICENSE.code LICENSE-v1.10-migrator.code
-cp v1.10-migrator-%{commit5}/LICENSE.docs LICENSE-v1.10-migrator.docs
 
 %check
 [ ! -w /run/%{name}.sock ] || {
     mkdir test_dir
     pushd test_dir
-    git clone https://github.com/projectatomic/docker.git -b fedora-1.10.2
+    git clone https://github.com/projectatomic/%{name}.git -b fedora-1.10.3
     pushd %{repo}
     make test
     popd
@@ -616,7 +612,7 @@ fi
 
 %if 0%{?with_unit_test}
 %files unit-test
-%{_sharedstatedir}/docker-unit-test/
+%{_sharedstatedir}/%{repo}-unit-test/
 %endif
 
 %files fish-completion
@@ -644,8 +640,8 @@ fi
 %{_bindir}/%{repo}tarsum
 
 %files v1.10-migrator
-%license LICENSE-v1.10-migrator.{code,docs}
-%doc CONTRIBUTING-v1.10-migrator.md README-v1.10-migrator.md
+%license v1.10-migrator-%{commit5}/LICENSE.{code,docs}
+%doc v1.10-migrator-%{commit5}/{CONTRIBUTING,README}.md
 %{_bindir}/v1.10-migrator-local
 
 %files forward-journald
@@ -654,6 +650,9 @@ fi
 %{_bindir}/forward-journald
 
 %changelog
+* Fri Apr 08 2016 Lokesh Mandvekar <lsm5@fedoraproject.org> - 2:1.10.3-10.gitf8a9a2a
+- Resolves: rhbz#1325377 - bump back to 1.10.3
+
 * Tue Mar 29 2016 Lokesh Mandvekar <lsm5@fedoraproject.org> - 2:1.9.1-9.gitee06d03
 - built docker @projectatomic/fedora-1.9 commit#ee06d03
 - built docker-selinux commit#afc876c
