@@ -21,18 +21,18 @@
 
 # docker
 %global git0 https://github.com/projectatomic/%{repo}
-%global commit0 ee06d03a4f2e006d94e5de3d246b84713d66daee
+%global commit0 8eaba084fd648fa35dfb89069a318251e115c6f3
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 
 # d-s-s
 %global git1 https://github.com/projectatomic/%{repo}-storage-setup/
-%global commit1 f087cb16d6751d29821494a86b9ff2f302ae9ea7
+%global commit1 bebb4b109f77af13f3a65b2cffda6ef17d90a148
 %global shortcommit1 %(c=%{commit1}; echo ${c:0:7})
 %global dss_libdir %{_exec_prefix}/lib/%{repo}-storage-setup
 
 # docker-selinux
 %global git2 https://github.com/projectatomic/%{repo}-selinux
-%global commit2 afc876c0e8828cc0b73cf76bbf550e30b5e627aa
+%global commit2 2bc84ec693a96150b08468d5a337f1a3a702e80b
 %global shortcommit2 %(c=%{commit2}; echo ${c:0:7})
 
 # docker-utils
@@ -42,7 +42,7 @@
 
 # v1.10-migrator
 %global git5 https://github.com/%{repo}/v1.10-migrator
-%global commit5 994c35cbf7ae094d4cb1230b85631ecedd77b0d8
+%global commit5 c417a6a022c5023c111662e8280f885f6ac259be
 %global shortcommit5 %(c=%{commit5}; echo ${c:0:7})
 
 # forward-journald
@@ -74,7 +74,7 @@
 Name: %{repo}
 Epoch: 2
 Version: 1.10.3
-Release: 10.git%{shortcommit0}%{?dist}
+Release: 11.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{name}
@@ -575,6 +575,10 @@ if %{_sbindir}/selinuxenabled ; then
 fi
 fi
 
+triggerpost -n %{repo}-v1.10-migrator -- %{repo} < %{version}
+%{_bindir}/v1.10-migrator-local 2>/dev/null
+exit 0
+
 #define license tag if not already defined
 %{!?_licensedir:%global license %doc}
 
@@ -650,6 +654,14 @@ fi
 %{_bindir}/forward-journald
 
 %changelog
+* Wed Apr 13 2016 Lokesh Mandvekar <lsm5@fedoraproject.org> - 2:1.10.3-10.git8eaba08
+- built docker @projectatomic/fedora-1.10.3 commit#8eaba08
+- built docker-selinux commit#2bc84ec
+- built d-s-s commit#bebb4b1
+- built docker-utils commit#b851c03
+- built forward-journald commit#77e02a9
+- built v1.10-migrator commit#c417a6a
+
 * Fri Apr 08 2016 Lokesh Mandvekar <lsm5@fedoraproject.org> - 2:1.10.3-10.gitf8a9a2a
 - Resolves: rhbz#1325377 - bump back to 1.10.3
 
