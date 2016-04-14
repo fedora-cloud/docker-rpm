@@ -28,7 +28,7 @@
 
 # docker
 %global git0 https://github.com/projectatomic/%{repo}
-%global commit0 f8a9a2a9fee151828f9deed04cb40e88bc3b2f56
+%global commit0 69e6294e61c6353192ea59a9aeac8b3f311ac075
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 
 # d-s-s
@@ -49,13 +49,23 @@
 
 # docker-novolume-plugin
 %global git4 https://github.com/projectatomic/%{repo}-novolume-plugin
-%global commit4 77a55c1e22563a4b87d426bb89e7c9144c966742
+%global commit4 7715854b5f3ccfdbf005c9e95d6e9afcaae9376a
 %global shortcommit4 %(c=%{commit4}; echo ${c:0:7})
 
 # v1.10-migrator
 %global git5 https://github.com/%{repo}/v1.10-migrator
 %global commit5 994c35cbf7ae094d4cb1230b85631ecedd77b0d8
 %global shortcommit5 %(c=%{commit5}; echo ${c:0:7})
+
+# docker-runc
+%global git6 https://github.com/opencontainers/runc/
+%global commit6 e87436998478d222be209707503c27f6f91be0c5
+%global shortcommit6 %(c=%{commit6}; echo ${c:0:7})
+
+# docker-containerd
+%global git7 https://github.com/docker/containerd
+%global commit7 d2f03861c91edaafdcb3961461bf82ae83785ed7
+%global shortcommit7 %(c=%{commit7}; echo ${c:0:7})
 
 # docker-selinux stuff (prefix with ds_ for version/release etc.)
 # Some bits borrowed from the openstack-selinux package
@@ -69,7 +79,7 @@
 %global _format() export %1=""; for x in %{modulenames}; do %1+=%2; %1+=" "; done;
 
 # Relabel files
-%global relabel_files() %{_sbindir}/restorecon -R %{_bindir}/%{repo} %{_localstatedir}/run/%{repo}.sock %{_localstatedir}/run/%{repo}.pid %{_sysconfdir}/%{repo} %{_localstatedir}/log/%{repo} %{_localstatedir}/log/lxc %{_localstatedir}/lock/lxc %{_unitdir}/%{repo}.service %{_sysconfdir}/%{repo} &> /dev/null || :
+%global relabel_files() %{_sbindir}/restorecon -R %{_bindir}/%{repo} %{_localstatedir}/run/%{repo}.sock %{_localstatedir}/run/%{repo}.pid %{_sysconfdir}/%{repo} %{_localstatedir}/log/%{repo} %{_localstatedir}/log/lxc %{_localstatedir}/lock/lxc %{_unitdir}/%{repo}.service %{_unitdir}/%{repo}-containerd.service %{_sysconfdir}/%{repo} &> /dev/null || :
 
 # Version of SELinux we were using
 %if 0%{?fedora} >= 22
@@ -84,8 +94,8 @@ Name: %{repo}-master
 Name: %{repo}
 %endif
 Epoch: 2
-Version: 1.10.3
-Release: 4.git%{shortcommit0}%{?dist}
+Version: 1.11
+Release: 2.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -104,6 +114,9 @@ Source8: %{repo}-logrotate.sh
 Source9: README.%{repo}-logrotate
 Source10: %{repo}-network.sysconfig
 Source11: %{git5}/archive/%{commit5}/v1.10-migrator-%{shortcommit5}.tar.gz
+Source12: %{git6}/archive/%{commit6}/runc-%{shortcommit6}.tar.gz
+Source13: %{git7}/archive/%{commit7}/containerd-%{shortcommit7}.tar.gz
+Source14: %{repo}-containerd.service
 
 %if 0%{?with_debug}
 # Build with debug
@@ -470,6 +483,12 @@ tar zxf %{SOURCE4}
 # untar v1.10-migrator
 tar zxf %{SOURCE11}
 
+# untar docker-runc
+tar zxf %{SOURCE12}
+
+# untar docker-containerd
+tar zxf %{SOURCE13}
+
 %build
 # set up temporary build gopath, and put our directory there
 mkdir _build
@@ -478,11 +497,18 @@ mkdir -p src/%{provider}.%{provider_tld}/{%{repo},projectatomic,vbatts}
 ln -s $(dirs +1 -l) src/%{import_path}
 ln -s $(dirs +1 -l)/%{repo}-utils-%{commit3} src/%{provider}.%{provider_tld}/vbatts/%{repo}-utils
 ln -s $(dirs +1 -l)/%{repo}-novolume-plugin-%{commit4} src/%{provider}.%{provider_tld}/projectatomic/%{repo}-novolume-plugin
+ln -s $(dirs +1 -l)/containerd-%{commit7} src/%{provider}.%{provider_tld}/docker/containerd
+popd
+
+# compile novolume first - otherwise deps in gopath conflict with the others below and this fails
+export GOPATH=$(pwd)/%{repo}-novolume-plugin-%{commit4}/Godeps/_workspace:$(pwd)/_build
+pushd $(pwd)/_build/src
+go build -ldflags "-B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d ' \n')" github.com/projectatomic/%{repo}-novolume-plugin
 popd
 
 export DOCKER_GITCOMMIT="%{shortcommit0}/%{version}"
 export DOCKER_BUILDTAGS="selinux seccomp"
-export GOPATH=$(pwd)/_build:$(pwd)/vendor:%{gopath}:$(pwd)/%{repo}-novolume-plugin-%{commit4}/Godeps/_workspace
+export GOPATH=$(pwd)/_build:$(pwd)/vendor:%{gopath}:$(pwd)/containerd-%{commit7}/vendor
 
 DEBUG=1 bash -x hack/make.sh dynbinary
 man/md2man-all.sh
@@ -495,7 +521,6 @@ go-md2man -in %{repo}-novolume-plugin-%{commit4}/man/docker-novolume-plugin.8.md
 pushd $(pwd)/_build/src
 go build -ldflags "-B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d ' \n')" github.com/vbatts/%{repo}-utils/cmd/%{repo}-fetch
 go build -ldflags "-B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d ' \n')" github.com/vbatts/%{repo}-utils/cmd/%{repo}tarsum
-go build -ldflags "-B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d ' \n')" github.com/projectatomic/%{repo}-novolume-plugin
 popd
 
 # build %%{repo}-selinux
@@ -508,6 +533,16 @@ popd
 # build v1.10-migrator
 pushd v1.10-migrator-%{commit5}
 make v1.10-migrator-local
+popd
+
+# build docker-runc
+pushd runc-%{commit6}
+make
+popd
+
+# build docker-containerd
+pushd containerd-%{commit7}
+make
 popd
 
 %install
@@ -570,14 +605,25 @@ install -d %{buildroot}%{_datadir}/rhel/secrets
 # install systemd/init scripts
 install -d %{buildroot}%{_unitdir}
 install -p -m 644 %{SOURCE5} %{buildroot}%{_unitdir}
+install -p -m 644 %{SOURCE14} %{buildroot}%{_unitdir}
 
 # install novolume-plugin executable, unitfile, socket and man
-install -d %{buildroot}/usr/lib/docker
-install -p -m 755 _build/src/%{repo}-novolume-plugin %{buildroot}/usr/lib/docker
+install -d %{buildroot}%{_libexecdir}/docker
+install -p -m 755 _build/src/%{repo}-novolume-plugin %{buildroot}%{_libexecdir}/docker
 install -p -m 644 %{repo}-novolume-plugin-%{commit4}/systemd/%{repo}-novolume-plugin.service %{buildroot}%{_unitdir}
 install -p -m 644 %{repo}-novolume-plugin-%{commit4}/systemd/%{repo}-novolume-plugin.socket %{buildroot}%{_unitdir}
 install -d %{buildroot}%{_mandir}/man8
 install -p -m 644 %{repo}-novolume-plugin.8 %{buildroot}%{_mandir}/man8
+
+# install docker-runc
+install -d %{buildroot}%{_libexecdir}/docker
+install -p -m 755 runc-%{commit6}/runc %{buildroot}%{_libexecdir}/docker/docker-runc
+
+#install docker-containerd
+install -d %{buildroot}%{_libexecdir}/docker
+install -p -m 755 containerd-%{commit7}/bin/containerd %{buildroot}%{_libexecdir}/docker/docker-containerd
+install -p -m 755 containerd-%{commit7}/bin/containerd-shim %{buildroot}%{_libexecdir}/docker/docker-containerd-shim
+install -p -m 755 containerd-%{commit7}/bin/ctr %{buildroot}%{_libexecdir}/docker/docker-ctr
 
 # for additional args
 install -d %{buildroot}%{_sysconfdir}/sysconfig/
@@ -647,7 +693,7 @@ cp v1.10-migrator-%{commit5}/LICENSE.docs LICENSE-v1.10-migrator.docs
 [ ! -w /run/%{repo}.sock ] || {
     mkdir test_dir
     pushd test_dir
-    git clone https://github.com/projectatomic/docker.git -b fedora-1.10.3
+    git clone https://github.com/projectatomic/docker.git -b fedora-1.11
     pushd %{repo}
     make test
     popd
@@ -706,6 +752,7 @@ exit 0
 %{_mandir}/man8/%{repo}*.8.gz
 %{_bindir}/%{repo}
 %{_unitdir}/%{repo}.service
+%{_unitdir}/%{repo}-containerd.service
 %{_datadir}/bash-completion/completions/%{repo}
 %dir %{_datadir}/rhel/secrets
 %dir %{_sharedstatedir}/%{repo}
@@ -717,6 +764,11 @@ exit 0
 %{_bindir}/%{repo}-storage-setup
 %dir %{dss_libdir}
 %{dss_libdir}/*
+# 1.11 specific
+%{_libexecdir}/docker/docker-runc
+%{_libexecdir}/docker/docker-containerd
+%{_libexecdir}/docker/docker-containerd-shim
+%{_libexecdir}/docker/docker-ctr
 
 %if 0%{?with_devel}
 %files devel
@@ -742,7 +794,7 @@ exit 0
 %files novolume-plugin
 %license LICENSE-novolume-plugin
 %doc README-novolume-plugin.md
-/usr/lib/docker/%{repo}-novolume-plugin
+%{_libexecdir}/docker/%{repo}-novolume-plugin
 %{_unitdir}/%{repo}-novolume-plugin.service
 %{_unitdir}/%{repo}-novolume-plugin.socket
 
@@ -768,6 +820,14 @@ exit 0
 %{_bindir}/v1.10-migrator-local
 
 %changelog
+* Thu Apr 14 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.11-2.git69e6294
+- built docker @projectatomic/fedora-1.11 commit#69e6294
+- built docker-selinux commit#2bc84ec
+- built d-s-s commit#f087cb1
+- built docker-utils commit#b851c03
+- built docker-novolume-plugin commit#7715854
+- built docker-v1.10-migrator commit#994c35
+
 * Tue Mar 29 2016 Lokesh Mandvekar <lsm5@fedoraproject.org> - 2:1.10.3-4.gitf8a9a2a
 - built docker @projectatomic/fedora-1.10.3 commit#f8a9a2a
 - built docker-selinux commit#2bc84ec

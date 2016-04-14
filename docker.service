@@ -1,8 +1,9 @@
 [Unit]
 Description=Docker Application Container Engine
 Documentation=http://docs.docker.com
-After=network.target
+After=network.target containerd.service
 Wants=docker-storage-setup.service
+Requires=containerd.service
 
 [Service]
 Type=notify
@@ -11,6 +12,7 @@ EnvironmentFile=-/etc/sysconfig/docker-storage
 EnvironmentFile=-/etc/sysconfig/docker-network
 Environment=GOTRACEBACK=crash
 ExecStart=/usr/bin/docker daemon \
+          --containerd /run/docker/containerd.sock \
           --exec-opt native.cgroupdriver=systemd \
           $OPTIONS \
           $DOCKER_STORAGE_OPTIONS \

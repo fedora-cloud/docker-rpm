@@ -1,0 +1,13 @@
+[Unit]
+Description=Containerd Standalone OCI Container Daemon
+Documentation=https://containerd.tools/
+After=network.target
+
+[Service]
+ExecStart=/usr/libexec/docker/containerd --listen /run/docker/containerd.socket --runtime /usr/libexec/docker/docker-runc
+LimitNOFILE=1048576
+LimitNPROC=1048576
+LimitCORE=infinity
+
+[Install]
+WantedBy=multi-user.target
