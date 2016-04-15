@@ -79,7 +79,7 @@
 %global _format() export %1=""; for x in %{modulenames}; do %1+=%2; %1+=" "; done;
 
 # Relabel files
-%global relabel_files() %{_sbindir}/restorecon -R %{_bindir}/%{repo} %{_localstatedir}/run/%{repo}.sock %{_localstatedir}/run/%{repo}.pid %{_sysconfdir}/%{repo} %{_localstatedir}/log/%{repo} %{_localstatedir}/log/lxc %{_localstatedir}/lock/lxc %{_unitdir}/%{repo}.service %{_unitdir}/%{repo}-containerd.service %{_sysconfdir}/%{repo} &> /dev/null || :
+%global relabel_files() %{_sbindir}/restorecon -R %{_bindir}/%{repo} %{_localstatedir}/run/containerd.sock %{_localstatedir}/run/%{repo}.sock %{_localstatedir}/run/%{repo}.pid %{_sysconfdir}/%{repo} %{_localstatedir}/log/%{repo} %{_localstatedir}/log/lxc %{_localstatedir}/lock/lxc %{_unitdir}/%{repo}.service %{_unitdir}/%{repo}-containerd.service %{_sysconfdir}/%{repo} &> /dev/null || :
 
 # Version of SELinux we were using
 %if 0%{?fedora} >= 22
@@ -95,7 +95,7 @@ Name: %{repo}
 %endif
 Epoch: 2
 Version: 1.11
-Release: 3.git%{shortcommit0}%{?dist}
+Release: 4.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -820,6 +820,9 @@ exit 0
 %{_bindir}/v1.10-migrator-local
 
 %changelog
+* Fri Apr 15 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.11-4.git69e6294
+- fix containerd socket location
+
 * Fri Apr 15 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.11-3.git69e6294
 - rebuilt with fixes to unit files and re-enable debug
 

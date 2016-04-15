@@ -12,7 +12,7 @@ EnvironmentFile=-/etc/sysconfig/docker-storage
 EnvironmentFile=-/etc/sysconfig/docker-network
 Environment=GOTRACEBACK=crash
 ExecStart=/usr/bin/docker daemon \
-          --containerd /run/docker/containerd.sock \
+          --containerd /run/containerd.sock \
           --exec-opt native.cgroupdriver=systemd \
           $OPTIONS \
           $DOCKER_STORAGE_OPTIONS \
