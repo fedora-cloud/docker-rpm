@@ -95,7 +95,7 @@ Name: %{repo}
 %endif
 Epoch: 2
 Version: 1.11
-Release: 4.git%{shortcommit0}%{?dist}
+Release: 5.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -820,6 +820,9 @@ exit 0
 %{_bindir}/v1.10-migrator-local
 
 %changelog
+* Sat Apr 16 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.11-5.git69e6294
+- fixed containerd unit file
+
 * Fri Apr 15 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.11-4.git69e6294
 - fix containerd socket location
 
