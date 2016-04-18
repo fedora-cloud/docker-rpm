@@ -39,7 +39,7 @@
 
 # docker-selinux
 %global git2 https://github.com/projectatomic/%{repo}-selinux
-%global commit2 2bc84ec693a96150b08468d5a337f1a3a702e80b
+%global commit2 5b4f257237ff58057e4160030ec75cdcc4d0f24a
 %global shortcommit2 %(c=%{commit2}; echo ${c:0:7})
 
 # docker-utils
@@ -95,7 +95,7 @@ Name: %{repo}
 %endif
 Epoch: 2
 Version: 1.11
-Release: 5.git%{shortcommit0}%{?dist}
+Release: 6.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -820,6 +820,14 @@ exit 0
 %{_bindir}/v1.10-migrator-local
 
 %changelog
+* Mon Apr 18 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.11-6.git69e6294
+- built docker @projectatomic/fedora-1.11 commit#69e6294
+- built docker-selinux commit#5b4f257
+- built d-s-s commit#f087cb1
+- built docker-utils commit#b851c03
+- built docker-novolume-plugin commit#7715854
+- built docker-v1.10-migrator commit#994c35
+
 * Sat Apr 16 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.11-5.git69e6294
 - fixed containerd unit file
 
