@@ -525,9 +525,7 @@ popd
 
 # build %%{repo}-selinux
 pushd %{repo}-selinux-%{commit2}
-ln -s %{_datadir}/selinux/devel/Makefile .
-make SHARE="%{_datadir}" TARGETS="%{modulenames}"
-bzip2 -9 %{repo}.pp
+make
 popd
 
 # build v1.10-migrator
