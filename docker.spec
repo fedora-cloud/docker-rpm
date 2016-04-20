@@ -35,11 +35,6 @@
 %global commit2 39c092ce65cc68c86197d1e2f1a7d64abaf3203e
 %global shortcommit2 %(c=%{commit2}; echo ${c:0:7})
 
-# docker-utils
-%global git3 https://github.com/vbatts/%{repo}-utils
-%global commit3 b851c03ddae1db30a4acf5e4cc5e31b6a671af35
-%global shortcommit3 %(c=%{commit3}; echo ${c:0:7})
-
 # v1.10-migrator
 %global git5 https://github.com/%{repo}/v1.10-migrator
 %global commit5 c417a6a022c5023c111662e8280f885f6ac259be
@@ -83,7 +78,6 @@ ExclusiveArch: %{go_arches}
 Source0: %{git0}/archive/%{commit0}/%{repo}-%{shortcommit0}.tar.gz
 Source1: %{git1}/archive/%{commit1}/%{repo}-storage-setup-%{shortcommit1}.tar.gz
 Source2: %{git2}/archive/%{commit2}/%{repo}-selinux-%{shortcommit2}.tar.gz
-Source3: %{git3}/archive/%{commit3}/%{repo}-utils-%{shortcommit3}.tar.gz
 Source5: %{repo}.service
 Source6: %{repo}.sysconfig
 Source7: %{repo}-storage.sysconfig
@@ -256,12 +250,6 @@ Provides: golang(%{import_path}/graph) = %{epoch}:%{version}-%{release}
 This package provides the source libraries for Docker.
 %endif
 
-%package utils
-Summary: External utilities for the %{name} experience
-
-%description utils
-%{summary}
-
 %if 0%{?with_unit_test}
 %package unit-test
 Summary: %{summary} - for running unit tests
@@ -363,9 +351,6 @@ tar zxf %{SOURCE1}
 # unpack %%{repo}-selinux
 tar zxf %{SOURCE2}
 
-# untar docker-utils
-tar zxf %{SOURCE3}
-
 # untar v1.10-migrator
 tar zxf %{SOURCE11}
 
@@ -376,24 +361,22 @@ tar zxf %{SOURCE12}
 # set up temporary build gopath, and put our directory there
 mkdir _build
 pushd _build
-mkdir -p src/%{provider}.%{provider_tld}/{%{repo},projectatomic,vbatts}
+mkdir -p src/%{provider}.%{provider_tld}/{%{repo},projectatomic}
 ln -s $(dirs +1 -l) src/%{import_path}
-ln -s $(dirs +1 -l)/%{repo}-utils-%{commit3} src/%{provider}.%{provider_tld}/vbatts/%{repo}-utils
 ln -s $(dirs +1 -l)/forward-journald-%{commit6} src/%{provider}.%{provider_tld}/projectatomic/forward-journald
 popd
 
 export DOCKER_GITCOMMIT="%{shortcommit0}/%{version}"
-export DOCKER_BUILDTAGS="selinux"
+export DOCKER_BUILDTAGS="selinux seccomp"
 export GOPATH=$(pwd)/_build:$(pwd)/vendor:%{gopath}:$(pwd)/forward-journald-%{commit6}/vendor
 
-DEBUG=1 bash -x hack/make.sh dynbinary
+sed -i '/LDFLAGS_STATIC/d' hack/make/.dockerinit
+IAMSTATIC=false DOCKER_DEBUG=1 bash -x hack/make.sh dynbinary
 man/md2man-all.sh
 cp contrib/syntax/vim/LICENSE LICENSE-vim-syntax
 cp contrib/syntax/vim/README.md README-vim-syntax.md
 
 pushd $(pwd)/_build/src
-go build -ldflags "-B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d ' \n')" github.com/vbatts/%{repo}-utils/cmd/%{repo}-fetch
-go build -ldflags "-B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d ' \n')" github.com/vbatts/%{repo}-utils/cmd/%{repo}tarsum
 go build -ldflags "-B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d ' \n')" github.com/projectatomic/forward-journald
 popd
 
@@ -412,9 +395,7 @@ popd
 install -d %{buildroot}%{_bindir}
 install -d %{buildroot}%{_libexecdir}/%{repo}
 
-# install utils and forward-journald
-install -p -m 755 _build/src/%{repo}-fetch %{buildroot}%{_bindir}
-install -p -m 755 _build/src/%{repo}tarsum %{buildroot}%{_bindir}
+# install forward-journald
 install -p -m 700 _build/src/forward-journald %{buildroot}%{_bindir}
 
 for x in bundles/latest; do
@@ -423,7 +404,6 @@ for x in bundles/latest; do
     fi
     rm $x/dynbinary/*.md5 $x/dynbinary/*.sha256
     install -p -m 755 $x/dynbinary/%{repo}-%{version}* %{buildroot}%{_bindir}/%{repo}
-    install -p -m 755 $x/dynbinary/%{repo}init-%{version}* %{buildroot}%{_libexecdir}/%{repo}/%{repo}init
     break
 done
 
@@ -638,10 +618,6 @@ exit 0
 
 %files zsh-completion
 %{_datadir}/zsh/site-functions/_%{repo}
-
-%files utils
-%{_bindir}/%{repo}-fetch
-%{_bindir}/%{repo}tarsum
 
 %files v1.10-migrator
 %license v1.10-migrator-%{commit5}/LICENSE.{code,docs}
