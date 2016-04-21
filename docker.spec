@@ -92,6 +92,7 @@ BuildRequires: glibc-static
 BuildRequires: go-md2man
 BuildRequires: godep
 BuildRequires: device-mapper-devel
+BuildRequires: libseccomp-devel
 BuildRequires: pkgconfig(audit)
 BuildRequires: btrfs-progs-devel
 BuildRequires: sqlite-devel
