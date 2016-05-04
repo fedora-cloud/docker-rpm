@@ -18,6 +18,7 @@ ExecStart=/usr/bin/docker daemon \
           $DOCKER_STORAGE_OPTIONS \
           $DOCKER_NETWORK_OPTIONS \
           $INSECURE_REGISTRY
+ExecReload=/bin/kill -s HUP $MAINPID
 LimitNOFILE=1048576
 LimitNPROC=1048576
 LimitCORE=infinity
