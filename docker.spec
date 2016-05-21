@@ -95,7 +95,7 @@ Name: %{repo}
 %endif
 Epoch: 2
 Version: 1.11.1
-Release: 3.git%{shortcommit0}%{?dist}
+Release: 4.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -194,11 +194,7 @@ servers, OpenStack clusters, public instances, or combinations of the above.
 
 %if 0%{?with_devel}
 %package devel
-%ifarch %{golang_arches}
-BuildRequires: golang >= 1.2.1-3
-%else
-BuildRequires: gcc-go >= %{gccgo_min_vers}
-%endif
+BuildArch: noarch
 Provides: %{repo}-io-devel = %{epoch}:%{version}-%{release}
 Provides: %{repo}-pkg-devel = %{epoch}:%{version}-%{release}
 Provides: %{repo}-io-pkg-devel = %{epoch}:%{version}-%{release}
@@ -210,13 +206,15 @@ Provides: golang(%{import_path}/api/client/formatter) = %{epoch}:%{version}-%{re
 Provides: golang(%{import_path}/api/client/inspect) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/api/server) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/api/server/httputils) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/api/server/middleware) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/api/server/router) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/api/server/router/build) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/api/server/router/container) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/api/server/router/local) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/api/server/router/image) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/api/server/router/network) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/api/server/router/system) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/api/server/router/volume) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/api/types/backend) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/builder) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/builder/dockerfile) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/builder/dockerfile/command) = %{epoch}:%{version}-%{release}
@@ -224,17 +222,14 @@ Provides: golang(%{import_path}/builder/dockerfile/parser) = %{epoch}:%{version}
 Provides: golang(%{import_path}/builder/dockerignore) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/cli) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/cliconfig) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/cliconfig/credentials) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/container) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/daemon) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/daemon/daemonbuilder) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/daemon/caps) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/daemon/dockerhooks) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/daemon/events) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/daemon/events/testutils) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/daemon/exec) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/daemon/execdriver) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/daemon/execdriver/dockerhooks) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/daemon/execdriver/execdrivers) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/daemon/execdriver/native) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/daemon/execdriver/native/template) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/daemon/execdriver/windows) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/daemon/graphdriver) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/daemon/graphdriver/aufs) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/daemon/graphdriver/btrfs) = %{epoch}:%{version}-%{release}
@@ -248,7 +243,9 @@ Provides: golang(%{import_path}/daemon/graphdriver/zfs) = %{epoch}:%{version}-%{
 Provides: golang(%{import_path}/daemon/links) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/daemon/logger) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/daemon/logger/awslogs) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/daemon/logger/etwlogs) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/daemon/logger/fluentd) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/daemon/logger/gcplogs) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/daemon/logger/gelf) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/daemon/logger/journald) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/daemon/logger/jsonfilelog) = %{epoch}:%{version}-%{release}
@@ -259,19 +256,18 @@ Provides: golang(%{import_path}/daemon/network) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/distribution) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/distribution/metadata) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/distribution/xfer) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/docker-utils-dab51acd1b1a77f7cb01a1b7e2129ec85c846b71/dockerfile) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/docker-utils-dab51acd1b1a77f7cb01a1b7e2129ec85c846b71/opts) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/docker-utils-dab51acd1b1a77f7cb01a1b7e2129ec85c846b71/registry) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/docker-utils-dab51acd1b1a77f7cb01a1b7e2129ec85c846b71/registry/fetch) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/docker-utils-dab51acd1b1a77f7cb01a1b7e2129ec85c846b71/sum) = %{epoch}:%{version}-%{release}
-Provides: golang(%{import_path}/docker-utils-dab51acd1b1a77f7cb01a1b7e2129ec85c846b71/version) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/docker/hack) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/docker/listeners) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/dockerversion) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/errors) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/image) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/image/tarexport) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/image/v1) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/layer) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/libcontainerd) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/libcontainerd/windowsoci) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/migrate/v1) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/oci) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/opts) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/pkg/aaparser) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/pkg/archive) = %{epoch}:%{version}-%{release}
@@ -311,6 +307,7 @@ Provides: golang(%{import_path}/pkg/pidfile) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/pkg/platform) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/pkg/plugins) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/pkg/plugins/pluginrpc-gen/fixtures) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/pkg/plugins/transport) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/pkg/pools) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/pkg/progress) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/pkg/promise) = %{epoch}:%{version}-%{release}
@@ -337,11 +334,15 @@ Provides: golang(%{import_path}/pkg/truncindex) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/pkg/urlutil) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/pkg/useragent) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/pkg/version) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/profiles/apparmor) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/profiles/seccomp) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/reference) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/registry) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/restartmanager) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/runconfig) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/runconfig/opts) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/utils) = %{epoch}:%{version}-%{release}
+Provides: golang(%{import_path}/utils/templates) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/volume) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/volume/drivers) = %{epoch}:%{version}-%{release}
 Provides: golang(%{import_path}/volume/local) = %{epoch}:%{version}-%{release}
@@ -644,17 +645,16 @@ done
 rm -rf %{buildroot}%{_sharedstatedir}/docker-unit-test/contrib/init/openrc/docker.initd
 %endif
 
+# source codes for building projects
 %if 0%{?with_devel}
-# sources
-install -d -p %{buildroot}%{gopath}/src/%{import_path}
-rm -rf pkg/symlink/testdata
-
-# remove dirs that won't be installed in devel
-rm -rf vendor docs _build bundles contrib/init hack project
-
-# install sources to devel
-for dir in */ ; do
-    cp -rpav $dir %{buildroot}/%{gopath}/src/%{import_path}/
+install -d -p %{buildroot}/%{gopath}/src/%{import_path}/
+echo "%%dir %%{gopath}/src/%%{import_path}/." >> devel.file-list
+# find all *.go but no *_test.go files and generate devel.file-list
+for file in $(find . -iname "*.go" \! -iname "*_test.go") ; do
+    echo "%%dir %%{gopath}/src/%%{import_path}/$(dirname $file)" >> devel.file-list
+    install -d -p %{buildroot}/%{gopath}/src/%{import_path}/$(dirname $file)
+    cp -pav $file %{buildroot}/%{gopath}/src/%{import_path}/$file
+    echo "%%{gopath}/src/%%{import_path}/$file" >> devel.file-list
 done
 %endif
 
@@ -769,11 +769,10 @@ exit 0
 %{_libexecdir}/docker/docker-ctr
 
 %if 0%{?with_devel}
-%files devel
+%files devel -f devel.file-list
 %license LICENSE
 %doc AUTHORS CHANGELOG.md CONTRIBUTING.md MAINTAINERS NOTICE README.md 
 %dir %{gopath}/src/%{provider}.%{provider_tld}/%{project}
-%{gopath}/src/%{import_path}
 %endif
 
 %if 0%{?with_unit_test}
@@ -818,6 +817,9 @@ exit 0
 %{_bindir}/v1.10-migrator-local
 
 %changelog
+* Sat May 21 2016 jchaloup <jchaloup@redhat.com>
+- Update devel subpackage
+
 * Fri May 20 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.11.1-3.git9dea74f
 - built docker @projectatomic/docker-1.11 commit 9dea74f
 - built docker-selinux commit 5b4f257
