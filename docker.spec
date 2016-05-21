@@ -817,7 +817,7 @@ exit 0
 %{_bindir}/v1.10-migrator-local
 
 %changelog
-* Sat May 21 2016 jchaloup <jchaloup@redhat.com>
+* Sat May 21 2016 jchaloup <jchaloup@redhat.com> - 2:1.11.1-4.git9dea74f
 - Update devel subpackage
 
 * Fri May 20 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.11.1-3.git9dea74f
