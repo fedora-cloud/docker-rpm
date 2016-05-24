@@ -69,7 +69,7 @@
 Name: %{repo}
 Epoch: 2
 Version: 1.10.3
-Release: 19.git%{shortcommit0}%{?dist}
+Release: 20.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{name}
@@ -631,6 +631,15 @@ exit 0
 %{_bindir}/forward-journald
 
 %changelog
+* Tue May 24 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.10.3-20.git8ecd47f
+- built docker @projectatomic/fedora-1.10.3 commit 8ecd47f
+- built docker-selinux commit 4e4e40e
+- built d-s-s commit bebb4b1
+- built docker-utils commit b851c03
+- built forward-journald commit 77e02a9
+- built v1.10-migrator commit c417a6a
+- rebuilt to include --exec-opt native.cgroupdriver=systemd in the unit file
+
 * Fri May 20 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.10.3-19.git8ecd47f
 - built docker @projectatomic/fedora-1.10.3 commit 8ecd47f
 - built docker-selinux commit 4e4e40e
