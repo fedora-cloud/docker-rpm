@@ -95,7 +95,7 @@ Name: %{repo}
 %endif
 Epoch: 2
 Version: 1.11.1
-Release: 4.git%{shortcommit0}%{?dist}
+Release: 5.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -463,6 +463,15 @@ The migration usually runs on daemon startup but it can be quite slow(usually
 that time. You can run this tool instead while the old daemon is still
 running and skip checksum calculation on startup.
 
+%package rhsubscription
+Summary: Red Hat subscription management files needed on the host to enable RHEL containers
+Requires: %{repo} = %{epoch}:%{version}-%{release}
+Requires: subscription-manager-plugin-container
+Provides: %{repo}-io-rhsubscription
+
+%description rhsubscription
+In order to work with RHEL containers, the host (RHEL, or other) must export susbcription information to the container.
+
 %prep
 %setup -q -n %{repo}-%{commit0}
 
@@ -687,6 +696,16 @@ cp v1.10-migrator-%{commit5}/README.md README-v1.10-migrator.md
 cp v1.10-migrator-%{commit5}/LICENSE.code LICENSE-v1.10-migrator.code
 cp v1.10-migrator-%{commit5}/LICENSE.docs LICENSE-v1.10-migrator.docs
 
+# install secrets patch directory
+install -d -p -m 750 %{buildroot}/%{_datadir}/rhel/secrets
+# rhbz#1110876 - update symlinks for subscription management
+ln -s %{_sysconfdir}/pki/entitlement %{buildroot}%{_datadir}/rhel/secrets/etc-pki-entitlement
+ln -s %{_sysconfdir}/rhsm %{buildroot}%{_datadir}/rhel/secrets/rhsm
+ln -s %{_sysconfdir}/yum.repos.d/redhat.repo %{buildroot}%{_datadir}/rhel/secrets/rhel7.repo
+mkdir -p %{buildroot}/etc/%{name}/certs.d/redhat.{com,io}
+ln -s %{_sysconfdir}/rhsm/ca/redhat-uep.pem %{buildroot}/%{_sysconfdir}/%{name}/certs.d/redhat.com/redhat-ca.crt
+ln -s %{_sysconfdir}/rhsm/ca/redhat-uep.pem %{buildroot}/%{_sysconfdir}/%{name}/certs.d/redhat.io/redhat-ca.crt
+
 %check
 [ ! -w /run/%{repo}.sock ] || {
     mkdir test_dir
@@ -772,7 +791,6 @@ exit 0
 %files devel -f devel.file-list
 %license LICENSE
 %doc AUTHORS CHANGELOG.md CONTRIBUTING.md MAINTAINERS NOTICE README.md 
-%dir %{gopath}/src/%{provider}.%{provider_tld}/%{project}
 %endif
 
 %if 0%{?with_unit_test}
@@ -816,7 +834,16 @@ exit 0
 %doc CONTRIBUTING-v1.10-migrator.md README-v1.10-migrator.md
 %{_bindir}/v1.10-migrator-local
 
+%files rhsubscription
+%{_datadir}/rhel/secrets/etc-pki-entitlement
+%{_datadir}/rhel/secrets/rhel7.repo
+%{_datadir}/rhel/secrets/rhsm
+
 %changelog
+* Thu May 26 2016 Lokesh Mandvekar <lsm5@fedoraproject.org> - 2:1.11.1-5.git9dea74f
+- Resolves: #1335649 - enable Red Hat subscription use in Docker containers on Fedora
+- From: Daniel Riek <riek@redhat.com>
+
 * Sat May 21 2016 jchaloup <jchaloup@redhat.com> - 2:1.11.1-4.git9dea74f
 - Update devel subpackage
 
