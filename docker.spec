@@ -69,7 +69,7 @@
 Name: %{repo}
 Epoch: 2
 Version: 1.10.3
-Release: 20.git%{shortcommit0}%{?dist}
+Release: 21.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{name}
@@ -340,6 +340,15 @@ SIGPIPE's on stdout or stderr cause go to generate a non-trappable SIGPIPE
 killing the process. This happens when journald is restarted while docker is
 running under systemd.
 
+%package rhsubscription
+Summary: Red Hat subscription management files needed on the host to enable RHEL containers
+Requires: %{repo} = %{epoch}:%{version}-%{release}
+Requires: subscription-manager-plugin-container
+Provides: %{repo}-io-rhsubscription
+
+%description rhsubscription
+In order to work with RHEL containers, the host (RHEL, or other) must export susbcription information to the container.
+
 %prep
 %setup -q -n %{repo}-%{commit0}
 
@@ -512,6 +521,16 @@ popd
 install -d %{buildroot}%{_bindir}
 install -p -m 700 v1.10-migrator-%{commit5}/v1.10-migrator-local %{buildroot}%{_bindir}
 
+# install secrets patch directory
+install -d -p -m 750 %{buildroot}/%{_datadir}/rhel/secrets
+# rhbz#1110876 - update symlinks for subscription management
+ln -s %{_sysconfdir}/pki/entitlement %{buildroot}%{_datadir}/rhel/secrets/etc-pki-entitlement
+ln -s %{_sysconfdir}/rhsm %{buildroot}%{_datadir}/rhel/secrets/rhsm
+ln -s %{_sysconfdir}/yum.repos.d/redhat.repo %{buildroot}%{_datadir}/rhel/secrets/rhel7.repo
+mkdir -p %{buildroot}/etc/%{name}/certs.d/redhat.{com,io}
+ln -s %{_sysconfdir}/rhsm/ca/redhat-uep.pem %{buildroot}/%{_sysconfdir}/%{name}/certs.d/redhat.com/redhat-ca.crt
+ln -s %{_sysconfdir}/rhsm/ca/redhat-uep.pem %{buildroot}/%{_sysconfdir}/%{name}/certs.d/redhat.io/redhat-ca.crt
+
 %check
 [ ! -w /run/%{name}.sock ] || {
     mkdir test_dir
@@ -630,7 +649,16 @@ exit 0
 %doc forward-journald-%{commit6}/README.md
 %{_bindir}/forward-journald
 
+%files rhsubscription
+%{_datadir}/rhel/secrets/etc-pki-entitlement
+%{_datadir}/rhel/secrets/rhel7.repo
+%{_datadir}/rhel/secrets/rhsm
+
 %changelog
+* Thu May 26 2016 Lokesh Mandvekar <lsm5@fedoraproject.org> - 2:1.10.3-21.git8ecd47f
+- Resolves: #1335649 - enable Red Hat subscription use in Docker containers on Fedora
+- From: Daniel Riek <riek@redhat.com>
+
 * Tue May 24 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.10.3-20.git8ecd47f
 - built docker @projectatomic/fedora-1.10.3 commit 8ecd47f
 - built docker-selinux commit 4e4e40e
