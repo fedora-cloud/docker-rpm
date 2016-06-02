@@ -85,7 +85,7 @@ Name: %{repo}
 %endif
 Epoch: 2
 Version: 1.10.3
-Release: 14.git%{shortcommit0}%{?dist}
+Release: 15.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -792,6 +792,9 @@ exit 0
 %{_datadir}/rhel/secrets/rhsm
 
 %changelog
+* Thu Jun 02 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.10.3-15.gitf476348
+- Resolves: #1340519 - add TasksMax=infinity
+
 * Wed Jun 01 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.10.3-14.gitf476348
 - built docker @projectatomic/fedora-1.10.3 commit f476348
 - built docker-selinux commit 2bc84ec
