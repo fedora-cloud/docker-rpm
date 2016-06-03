@@ -28,18 +28,18 @@
 
 # docker
 %global git0 https://github.com/projectatomic/%{repo}
-%global commit0 9dea74f3a01d9a0b51ed6806c16af3e77a35a722
+%global commit0 40ea190c1f5c5dd6ef9c3646ff06780ee2f8f1fd
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 
 # d-s-s
 %global git1 https://github.com/projectatomic/%{repo}-storage-setup/
-%global commit1 f087cb16d6751d29821494a86b9ff2f302ae9ea7
+%global commit1 194eca25fd0d180b62f3ecf1b7b408992fd6a083
 %global shortcommit1 %(c=%{commit1}; echo ${c:0:7})
 %global dss_libdir %{_exec_prefix}/lib/%{repo}-storage-setup
 
 # docker-selinux
 %global git2 https://github.com/projectatomic/%{repo}-selinux
-%global commit2 5b4f257237ff58057e4160030ec75cdcc4d0f24a
+%global commit2 f08f06dd857177dfbaf0f5857989446e229df187
 %global shortcommit2 %(c=%{commit2}; echo ${c:0:7})
 
 # docker-utils
@@ -59,12 +59,12 @@
 
 # docker-runc
 %global git6 https://github.com/opencontainers/runc/
-%global commit6 e87436998478d222be209707503c27f6f91be0c5
+%global commit6 baf6536d6259209c3edfa2b22237af82942d3dfa
 %global shortcommit6 %(c=%{commit6}; echo ${c:0:7})
 
 # docker-containerd
 %global git7 https://github.com/docker/containerd
-%global commit7 d2f03861c91edaafdcb3961461bf82ae83785ed7
+%global commit7 9dc2b3273db42c75368988a3885a3afd770069d9
 %global shortcommit7 %(c=%{commit7}; echo ${c:0:7})
 
 # docker-selinux stuff (prefix with ds_ for version/release etc.)
@@ -94,8 +94,8 @@ Name: %{repo}-master
 Name: %{repo}
 %endif
 Epoch: 2
-Version: 1.11.1
-Release: 5.git%{shortcommit0}%{?dist}
+Version: 1.11.2
+Release: 1.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -840,6 +840,15 @@ exit 0
 %{_datadir}/rhel/secrets/rhsm
 
 %changelog
+* Fri Jun 03 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.11.2-1.git40ea190
+- bump to docker 1.11.2
+- built docker @projectatomic/docker-1.11 commit 40ea190
+- built docker-selinux commit f08f06d
+- built d-s-s commit 194eca2
+- built docker-utils commit b851c03
+- built docker-novolume-plugin commit 7715854
+- built docker-v1.10-migrator commit 994c35
+
 * Thu May 26 2016 Lokesh Mandvekar <lsm5@fedoraproject.org> - 2:1.11.1-5.git9dea74f
 - Resolves: #1335649 - enable Red Hat subscription use in Docker containers on Fedora
 - From: Daniel Riek <riek@redhat.com>
