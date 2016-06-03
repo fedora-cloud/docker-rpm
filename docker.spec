@@ -69,7 +69,7 @@
 Name: %{repo}
 Epoch: 2
 Version: 1.10.3
-Release: 27.git%{shortcommit0}%{?dist}
+Release: 28.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{name}
@@ -525,7 +525,7 @@ install -d %{buildroot}%{_bindir}
 install -p -m 700 v1.10-migrator-%{commit5}/v1.10-migrator-local %{buildroot}%{_bindir}
 
 # install v1.10-migrator-helper
-install -p -m 700 %{SOURCE18} %{buildroot}%{_bindir}
+install -p -m 700 %{SOURCE13} %{buildroot}%{_bindir}
 
 # install secrets patch directory
 install -d -p -m 750 %{buildroot}/%{_datadir}/rhel/secrets
@@ -581,7 +581,7 @@ if %{_sbindir}/selinuxenabled ; then
 fi
 fi
 
-triggerpost -n %{repo}-v1.10-migrator -- %{repo} < %{version}
+%triggerin -n %{name}-v1.10-migrator -- %{repo} < %{version}
 %{_bindir}/v1.10-migrator-local 2>/dev/null
 exit 0
 
@@ -662,6 +662,10 @@ exit 0
 %{_datadir}/rhel/secrets/rhsm
 
 %changelog
+* Fri Jun 03 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.10.3-28.gitf476348
+- Resolves: #1340940 - include v1.10-migrator-helper script in the migrator
+- Resolves: #1316711 - invalid %triggerpost
+
 * Fri Jun 03 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.10.3-27.gitf476348
 - built docker @projectatomic/fedora-1.10.3 commit f476348
 - built docker-selinux commit 4e4e40e
