@@ -69,7 +69,7 @@
 Name: %{repo}
 Epoch: 2
 Version: 1.10.3
-Release: 24.git%{shortcommit0}%{?dist}
+Release: 25.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{name}
@@ -421,7 +421,9 @@ done
 install -d %{buildroot}%{_mandir}/man1
 install -p -m 644 man/man1/%{repo}*.1 %{buildroot}%{_mandir}/man1
 install -d %{buildroot}%{_mandir}/man5
-install -p -m 644 man/man5/Dockerfile.5 %{buildroot}%{_mandir}/man5
+install -p -m 644 man/man5/*.5 %{buildroot}%{_mandir}/man5
+install -d %{buildroot}%{_mandir}/man8
+install -p -m 644 man/man8/%{repo}*.8 %{buildroot}%{_mandir}/man8
 
 # install bash completion
 install -dp %{buildroot}%{_datadir}/bash-completion/completions
@@ -591,6 +593,7 @@ exit 0
 %config(noreplace) %{_sysconfdir}/sysconfig/%{repo}-storage
 %{_mandir}/man1/%{repo}*.1.gz
 %{_mandir}/man5/Dockerfile.5.gz
+%{_mandir}/man8/%{repo}*.8.gz
 %{_bindir}/%{repo}
 %{_libexecdir}/%{repo}
 %{_unitdir}/%{repo}.service
@@ -655,6 +658,15 @@ exit 0
 %{_datadir}/rhel/secrets/rhsm
 
 %changelog
+* Fri Jun 03 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.10.3-25.gitf476348
+- built docker @projectatomic/fedora-1.10.3 commit f476348
+- built docker-selinux commit 4e4e40e
+- built d-s-s commit 194eca2
+- built docker-utils commit b851c03
+- built forward-journald commit 77e02a9
+- built v1.10-migrator commit c417a6a
+- Resolves: #1317561 - install man8 man pages
+
 * Wed Jun 01 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.10.3-24.gitf476348
 - built docker @projectatomic/fedora-1.10.3 commit f476348
 - built docker-selinux commit 4e4e40e
