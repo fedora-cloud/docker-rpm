@@ -69,7 +69,7 @@
 Name: %{repo}
 Epoch: 2
 Version: 1.10.3
-Release: 26.git%{shortcommit0}%{?dist}
+Release: 27.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{name}
@@ -86,6 +86,7 @@ Source9: README.%{repo}-logrotate
 Source10: %{repo}-network.sysconfig
 Source11: %{git5}/archive/%{commit5}/v1.10-migrator-%{shortcommit5}.tar.gz
 Source12: %{git6}/archive/%{commit6}/forward-journald-%{shortcommit6}.tar.gz
+Source13: v1.10-migrator-helper
 
 BuildRequires: git
 BuildRequires: glibc-static
@@ -523,6 +524,9 @@ popd
 install -d %{buildroot}%{_bindir}
 install -p -m 700 v1.10-migrator-%{commit5}/v1.10-migrator-local %{buildroot}%{_bindir}
 
+# install v1.10-migrator-helper
+install -p -m 700 %{SOURCE18} %{buildroot}%{_bindir}
+
 # install secrets patch directory
 install -d -p -m 750 %{buildroot}/%{_datadir}/rhel/secrets
 # rhbz#1110876 - update symlinks for subscription management
@@ -645,7 +649,7 @@ exit 0
 %files v1.10-migrator
 %license v1.10-migrator-%{commit5}/LICENSE.{code,docs}
 %doc v1.10-migrator-%{commit5}/{CONTRIBUTING,README}.md
-%{_bindir}/v1.10-migrator-local
+%{_bindir}/v1.10-migrator-*
 
 %files forward-journald
 %license forward-journald-%{commit6}/LICENSE
@@ -658,6 +662,15 @@ exit 0
 %{_datadir}/rhel/secrets/rhsm
 
 %changelog
+* Fri Jun 03 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.10.3-27.gitf476348
+- built docker @projectatomic/fedora-1.10.3 commit f476348
+- built docker-selinux commit 4e4e40e
+- built d-s-s commit 194eca2
+- built docker-utils commit b851c03
+- built forward-journald commit 77e02a9
+- built v1.10-migrator commit c417a6a
+- Resolves: #1340940 - include v1.10-migrator-helper script in the migrator
+
 * Fri Jun 03 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.10.3-26.gitf476348
 - built docker @projectatomic/fedora-1.10.3 commit f476348
 - built docker-selinux commit 4e4e40e
