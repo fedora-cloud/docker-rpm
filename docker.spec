@@ -69,7 +69,7 @@
 Name: %{repo}
 Epoch: 2
 Version: 1.10.3
-Release: 28.git%{shortcommit0}%{?dist}
+Release: 29.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{name}
@@ -473,6 +473,8 @@ install -p -m 644 %{SOURCE7} %{buildroot}%{_sysconfdir}/sysconfig/%{repo}-storag
 # install policy modules
 %_format MODULES $x.pp.bz2
 install -d %{buildroot}%{_datadir}/selinux/packages
+install -d -p %{buildroot}%{_datadir}/selinux/devel/include/services
+install -p -m 644 %{name}-selinux-%{commit2}/docker.if %{buildroot}%{_datadir}/selinux/devel/include/services/docker.if
 install -m 0644 %{name}-selinux-%{commit2}/$MODULES %{buildroot}%{_datadir}/selinux/packages
 
 %if 0%{?with_unit_test}
@@ -662,6 +664,9 @@ exit 0
 %{_datadir}/rhel/secrets/rhsm
 
 %changelog
+* Sat Jun 04 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.10.3-29.gitf476348
+- Resolves: #1330442 - package docker-selinux is missing interface files
+
 * Fri Jun 03 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.10.3-28.gitf476348
 - Resolves: #1340940 - include v1.10-migrator-helper script in the migrator
 - Resolves: #1316711 - invalid %triggerpost
