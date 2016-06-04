@@ -69,7 +69,7 @@
 Name: %{repo}
 Epoch: 2
 Version: 1.10.3
-Release: 29.git%{shortcommit0}%{?dist}
+Release: 30.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{name}
@@ -118,6 +118,9 @@ Provides: lxc-%{name} = %{epoch}:%{version}-%{release}
 
 # needs tar to be able to run containers
 Requires: tar
+
+# BZ1327809
+Requires: firewalld
 
 # permitted by https://fedorahosted.org/fpc/ticket/341#comment:7
 # In F22, the whole package should be renamed to be just "docker" and
@@ -664,6 +667,9 @@ exit 0
 %{_datadir}/rhel/secrets/rhsm
 
 %changelog
+* Sat Jun 04 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.10.3-30.gitf476348
+- Resolves: #1327809 - Requires firewalld
+
 * Sat Jun 04 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.10.3-29.gitf476348
 - Resolves: #1330442 - package docker-selinux is missing interface files
 
