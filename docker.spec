@@ -85,7 +85,7 @@ Name: %{repo}
 %endif
 Epoch: 2
 Version: 1.10.3
-Release: 15.git%{shortcommit0}%{?dist}
+Release: 16.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -104,6 +104,7 @@ Source8: %{repo}-logrotate.sh
 Source9: README.%{repo}-logrotate
 Source10: %{repo}-network.sysconfig
 Source11: %{git5}/archive/%{commit5}/v1.10-migrator-%{shortcommit5}.tar.gz
+Source12: v1.10-migrator-helper
 
 %if 0%{?with_debug}
 # Build with debug
@@ -147,6 +148,9 @@ Provides: %{repo}-engine = %{version}-%{release}
 
 # needs tar to be able to run containers
 Requires: tar
+
+# BZ1327809
+Requires: firewalld
 
 # permitted by https://fedorahosted.org/fpc/ticket/341#comment:7
 # In F22, the whole package should be renamed to be just "docker" and
@@ -540,7 +544,9 @@ done
 install -d %{buildroot}%{_mandir}/man1
 install -p -m 644 man/man1/%{repo}*.1 %{buildroot}%{_mandir}/man1
 install -d %{buildroot}%{_mandir}/man5
-install -p -m 644 man/man5/Dockerfile.5 %{buildroot}%{_mandir}/man5
+install -p -m 644 man/man5/*.5 %{buildroot}%{_mandir}/man5
+install -d %{buildroot}%{_mandir}/man8
+install -p -m 644 man/man8/%{repo}*.8 %{buildroot}%{_mandir}/man8
 
 # install bash completion
 install -dp %{buildroot}%{_datadir}/bash-completion/completions
@@ -597,6 +603,8 @@ install -p -m 644 %{SOURCE7} %{buildroot}%{_sysconfdir}/sysconfig/%{repo}-storag
 # install policy modules
 %_format MODULES $x.pp.bz2
 install -d %{buildroot}%{_datadir}/selinux/packages
+install -d -p %{buildroot}%{_datadir}/selinux/devel/include/services
+install -p -m 644 %{name}-selinux-%{commit2}/docker.if %{buildroot}%{_datadir}/selinux/devel/include/services/do    cker.if
 install -m 0644 %{repo}-selinux-%{commit2}/$MODULES %{buildroot}%{_datadir}/selinux/packages
 
 %if 0%{?with_unit_test}
@@ -652,6 +660,9 @@ cp v1.10-migrator-%{commit5}/README.md README-v1.10-migrator.md
 cp v1.10-migrator-%{commit5}/LICENSE.code LICENSE-v1.10-migrator.code
 cp v1.10-migrator-%{commit5}/LICENSE.docs LICENSE-v1.10-migrator.docs
 
+# install v1.10-migrator-helper
+install -p -m 700 %{SOURCE12} %{buildroot}%{_bindir}
+
 # install secrets patch directory
 install -d -p -m 750 %{buildroot}/%{_datadir}/rhel/secrets
 # rhbz#1110876 - update symlinks for subscription management
@@ -706,7 +717,7 @@ if %{_sbindir}/selinuxenabled ; then
 fi
 fi
 
-%triggerpost -n %{repo}-v1.10-migrator -- %{repo} < %{version}
+%triggerin -n %{repo}-v1.10-migrator -- %{repo} < %{version}
 %{_bindir}/v1.10-migrator-local 2>/dev/null
 exit 0
 
@@ -721,7 +732,7 @@ exit 0
 %config(noreplace) %{_sysconfdir}/sysconfig/%{repo}-network
 %config(noreplace) %{_sysconfdir}/sysconfig/%{repo}-storage
 %{_mandir}/man1/%{repo}*.1.gz
-%{_mandir}/man5/Dockerfile.5.gz
+%{_mandir}/man5/*.5.gz
 %{_mandir}/man8/%{repo}*.8.gz
 %{_bindir}/%{repo}
 %{_unitdir}/%{repo}.service
@@ -784,7 +795,7 @@ exit 0
 %files v1.10-migrator
 %license LICENSE-v1.10-migrator.{code,docs}
 %doc CONTRIBUTING-v1.10-migrator.md README-v1.10-migrator.md
-%{_bindir}/v1.10-migrator-local
+%{_bindir}/v1.10-migrator-*
 
 %files rhsubscription
 %{_datadir}/rhel/secrets/etc-pki-entitlement
@@ -792,6 +803,13 @@ exit 0
 %{_datadir}/rhel/secrets/rhsm
 
 %changelog
+* Mon Jun 06 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.10.3-16.gitf476348
+- Resolves: #1327809
+- Resolves: #1330442
+- Resolves: #1340940
+- Resolves: #1316711
+- Resolves: #1317561
+
 * Thu Jun 02 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.10.3-15.gitf476348
 - Resolves: #1340519 - add TasksMax=infinity
 
