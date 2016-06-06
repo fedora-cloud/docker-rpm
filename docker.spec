@@ -604,7 +604,7 @@ install -p -m 644 %{SOURCE7} %{buildroot}%{_sysconfdir}/sysconfig/%{repo}-storag
 %_format MODULES $x.pp.bz2
 install -d %{buildroot}%{_datadir}/selinux/packages
 install -d -p %{buildroot}%{_datadir}/selinux/devel/include/services
-install -p -m 644 %{name}-selinux-%{commit2}/docker.if %{buildroot}%{_datadir}/selinux/devel/include/services/do    cker.if
+install -p -m 644 %{name}-selinux-%{commit2}/docker.if %{buildroot}%{_datadir}/selinux/devel/include/services/docker.if
 install -m 0644 %{repo}-selinux-%{commit2}/$MODULES %{buildroot}%{_datadir}/selinux/packages
 
 %if 0%{?with_unit_test}
