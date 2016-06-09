@@ -95,7 +95,7 @@ Name: %{repo}
 %endif
 Epoch: 2
 Version: 1.11.2
-Release: 3.git%{shortcommit0}%{?dist}
+Release: 2.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -122,10 +122,6 @@ Source15: v1.10-migrator-helper
 %if 0%{?with_debug}
 # Build with debug
 #Patch0:      build-with-debug-info.patch
-%endif
-
-%ifarch s390x
-Patch0: s390x-pthread.patch
 %endif
 
 BuildRequires: git
@@ -507,10 +503,6 @@ tar zxf %{SOURCE12}
 # untar docker-containerd
 tar zxf %{SOURCE13}
 
-%ifarch s390x
-%patch0 -p1 -b .ln
-%endif
-
 %build
 # set up temporary build gopath, and put our directory there
 mkdir _build
@@ -859,9 +851,6 @@ exit 0
 %{_datadir}/rhel/secrets/rhsm
 
 %changelog
-* Thu Jun 09 2016 Sinny Kumari <sinny@redhat.com> - 2:1.11.2-3.git40ea190
-- BZ#1326896 - Fix build issue on s390x architecture
-
 * Mon Jun 06 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.11.2-2.git40ea190
 - Resolves: #1327809
 - Resolves: #1330442
