@@ -69,7 +69,7 @@
 Name: %{repo}
 Epoch: 2
 Version: 1.10.3
-Release: 31.git%{shortcommit0}%{?dist}
+Release: 32.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{name}
@@ -667,6 +667,9 @@ exit 0
 %{_datadir}/rhel/secrets/rhsm
 
 %changelog
+* Fri Jun 10 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.10.3-32.gitee81b72
+- remove MountFlags=slave from docker.service
+
 * Thu Jun 09 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.10.3-31.gitee81b72
 - built docker @projectatomic/fedora-1.10.3 commit ee81b72
 - built docker-selinux commit 4e4e40e
