@@ -165,7 +165,7 @@ Provides: %{repo}-engine = %{version}-%{release}
 Requires: tar
 
 # BZ1327809
-Requires: firewalld
+Requires: iptables
 
 # permitted by https://fedorahosted.org/fpc/ticket/341#comment:7
 # In F22, the whole package should be renamed to be just "docker" and
