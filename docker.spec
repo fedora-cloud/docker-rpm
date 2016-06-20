@@ -95,7 +95,7 @@ Name: %{repo}
 %endif
 Epoch: 2
 Version: 1.11.2
-Release: 5.git%{shortcommit0}%{?dist}
+Release: 6.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -857,6 +857,9 @@ exit 0
 %{_datadir}/rhel/secrets/rhsm
 
 %changelog
+* Mon Jun 20 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.11.2-6.git4ddbd3d
+- requires iptables not firewalld
+
 * Thu Jun 09 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.11.2-5.git4ddbd3d
 - built docker @projectatomic/docker-1.11 commit 4ddbd3d
 - built docker-selinux commit f08f06d
