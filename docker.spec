@@ -69,7 +69,7 @@
 Name: %{repo}
 Epoch: 2
 Version: 1.10.3
-Release: 32.git%{shortcommit0}%{?dist}
+Release: 33.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{name}
@@ -118,9 +118,6 @@ Provides: lxc-%{name} = %{epoch}:%{version}-%{release}
 
 # needs tar to be able to run containers
 Requires: tar
-
-# BZ1327809
-Requires: firewalld
 
 # permitted by https://fedorahosted.org/fpc/ticket/341#comment:7
 # In F22, the whole package should be renamed to be just "docker" and
@@ -667,6 +664,9 @@ exit 0
 %{_datadir}/rhel/secrets/rhsm
 
 %changelog
+* Mon Jun 20 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.10.3-33.gitee81b72
+- remove dependency on firewalld BZ#1348334
+
 * Fri Jun 10 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.10.3-32.gitee81b72
 - remove MountFlags=slave from docker.service
 
