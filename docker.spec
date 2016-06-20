@@ -85,7 +85,7 @@ Name: %{repo}
 %endif
 Epoch: 2
 Version: 1.10.3
-Release: 19.git%{shortcommit0}%{?dist}
+Release: 20.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -150,9 +150,6 @@ Provides: %{repo}-engine = %{version}-%{release}
 
 # needs tar to be able to run containers
 Requires: tar
-
-# BZ1327809
-Requires: firewalld
 
 # permitted by https://fedorahosted.org/fpc/ticket/341#comment:7
 # In F22, the whole package should be renamed to be just "docker" and
@@ -809,6 +806,9 @@ exit 0
 %{_datadir}/rhel/secrets/rhsm
 
 %changelog
+* Mon Jun 20 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.10.3-20.gitee81b72
+- remove dependency on firewalld BZ#1348334
+
 * Thu Jun 09 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.10.3-19.gitee81b72
 - built docker @projectatomic/fedora-1.10.3 commit ee81b72
 - built docker-selinux commit 2bc84ec
