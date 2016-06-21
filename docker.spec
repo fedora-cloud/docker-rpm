@@ -88,14 +88,10 @@
 %global selinux_policyver 3.13.1-39
 %endif
 
-%if 0%{?centos}
-Name: %{repo}-master
-%else
 Name: %{repo}
-%endif
 Epoch: 2
 Version: 1.11.2
-Release: 6.git%{shortcommit0}%{?dist}
+Release: 7.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -185,8 +181,13 @@ Requires(pre): %{repo}-v1.10-migrator
 
 Requires: libseccomp >= 2.3.0
 
+%if %{?fedora}
 Recommends: oci-register-machine
 Recommends: oci-systemd-hook
+%else
+Requires: oci-register-machine
+Requires: oci-systemd-hook
+%endif
 
 %description
 Docker is an open-source engine that automates the deployment of any
@@ -857,6 +858,10 @@ exit 0
 %{_datadir}/rhel/secrets/rhsm
 
 %changelog
+* Mon Jun 20 2016 Lokesh Mandvekar <lsm5@fedoraproject.org> - 2:1.11.2-7.git4ddbd3d
+- Requires instead of Recommends if not fedora
+- Remove docker-master name tag for centos
+
 * Mon Jun 20 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.11.2-6.git4ddbd3d
 - requires iptables not firewalld
 
