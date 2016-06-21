@@ -30,6 +30,8 @@
 %global git0 https://github.com/projectatomic/%{repo}
 %global commit0 4ddbd3d6b9070a0693f14aaa40f3d84af05c7e85
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
+# docker_branch used in %%check
+%global docker_branch fedora-1.11
 
 # d-s-s
 %global git1 https://github.com/projectatomic/%{repo}-storage-setup/
@@ -41,11 +43,6 @@
 %global git2 https://github.com/projectatomic/%{repo}-selinux
 %global commit2 f08f06dd857177dfbaf0f5857989446e229df187
 %global shortcommit2 %(c=%{commit2}; echo ${c:0:7})
-
-# docker-utils
-%global git3 https://github.com/vbatts/%{repo}-utils
-%global commit3 b851c03ddae1db30a4acf5e4cc5e31b6a671af35
-%global shortcommit3 %(c=%{commit3}; echo ${c:0:7})
 
 # docker-novolume-plugin
 %global git4 https://github.com/projectatomic/%{repo}-novolume-plugin
@@ -91,7 +88,7 @@
 Name: %{repo}
 Epoch: 2
 Version: 1.11.2
-Release: 7.git%{shortcommit0}%{?dist}
+Release: 8.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -101,7 +98,6 @@ ExclusiveArch: %{ix86} x86_64 %{arm} aarch64 ppc64le s390x %{mips}
 Source0: %{git0}/archive/%{commit0}/%{repo}-%{shortcommit0}.tar.gz
 Source1: %{git1}/archive/%{commit1}/%{repo}-storage-setup-%{shortcommit1}.tar.gz
 Source2: %{git2}/archive/%{commit2}/%{repo}-selinux-%{shortcommit2}.tar.gz
-Source3: %{git3}/archive/%{commit3}/%{repo}-utils-%{shortcommit3}.tar.gz
 Source4: %{git4}/archive/%{commit4}/%{repo}-novolume-plugin-%{shortcommit4}.tar.gz
 Source5: %{repo}.service
 Source6: %{repo}.sysconfig
@@ -176,8 +172,6 @@ Obsoletes: %{repo}-io <= 1.5.0-19
 Requires: lvm2
 Requires: xfsprogs
 Obsoletes: %{repo}-storage-setup <= 0.5-3
-
-Requires(pre): %{repo}-v1.10-migrator
 
 Requires: libseccomp >= 2.3.0
 
@@ -362,12 +356,6 @@ Provides: golang(%{import_path}/volume/testutils) = %{epoch}:%{version}-%{releas
 This package provides the source libraries for Docker.
 %endif
 
-%package utils
-Summary: External utilities for the %{repo} experience
-
-%description utils
-%{summary}
-
 %if 0%{?with_unit_test}
 %package unit-test
 Summary: %{summary} - for running unit tests
@@ -474,7 +462,7 @@ running and skip checksum calculation on startup.
 Summary: Red Hat subscription management files needed on the host to enable RHEL containers
 Requires: %{repo} = %{epoch}:%{version}-%{release}
 Requires: subscription-manager-plugin-container
-Provides: %{repo}-io-rhsubscription
+Provides: %{repo}-io-rhsubscription = %{version}-%{release}
 
 %description rhsubscription
 In order to work with RHEL containers, the host (RHEL, or other) must export susbcription information to the container.
@@ -490,9 +478,6 @@ tar zxf %{SOURCE1}
 
 # unpack %%{repo}-selinux
 tar zxf %{SOURCE2}
-
-# untar docker-utils
-tar zxf %{SOURCE3}
 
 # untar docker-novolume-plugin
 tar zxf %{SOURCE4}
@@ -514,9 +499,8 @@ tar zxf %{SOURCE13}
 # set up temporary build gopath, and put our directory there
 mkdir _build
 pushd _build
-mkdir -p src/%{provider}.%{provider_tld}/{%{repo},projectatomic,vbatts}
+mkdir -p src/%{provider}.%{provider_tld}/{%{repo},projectatomic}
 ln -s $(dirs +1 -l) src/%{import_path}
-ln -s $(dirs +1 -l)/%{repo}-utils-%{commit3} src/%{provider}.%{provider_tld}/vbatts/%{repo}-utils
 ln -s $(dirs +1 -l)/%{repo}-novolume-plugin-%{commit4} src/%{provider}.%{provider_tld}/projectatomic/%{repo}-novolume-plugin
 ln -s $(dirs +1 -l)/containerd-%{commit7} src/%{provider}.%{provider_tld}/docker/containerd
 popd
@@ -538,11 +522,6 @@ cp contrib/syntax/vim/README.md README-vim-syntax.md
 cp %{repo}-novolume-plugin-%{commit4}/LICENSE LICENSE-novolume-plugin
 cp %{repo}-novolume-plugin-%{commit4}/README.md README-novolume-plugin.md
 go-md2man -in %{repo}-novolume-plugin-%{commit4}/man/docker-novolume-plugin.8.md -out docker-novolume-plugin.8
-
-pushd $(pwd)/_build/src
-go build -ldflags "-B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d ' \n')" github.com/vbatts/%{repo}-utils/cmd/%{repo}-fetch
-go build -ldflags "-B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d ' \n')" github.com/vbatts/%{repo}-utils/cmd/%{repo}tarsum
-popd
 
 # build %%{repo}-selinux
 pushd %{repo}-selinux-%{commit2}
@@ -567,10 +546,6 @@ popd
 %install
 # install binary
 install -d %{buildroot}%{_bindir}
-
-# install utils
-install -p -m 755 _build/src/%{repo}-fetch %{buildroot}%{_bindir}
-install -p -m 755 _build/src/%{repo}tarsum %{buildroot}%{_bindir}
 
 for x in bundles/latest; do
     if ! test -d $x/dynbinary; then
@@ -728,7 +703,7 @@ ln -s %{_sysconfdir}/rhsm/ca/redhat-uep.pem %{buildroot}/%{_sysconfdir}/%{name}/
 [ ! -w /run/%{repo}.sock ] || {
     mkdir test_dir
     pushd test_dir
-    git clone https://github.com/projectatomic/docker.git -b fedora-1.11
+    git clone https://github.com/projectatomic/%{name}.git -b %{docker_branch}
     pushd %{repo}
     make test
     popd
@@ -843,10 +818,6 @@ exit 0
 %files zsh-completion
 %{_datadir}/zsh/site-functions/_%{repo}
 
-%files utils
-%{_bindir}/%{repo}-fetch
-%{_bindir}/%{repo}tarsum
-
 %files v1.10-migrator
 %license LICENSE-v1.10-migrator.{code,docs}
 %doc CONTRIBUTING-v1.10-migrator.md README-v1.10-migrator.md
@@ -858,6 +829,14 @@ exit 0
 %{_datadir}/rhel/secrets/rhsm
 
 %changelog
+* Mon Jun 20 2016 Lokesh Mandvekar <lsm5@fedoraproject.org> - 2:1.11.2-8.git4ddbd3d
+- Do not run migrator script via %%triggerin. If the docker daemon is already
+running prior, the new daemon will be restarted which will handle migration.
+Remove migrator subpackage from docker runtime deps
+- From: Jonathan Lebon <jlebon@redhat.com>
+- Versioned provides for docker-rhel-subscription
+- Remove docker-utils subpackage
+
 * Mon Jun 20 2016 Lokesh Mandvekar <lsm5@fedoraproject.org> - 2:1.11.2-7.git4ddbd3d
 - Requires instead of Recommends if not fedora
 - Remove docker-master name tag for centos
