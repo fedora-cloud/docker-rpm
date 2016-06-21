@@ -181,7 +181,7 @@ Requires(pre): %{repo}-v1.10-migrator
 
 Requires: libseccomp >= 2.3.0
 
-%if %{?fedora}
+%if 0%{?fedora}
 Recommends: oci-register-machine
 Recommends: oci-systemd-hook
 %else
