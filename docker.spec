@@ -41,7 +41,7 @@
 
 # docker-selinux
 %global git2 https://github.com/projectatomic/%{repo}-selinux
-%global commit2 f08f06dd857177dfbaf0f5857989446e229df187
+%global commit2 7c94597ac663c7ea624cc30fbb31faa49cd93afd
 %global shortcommit2 %(c=%{commit2}; echo ${c:0:7})
 
 # docker-novolume-plugin
@@ -88,7 +88,7 @@
 Name: %{repo}
 Epoch: 2
 Version: 1.11.2
-Release: 8.git%{shortcommit0}%{?dist}
+Release: 9.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -829,6 +829,9 @@ exit 0
 %{_datadir}/rhel/secrets/rhsm
 
 %changelog
+* Mon Jun 20 2016 Lokesh Mandvekar <lsm5@fedoraproject.org> - 2:1.11.2-9.git4ddbd3d
+- built docker-selinux commit 7c94597
+
 * Mon Jun 20 2016 Lokesh Mandvekar <lsm5@fedoraproject.org> - 2:1.11.2-8.git4ddbd3d
 - Do not run migrator script via %%triggerin. If the docker daemon is already
 running prior, the new daemon will be restarted which will handle migration.
