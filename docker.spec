@@ -41,7 +41,11 @@
 
 # docker-selinux
 %global git2 https://github.com/projectatomic/%{repo}-selinux
+%if 0%{?fedora}
 %global commit2 7c94597ac663c7ea624cc30fbb31faa49cd93afd
+%else
+%global commit2 032bcda7b1eb6d9d75d3c0ce64d9d35cdb9c7b85
+%endif
 %global shortcommit2 %(c=%{commit2}; echo ${c:0:7})
 
 # docker-novolume-plugin
@@ -88,7 +92,7 @@
 Name: %{repo}
 Epoch: 2
 Version: 1.11.2
-Release: 9.git%{shortcommit0}%{?dist}
+Release: 10.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -120,6 +124,7 @@ Patch0: s390x-pthread.patch
 
 BuildRequires: git
 BuildRequires: glibc-static
+BuildRequires: %{?go_compiler:compiler(go-compiler)}%{!?go_compiler:golang} >= 1.6.2
 BuildRequires: go-md2man
 BuildRequires: godep
 BuildRequires: device-mapper-devel
@@ -128,15 +133,6 @@ BuildRequires: pkgconfig(audit)
 BuildRequires: btrfs-progs-devel
 BuildRequires: sqlite-devel
 BuildRequires: pkgconfig(systemd)
-%if %{go_compiler}
-BuildRequires: compiler(go-compiler)
-%else
-%ifarch %{golang_arches}
-BuildRequires: golang >= 1.4.2
-%else
-BuildRequires: gcc-go >= %{gccgo_min_vers}
-%endif
-%endif
 %if 0%{?fedora} >= 21
 # Resolves: rhbz#1165615
 Requires: device-mapper-libs >= 1.02.90-1
@@ -829,8 +825,13 @@ exit 0
 %{_datadir}/rhel/secrets/rhsm
 
 %changelog
+* Sat Jun 26 2016 Lokesh Mandvekar <lsm5@fedoraproject.org> - 2:1.11.2-10.git4ddbd3d
+- built docker-selinux commit 7c94597 (for fedora)
+- built docker-selinux commit 032bcda (for centos7)
+
 * Mon Jun 20 2016 Lokesh Mandvekar <lsm5@fedoraproject.org> - 2:1.11.2-9.git4ddbd3d
 - built docker-selinux commit 7c94597
+
 
 * Mon Jun 20 2016 Lokesh Mandvekar <lsm5@fedoraproject.org> - 2:1.11.2-8.git4ddbd3d
 - Do not run migrator script via %%triggerin. If the docker daemon is already
