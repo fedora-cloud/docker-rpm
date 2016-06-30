@@ -92,7 +92,7 @@
 Name: %{repo}
 Epoch: 2
 Version: 1.11.2
-Release: 10.git%{shortcommit0}%{?dist}
+Release: 11.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -531,7 +531,7 @@ popd
 
 # build docker-runc
 pushd runc-%{commit6}
-make
+make BUILDTAGS="seccomp selinux"
 popd
 
 # build docker-containerd
@@ -825,6 +825,9 @@ exit 0
 %{_datadir}/rhel/secrets/rhsm
 
 %changelog
+* Thu Jun 30 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.11.2-11.git4ddbd3d
+- rebuilt with runc with selinux
+
 * Sat Jun 26 2016 Lokesh Mandvekar <lsm5@fedoraproject.org> - 2:1.11.2-10.git4ddbd3d
 - built docker-selinux commit 7c94597 (for fedora)
 - built docker-selinux commit 032bcda (for centos7)
