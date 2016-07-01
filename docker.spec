@@ -92,7 +92,7 @@
 Name: %{repo}
 Epoch: 2
 Version: 1.11.2
-Release: 11.git%{shortcommit0}%{?dist}
+Release: 12.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -124,7 +124,7 @@ Patch0: s390x-pthread.patch
 
 BuildRequires: git
 BuildRequires: glibc-static
-BuildRequires: %{?go_compiler:compiler(go-compiler)}%{!?go_compiler:golang} >= 1.6.2
+BuildRequires: %{?go_compiler:compiler(go-compiler)}%{!?go_compiler:golang >= 1.6.2}
 BuildRequires: go-md2man
 BuildRequires: godep
 BuildRequires: device-mapper-devel
@@ -825,6 +825,9 @@ exit 0
 %{_datadir}/rhel/secrets/rhsm
 
 %changelog
+* Fri Jul 01 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.11.2-12.git4ddbd3d
+- BZ#1350418 - Fix build broken for gcc-go
+
 * Thu Jun 30 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.11.2-11.git4ddbd3d
 - rebuilt with runc with selinux
 
@@ -834,7 +837,6 @@ exit 0
 
 * Mon Jun 20 2016 Lokesh Mandvekar <lsm5@fedoraproject.org> - 2:1.11.2-9.git4ddbd3d
 - built docker-selinux commit 7c94597
-
 
 * Mon Jun 20 2016 Lokesh Mandvekar <lsm5@fedoraproject.org> - 2:1.11.2-8.git4ddbd3d
 - Do not run migrator script via %%triggerin. If the docker daemon is already
