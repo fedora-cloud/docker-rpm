@@ -126,9 +126,11 @@ BuildRequires: git
 BuildRequires: glibc-static
 BuildRequires: %{?go_compiler:compiler(go-compiler)}%{!?go_compiler:golang >= 1.6.2}
 BuildRequires: go-md2man
-BuildRequires: godep
 BuildRequires: device-mapper-devel
+%if 0%{?fedora}
+BuildRequires: godep
 BuildRequires: libseccomp-static >= 2.3.0
+%endif
 BuildRequires: pkgconfig(audit)
 BuildRequires: btrfs-progs-devel
 BuildRequires: sqlite-devel
@@ -831,7 +833,7 @@ exit 0
 * Thu Jun 30 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.11.2-11.git4ddbd3d
 - rebuilt with runc with selinux
 
-* Sat Jun 26 2016 Lokesh Mandvekar <lsm5@fedoraproject.org> - 2:1.11.2-10.git4ddbd3d
+* Sat Jun 25 2016 Lokesh Mandvekar <lsm5@fedoraproject.org> - 2:1.11.2-10.git4ddbd3d
 - built docker-selinux commit 7c94597 (for fedora)
 - built docker-selinux commit 032bcda (for centos7)
 
