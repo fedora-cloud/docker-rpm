@@ -528,7 +528,11 @@ popd
 
 # build v1.10-migrator
 pushd v1.10-migrator-%{commit5}
+%if 0%{fedora}
 make v1.10-migrator-local
+%else
+go build -o v1.10-migrator-local .
+%endif
 popd
 
 # build docker-runc
