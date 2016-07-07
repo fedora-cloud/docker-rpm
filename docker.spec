@@ -90,7 +90,9 @@
 %endif
 
 Name: %{repo}
+%if 0%{?fedora} || 0%{?centos}
 Epoch: 2
+%endif
 Version: 1.11.2
 Release: 12.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
