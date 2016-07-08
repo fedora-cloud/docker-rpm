@@ -515,7 +515,7 @@ export DOCKER_GITCOMMIT="%{shortcommit0}/%{version}"
 export DOCKER_BUILDTAGS="selinux seccomp"
 export GOPATH=$(pwd)/_build:$(pwd)/vendor:%{gopath}:$(pwd)/containerd-%{commit7}/vendor
 
-DEBUG=1 bash -x hack/make.sh dynbinary
+DOCKER_DEBUG=1 bash -x hack/make.sh dynbinary
 man/md2man-all.sh
 cp contrib/syntax/vim/LICENSE LICENSE-vim-syntax
 cp contrib/syntax/vim/README.md README-vim-syntax.md
