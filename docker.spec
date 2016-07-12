@@ -28,7 +28,7 @@
 
 # docker
 %global git0 https://github.com/projectatomic/%{repo}
-%global commit0 971d3bfe40536facdc1d5772254132e1c7869f92
+%global commit0 29066b4884ded7f5e98ed9053388c3099e1c7d86
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 
 # d-s-s
@@ -85,7 +85,7 @@ Name: %{repo}
 %endif
 Epoch: 2
 Version: 1.10.3
-Release: 23.git%{shortcommit0}%{?dist}
+Release: 24.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -806,6 +806,13 @@ exit 0
 %{_datadir}/rhel/secrets/rhsm
 
 %changelog
+* Tue Jul 12 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.10.3-24.git29066b4
+- built docker @projectatomic/fedora-1.10.3 commit 29066b4
+- built docker-selinux commit 2bc84ec
+- built d-s-s commit 194eca2
+- built docker-utils commit b851c03
+- built v1.10-migrator commit c417a6a
+
 * Wed Jul 06 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.10.3-23.git971d3bf
 - built docker @projectatomic/fedora-1.10.3 commit 971d3bf
 - built docker-selinux commit 2bc84ec
