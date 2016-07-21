@@ -94,7 +94,7 @@ Name: %{repo}
 Epoch: 2
 %endif
 Version: 1.11.2
-Release: 12.git%{shortcommit0}%{?dist}
+Release: 13.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -833,6 +833,9 @@ exit 0
 %{_datadir}/rhel/secrets/rhsm
 
 %changelog
+* Thu Jul 21 2016 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2:1.11.2-13.git4ddbd3d
+- https://fedoraproject.org/wiki/Changes/golang1.7
+
 * Fri Jul 01 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.11.2-12.git4ddbd3d
 - BZ#1350418 - Fix build broken for gcc-go
 
