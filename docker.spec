@@ -28,10 +28,10 @@
 
 # docker
 %global git0 https://github.com/projectatomic/%{repo}
-%global commit0 4ddbd3d6b9070a0693f14aaa40f3d84af05c7e85
+%global commit0 8fdcf30ac77ddd15ef7eeb23fb11a5a7f8188f31
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 # docker_branch used in %%check
-%global docker_branch fedora-1.11
+%global docker_branch docker-1.12
 
 # d-s-s
 %global git1 https://github.com/projectatomic/%{repo}-storage-setup/
@@ -42,7 +42,7 @@
 # docker-selinux
 %global git2 https://github.com/projectatomic/%{repo}-selinux
 %if 0%{?fedora}
-%global commit2 7c94597ac663c7ea624cc30fbb31faa49cd93afd
+%global commit2 bcd65288e6109a5b13c57a836d685b8a8313001f
 %else
 %global commit2 032bcda7b1eb6d9d75d3c0ce64d9d35cdb9c7b85
 %endif
@@ -60,12 +60,12 @@
 
 # docker-runc
 %global git6 https://github.com/opencontainers/runc/
-%global commit6 baf6536d6259209c3edfa2b22237af82942d3dfa
+%global commit6 cc29e3dded8e27ba8f65738f40d251c885030a28
 %global shortcommit6 %(c=%{commit6}; echo ${c:0:7})
 
 # docker-containerd
 %global git7 https://github.com/docker/containerd
-%global commit7 9dc2b3273db42c75368988a3885a3afd770069d9
+%global commit7 0ac3cd1be170d180b2baed755e8f0da547ceb267
 %global shortcommit7 %(c=%{commit7}; echo ${c:0:7})
 
 # docker-selinux stuff (prefix with ds_ for version/release etc.)
@@ -93,8 +93,8 @@ Name: %{repo}
 %if 0%{?fedora} || 0%{?centos}
 Epoch: 2
 %endif
-Version: 1.11.2
-Release: 13.git%{shortcommit0}%{?dist}
+Version: 1.12.1
+Release: 2.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -121,8 +121,6 @@ Source15: v1.10-migrator-helper
 # Build with debug
 #Patch0:      build-with-debug-info.patch
 %endif
-
-Patch0: s390x-pthread.patch
 
 BuildRequires: git
 BuildRequires: glibc-static
@@ -491,10 +489,6 @@ tar zxf %{SOURCE12}
 # untar docker-containerd
 tar zxf %{SOURCE13}
 
-%ifarch s390x
-%patch0 -p1 -b .ln
-%endif
-
 %build
 # set up temporary build gopath, and put our directory there
 mkdir _build
@@ -550,15 +544,11 @@ popd
 %install
 # install binary
 install -d %{buildroot}%{_bindir}
-
-for x in bundles/latest; do
-    if ! test -d $x/dynbinary; then
-    continue
-    fi
-    rm $x/dynbinary/*.md5 $x/dynbinary/*.sha256
-    install -p -m 755 $x/dynbinary/%{repo}-%{version}* %{buildroot}%{_bindir}/%{repo}
-    break
-done
+rm bundles/latest/dynbinary-client/*.md5 bundles/latest/dynbinary-client/*.sha256
+rm bundles/latest/dynbinary-daemon/*.md5 bundles/latest/dynbinary-daemon/*.sha256
+install -p -m 755 bundles/latest/dynbinary-client/%{repo}-%{version} %{buildroot}%{_bindir}/%{repo}
+install -p -m 755 bundles/latest/dynbinary-daemon/%{repo}d-%{version} %{buildroot}%{_bindir}/%{repo}d
+install -p -m 755 bundles/latest/dynbinary-daemon/%{repo}-proxy-%{version} %{buildroot}%{_bindir}/%{repo}-proxy
 
 # install manpages
 install -d %{buildroot}%{_mandir}/man1
@@ -616,14 +606,14 @@ install -d %{buildroot}%{_mandir}/man8
 install -p -m 644 %{repo}-novolume-plugin.8 %{buildroot}%{_mandir}/man8
 
 # install docker-runc
-install -d %{buildroot}%{_libexecdir}/docker
-install -p -m 755 runc-%{commit6}/runc %{buildroot}%{_libexecdir}/docker/docker-runc
+install -d %{buildroot}%{_libexecdir}/%{repo}
+install -p -m 755 runc-%{commit6}/runc %{buildroot}%{_libexecdir}/%{repo}/%{repo}-runc
 
 #install docker-containerd
-install -d %{buildroot}%{_libexecdir}/docker
-install -p -m 755 containerd-%{commit7}/bin/containerd %{buildroot}%{_libexecdir}/docker/docker-containerd
-install -p -m 755 containerd-%{commit7}/bin/containerd-shim %{buildroot}%{_libexecdir}/docker/docker-containerd-shim
-install -p -m 755 containerd-%{commit7}/bin/ctr %{buildroot}%{_libexecdir}/docker/docker-ctr
+install -d %{buildroot}%{_libexecdir}/%{repo}
+install -p -m 755 containerd-%{commit7}/bin/containerd %{buildroot}%{_libexecdir}/%{repo}/%{repo}-containerd
+install -p -m 755 containerd-%{commit7}/bin/containerd-shim %{buildroot}%{_libexecdir}/%{repo}/%{repo}-containerd-shim
+install -p -m 755 containerd-%{commit7}/bin/ctr %{buildroot}%{_libexecdir}/%{repo}/%{repo}-ctr
 
 # for additional args
 install -d %{buildroot}%{_sysconfdir}/sysconfig/
@@ -765,6 +755,8 @@ exit 0
 %{_mandir}/man5/*.5.gz
 %{_mandir}/man8/%{repo}*.8.gz
 %{_bindir}/%{repo}
+%{_bindir}/%{repo}d
+%{_bindir}/%{repo}-proxy
 %{_unitdir}/%{repo}.service
 %{_unitdir}/%{repo}-containerd.service
 %{_datadir}/bash-completion/completions/%{repo}
@@ -778,11 +770,11 @@ exit 0
 %{_bindir}/%{repo}-storage-setup
 %dir %{dss_libdir}
 %{dss_libdir}/*
-# 1.11 specific
-%{_libexecdir}/docker/docker-runc
-%{_libexecdir}/docker/docker-containerd
-%{_libexecdir}/docker/docker-containerd-shim
-%{_libexecdir}/docker/docker-ctr
+# >= 1.11 specific
+%{_libexecdir}/%{repo}/%{repo}-runc
+%{_libexecdir}/%{repo}/%{repo}-containerd
+%{_libexecdir}/%{repo}/%{repo}-containerd-shim
+%{_libexecdir}/%{repo}/%{repo}-ctr
 
 %if 0%{?with_devel}
 %files devel -f devel.file-list
@@ -806,7 +798,7 @@ exit 0
 %files novolume-plugin
 %license LICENSE-novolume-plugin
 %doc README-novolume-plugin.md
-%{_libexecdir}/docker/%{repo}-novolume-plugin
+%{_libexecdir}/%{repo}/%{repo}-novolume-plugin
 %{_unitdir}/%{repo}-novolume-plugin.service
 %{_unitdir}/%{repo}-novolume-plugin.socket
 
@@ -833,6 +825,9 @@ exit 0
 %{_datadir}/rhel/secrets/rhsm
 
 %changelog
+* Mon Aug 22 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.12.1-2.git8fdcf30
+- Bump to 1.12.1
+
 * Thu Jul 21 2016 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2:1.11.2-13.git4ddbd3d
 - https://fedoraproject.org/wiki/Changes/golang1.7
 

@@ -13,6 +13,8 @@ EnvironmentFile=-/etc/sysconfig/docker-network
 Environment=GOTRACEBACK=crash
 Environment=DOCKER_HTTP_HOST_COMPAT=1
 ExecStart=/usr/bin/docker daemon \
+          --add-runtime docker-runc=/usr/libexec/docker/docker-runc \
+          --default-runtime=docker-runc \
           --containerd /run/containerd.sock \
           --exec-opt native.cgroupdriver=systemd \
           $OPTIONS \
