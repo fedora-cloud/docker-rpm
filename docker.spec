@@ -94,7 +94,7 @@ Name: %{repo}
 Epoch: 2
 %endif
 Version: 1.12.0
-Release: 2.git%{shortcommit0}%{?dist}
+Release: 3.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -831,6 +831,9 @@ exit 0
 %{_datadir}/rhel/secrets/rhsm
 
 %changelog
+* Tue Aug 02 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.12.0-3.gitad4812e
+- Fix containerd listen address
+
 * Fri Jul 29 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.12.0-2.gitad4812e
 - Bump to 1.12.0
 
