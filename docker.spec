@@ -94,7 +94,7 @@ Name: %{repo}
 Epoch: 2
 %endif
 Version: 1.12.0
-Release: 4.git%{shortcommit0}%{?dist}
+Release: 5.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -618,8 +618,7 @@ install -p -m 755 runc-%{commit6}/runc %{buildroot}%{_libexecdir}/%{repo}/%{repo
 #install docker-containerd
 install -d %{buildroot}%{_libexecdir}/%{repo}
 install -p -m 755 containerd-%{commit7}/bin/containerd %{buildroot}%{_libexecdir}/%{repo}/%{repo}-containerd
-# docker-containerd-shim has to stay in $PATH
-install -p -m 755 containerd-%{commit7}/bin/containerd-shim %{buildroot}%{_bindir}/%{repo}-containerd-shim
+install -p -m 755 containerd-%{commit7}/bin/containerd-shim %{buildroot}%{_libexecdir}/%{repo}/%{repo}-containerd-shim
 install -p -m 755 containerd-%{commit7}/bin/ctr %{buildroot}%{_libexecdir}/%{repo}/%{repo}-ctr
 
 # for additional args
@@ -780,7 +779,7 @@ exit 0
 # >= 1.11 specific
 %{_libexecdir}/%{repo}/%{repo}-runc
 %{_libexecdir}/%{repo}/%{repo}-containerd
-%{_bindir}/%{repo}-containerd-shim
+%{_libexecdir}/%{repo}/%{repo}-containerd-shim
 %{_libexecdir}/%{repo}/%{repo}-ctr
 
 %if 0%{?with_devel}
@@ -832,6 +831,9 @@ exit 0
 %{_datadir}/rhel/secrets/rhsm
 
 %changelog
+* Wed Aug 03 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.12.0-5.gitad4812e
+- rebuilt to use custom containerd-shim
+
 * Wed Aug 03 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.12.0-4.gitad4812e
 - Resolves: #1362623
 
