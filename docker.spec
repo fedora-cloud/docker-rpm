@@ -94,7 +94,7 @@ Name: %{repo}
 Epoch: 2
 %endif
 Version: 1.12.0
-Release: 3.git%{shortcommit0}%{?dist}
+Release: 4.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -612,14 +612,15 @@ install -d %{buildroot}%{_mandir}/man8
 install -p -m 644 %{repo}-novolume-plugin.8 %{buildroot}%{_mandir}/man8
 
 # install docker-runc
-install -d %{buildroot}%{_libexecdir}/docker
-install -p -m 755 runc-%{commit6}/runc %{buildroot}%{_libexecdir}/docker/docker-runc
+install -d %{buildroot}%{_libexecdir}/%{repo}
+install -p -m 755 runc-%{commit6}/runc %{buildroot}%{_libexecdir}/%{repo}/%{repo}-runc
 
 #install docker-containerd
-install -d %{buildroot}%{_libexecdir}/docker
-install -p -m 755 containerd-%{commit7}/bin/containerd %{buildroot}%{_libexecdir}/docker/docker-containerd
-install -p -m 755 containerd-%{commit7}/bin/containerd-shim %{buildroot}%{_libexecdir}/docker/docker-containerd-shim
-install -p -m 755 containerd-%{commit7}/bin/ctr %{buildroot}%{_libexecdir}/docker/docker-ctr
+install -d %{buildroot}%{_libexecdir}/%{repo}
+install -p -m 755 containerd-%{commit7}/bin/containerd %{buildroot}%{_libexecdir}/%{repo}/%{repo}-containerd
+# docker-containerd-shim has to stay in $PATH
+install -p -m 755 containerd-%{commit7}/bin/containerd-shim %{buildroot}%{_bindir}/%{repo}-containerd-shim
+install -p -m 755 containerd-%{commit7}/bin/ctr %{buildroot}%{_libexecdir}/%{repo}/%{repo}-ctr
 
 # for additional args
 install -d %{buildroot}%{_sysconfdir}/sysconfig/
@@ -776,11 +777,11 @@ exit 0
 %{_bindir}/%{repo}-storage-setup
 %dir %{dss_libdir}
 %{dss_libdir}/*
-# 1.11 specific
-%{_libexecdir}/docker/docker-runc
-%{_libexecdir}/docker/docker-containerd
-%{_libexecdir}/docker/docker-containerd-shim
-%{_libexecdir}/docker/docker-ctr
+# >= 1.11 specific
+%{_libexecdir}/%{repo}/%{repo}-runc
+%{_libexecdir}/%{repo}/%{repo}-containerd
+%{_bindir}/%{repo}-containerd-shim
+%{_libexecdir}/%{repo}/%{repo}-ctr
 
 %if 0%{?with_devel}
 %files devel -f devel.file-list
@@ -804,7 +805,7 @@ exit 0
 %files novolume-plugin
 %license LICENSE-novolume-plugin
 %doc README-novolume-plugin.md
-%{_libexecdir}/docker/%{repo}-novolume-plugin
+%{_libexecdir}/%{repo}/%{repo}-novolume-plugin
 %{_unitdir}/%{repo}-novolume-plugin.service
 %{_unitdir}/%{repo}-novolume-plugin.socket
 
@@ -831,6 +832,9 @@ exit 0
 %{_datadir}/rhel/secrets/rhsm
 
 %changelog
+* Wed Aug 03 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.12.0-4.gitad4812e
+- Resolves: #1362623
+
 * Tue Aug 02 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.12.0-3.gitad4812e
 - Fix containerd listen address
 
