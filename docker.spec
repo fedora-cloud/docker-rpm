@@ -28,7 +28,7 @@
 
 # docker
 %global git0 https://github.com/projectatomic/%{repo}
-%global commit0 8fdcf30ac77ddd15ef7eeb23fb11a5a7f8188f31
+%global commit0 8ea583fa38019b0c1a46eba9ea335ab40378cfc7
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 # docker_branch used in %%check
 %global docker_branch docker-1.12
@@ -94,7 +94,7 @@ Name: %{repo}
 Epoch: 2
 %endif
 Version: 1.12.1
-Release: 2.git%{shortcommit0}%{?dist}
+Release: 3.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -825,6 +825,9 @@ exit 0
 %{_datadir}/rhel/secrets/rhsm
 
 %changelog
+* Mon Aug 22 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.12.1-3.git8fdcf30
+- Fix commit for 1.12.1
+
 * Mon Aug 22 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.12.1-2.git8fdcf30
 - Bump to 1.12.1
 
