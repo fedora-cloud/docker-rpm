@@ -5,7 +5,7 @@ After=network.target
 
 [Service]
 ExecStart=/usr/libexec/docker/docker-containerd --listen unix:///run/containerd.sock --runtime /usr/libexec/docker/docker-runc --runtime-args --systemd-cgroup=true --shim /usr/libexec/docker/docker-containerd-shim
-TasksMax=infinity
+TasksMax=8192
 LimitNOFILE=1048576
 LimitNPROC=1048576
 LimitCORE=infinity

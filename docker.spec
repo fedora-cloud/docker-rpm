@@ -28,10 +28,10 @@
 
 # docker
 %global git0 https://github.com/projectatomic/%{repo}
-%global commit0 ad4812ef5edd92822f78c531fdc5b7eaa3304cb7
+%global commit0 8ea583fa38019b0c1a46eba9ea335ab40378cfc7
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 # docker_branch used in %%check
-%global docker_branch fedora-1.11
+%global docker_branch docker-1.12
 
 # d-s-s
 %global git1 https://github.com/projectatomic/%{repo}-storage-setup/
@@ -93,8 +93,8 @@ Name: %{repo}
 %if 0%{?fedora} || 0%{?centos}
 Epoch: 2
 %endif
-Version: 1.12.0
-Release: 7.git%{shortcommit0}%{?dist}
+Version: 1.12.1
+Release: 2.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -825,6 +825,10 @@ exit 0
 %{_datadir}/rhel/secrets/rhsm
 
 %changelog
+* Mon Aug 22 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.12.1-2.git8ea583f
+- Bump to 1.12.1
+- Fix BZ#1311750
+
 * Mon Aug 08 2016 Dan Horák <dan[at]danny.cz> - 2:1.12.0-7.gitad4812e
 - drop workaround for gcc-go based build on s390x, we have golang in F-25 and up
 
