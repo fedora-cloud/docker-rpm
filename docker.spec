@@ -28,7 +28,7 @@
 
 # docker
 %global git0 https://github.com/projectatomic/%{repo}
-%global commit0 8ea583fa38019b0c1a46eba9ea335ab40378cfc7
+%global commit0 49151a1fd0da1c2fc5ad2b7322c7b2117caaf506
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 # docker_branch used in %%check
 %global docker_branch docker-1.12
@@ -94,7 +94,7 @@ Name: %{repo}
 Epoch: 2
 %endif
 Version: 1.12.1
-Release: 5.git%{shortcommit0}%{?dist}
+Release: 6.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -825,6 +825,9 @@ exit 0
 %{_datadir}/rhel/secrets/rhsm
 
 %changelog
+* Wed Aug 24 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.12.1-6.git49151a1
+- Fix BZ#1368999
+
 * Tue Aug 23 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.12.1-5.git8ea583f
 - use our forked projectatomic/runc instead of upstream
 
