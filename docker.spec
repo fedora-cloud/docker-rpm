@@ -60,7 +60,7 @@
 
 # docker-runc
 %global git6 https://github.com/projectatomic/runc/
-%global commit6 ee10b449a5ea0a24586a86962fc540e9e94258c9
+%global commit6 f509e5094de84a919e2e8ae316373689fb66c513
 %global shortcommit6 %(c=%{commit6}; echo ${c:0:7})
 
 # docker-containerd
@@ -94,7 +94,7 @@ Name: %{repo}
 Epoch: 2
 %endif
 Version: 1.12.1
-Release: 6.git%{shortcommit0}%{?dist}
+Release: 7.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -825,6 +825,9 @@ exit 0
 %{_datadir}/rhel/secrets/rhsm
 
 %changelog
+* Thu Aug 25 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.12.1-7.git49151a1
+- bump runc commit to fix init.scope
+
 * Wed Aug 24 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.12.1-6.git49151a1
 - Fix BZ#1368999
 
