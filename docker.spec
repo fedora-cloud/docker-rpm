@@ -28,7 +28,7 @@
 
 # docker
 %global git0 https://github.com/projectatomic/%{repo}
-%global commit0 49151a1fd0da1c2fc5ad2b7322c7b2117caaf506
+%global commit0 f1040da127b7f1167ab351cb429ac5faa421c7cf
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 # docker_branch used in %%check
 %global docker_branch docker-1.12
@@ -94,7 +94,7 @@ Name: %{repo}
 Epoch: 2
 %endif
 Version: 1.12.1
-Release: 7.git%{shortcommit0}%{?dist}
+Release: 8.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -825,6 +825,10 @@ exit 0
 %{_datadir}/rhel/secrets/rhsm
 
 %changelog
+* Mon Aug 29 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.12.1-8.gitf1040da
+- Fix systemd cgroup
+- Fix docker.service, docker-containerd.service
+
 * Thu Aug 25 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.12.1-7.git49151a1
 - bump runc commit to fix init.scope
 
