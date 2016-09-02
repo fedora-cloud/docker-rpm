@@ -42,7 +42,7 @@
 # docker-selinux
 %global git2 https://github.com/projectatomic/%{repo}-selinux
 %if 0%{?fedora}
-%global commit2 bcd65288e6109a5b13c57a836d685b8a8313001f
+%global commit2 fd38eafe61f9c20fde78b2374e0a7a57f99e1f81
 %else
 %global commit2 032bcda7b1eb6d9d75d3c0ce64d9d35cdb9c7b85
 %endif
@@ -84,7 +84,7 @@
 
 # Version of SELinux we were using
 %if 0%{?fedora} >= 22
-%global selinux_policyver 3.13.1-155
+%global selinux_policyver 3.13.1-213
 %else
 %global selinux_policyver 3.13.1-39
 %endif
@@ -94,7 +94,7 @@ Name: %{repo}
 Epoch: 2
 %endif
 Version: 1.12.1
-Release: 20.git%{shortcommit0}%{?dist}
+Release: 21.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -598,8 +598,8 @@ install -p -m 644 %{SOURCE5} %{buildroot}%{_unitdir}
 install -p -m 644 %{SOURCE14} %{buildroot}%{_unitdir}
 
 # install novolume-plugin executable, unitfile, socket and man
-install -d %{buildroot}%{_libexecdir}/docker
-install -p -m 755 _build/src/%{repo}-novolume-plugin %{buildroot}%{_libexecdir}/docker
+install -d %{buildroot}%{_libexecdir}/%{repo}
+install -p -m 755 _build/src/%{repo}-novolume-plugin %{buildroot}%{_libexecdir}/%{repo}
 install -p -m 644 %{repo}-novolume-plugin-%{commit4}/systemd/%{repo}-novolume-plugin.service %{buildroot}%{_unitdir}
 install -p -m 644 %{repo}-novolume-plugin-%{commit4}/systemd/%{repo}-novolume-plugin.socket %{buildroot}%{_unitdir}
 install -d %{buildroot}%{_mandir}/man8
@@ -625,17 +625,17 @@ install -p -m 644 %{SOURCE7} %{buildroot}%{_sysconfdir}/sysconfig/%{repo}-storag
 %_format MODULES $x.pp.bz2
 install -d %{buildroot}%{_datadir}/selinux/packages
 install -d -p %{buildroot}%{_datadir}/selinux/devel/include/services
-install -p -m 644 %{name}-selinux-%{commit2}/docker.if %{buildroot}%{_datadir}/selinux/devel/include/services/docker.if
+install -p -m 644 %{name}-selinux-%{commit2}/%{repo}.if %{buildroot}%{_datadir}/selinux/devel/include/services/%{repo}.if
 install -m 0644 %{repo}-selinux-%{commit2}/$MODULES %{buildroot}%{_datadir}/selinux/packages
 
 %if 0%{?with_unit_test}
-install -d -m 0755 %{buildroot}%{_sharedstatedir}/docker-unit-test/
-cp -pav VERSION Dockerfile %{buildroot}%{_sharedstatedir}/docker-unit-test/.
+install -d -m 0755 %{buildroot}%{_sharedstatedir}/%{repo}-unit-test/
+cp -pav VERSION Dockerfile %{buildroot}%{_sharedstatedir}/%{repo}-unit-test/.
 for d in */ ; do
-  cp -rpav $d %{buildroot}%{_sharedstatedir}/docker-unit-test/
+  cp -rpav $d %{buildroot}%{_sharedstatedir}/%{repo}-unit-test/
 done
 # remove docker.initd as it requires /sbin/runtime no packages in Fedora
-rm -rf %{buildroot}%{_sharedstatedir}/docker-unit-test/contrib/init/openrc/docker.initd
+rm -rf %{buildroot}%{_sharedstatedir}/%{repo}-unit-test/contrib/init/openrc/docker.initd
 %endif
 
 # source codes for building projects
@@ -825,6 +825,10 @@ exit 0
 %{_datadir}/rhel/secrets/rhsm
 
 %changelog
+* Fri Sep 02 2016 Lokesh Mandvekar <lsm5@fedoraproject.org> - 2:1.12.1-21.git2649fe1
+- built docker-selinux commit fd38eaf
+- require selinux-policy >= 3.13.1-213
+
 * Fri Sep 02 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.12.1-20.git2649fe1
 - bump release to ensure stable upgrade path from f25 to Rawhide
 
