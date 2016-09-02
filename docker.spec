@@ -28,7 +28,7 @@
 
 # docker
 %global git0 https://github.com/projectatomic/%{repo}
-%global commit0 f1040da127b7f1167ab351cb429ac5faa421c7cf
+%global commit0 2649fe17852615709d5df25646aae3c065551771
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 # docker_branch used in %%check
 %global docker_branch docker-1.12
@@ -94,7 +94,7 @@ Name: %{repo}
 Epoch: 2
 %endif
 Version: 1.12.1
-Release: 8.git%{shortcommit0}%{?dist}
+Release: 9.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -825,6 +825,15 @@ exit 0
 %{_datadir}/rhel/secrets/rhsm
 
 %changelog
+* Fri Sep 02 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.12.1-9.git2649fe1
+- built docker @projectatomic/docker-1.12 commit 2649fe1
+- built docker-selinux commit bcd6528
+- built d-s-s commit 194eca2
+- built docker-novolume-plugin commit 7715854
+- built docker-v1.10-migrator commit 994c35
+- build docker-runc @projectatomic/runc-1.12 commit f509e50
+- build docker-containerd commit 0ac3cd1
+
 * Mon Aug 29 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.12.1-8.gitf1040da
 - Fix systemd cgroup
 - Fix docker.service, docker-containerd.service
