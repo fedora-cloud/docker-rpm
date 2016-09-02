@@ -94,7 +94,7 @@ Name: %{repo}
 Epoch: 2
 %endif
 Version: 1.12.1
-Release: 7.git%{shortcommit0}%{?dist}
+Release: 20.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -825,6 +825,9 @@ exit 0
 %{_datadir}/rhel/secrets/rhsm
 
 %changelog
+* Fri Sep 02 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.12.1-20.git2649fe1
+- bump release to ensure stable upgrade path from f25 to Rawhide
+
 * Fri Sep 02 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.12.1-7.git2649fe1
 - built docker @projectatomic/docker-1.12 commit 2649fe1
 - built docker-selinux commit bcd6528
