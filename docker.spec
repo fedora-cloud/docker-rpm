@@ -94,7 +94,7 @@ Name: %{repo}
 Epoch: 2
 %endif
 Version: 1.12.1
-Release: 25.git%{shortcommit0}%{?dist}
+Release: 26.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -795,10 +795,10 @@ exit 0
 %dir %{dss_libdir}
 %{dss_libdir}/*
 # >= 1.11 specific
-%{_libexecdir}/%{repo}/%{repo}-runc
-%{_libexecdir}/%{repo}/%{repo}-containerd
-%{_libexecdir}/%{repo}/%{repo}-containerd-shim
-%{_libexecdir}/%{repo}/%{repo}-ctr
+%{_libexecdir}/%{repo}/%{repo}-runc-current
+%{_libexecdir}/%{repo}/%{repo}-containerd-current
+%{_libexecdir}/%{repo}/%{repo}-containerd-shim-current
+%{_libexecdir}/%{repo}/%{repo}-ctr-current
 
 %if 0%{?with_devel}
 %files devel -f devel.file-list
@@ -854,6 +854,16 @@ exit 0
 %{_datadir}/rhel/secrets/rhsm
 
 %changelog
+* Sat Sep 24 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.12.1-26.git9a3752d
+- built docker @projectatomic/docker-1.12 commit 9a3752d
+- built docker-selinux commit 346ed1d
+- built d-s-s commit 194eca2
+- built docker-novolume-plugin commit c521254
+- built docker-runc @projectatomic/runc-1.12 commit f509e50
+- built docker-utils commit 
+- built docker-containerd commit 0ac3cd1
+- built docker-v1.10-migrator commit 994c35c
+
 * Sat Sep 24 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.12.1-25.git9a3752d
 - built docker @projectatomic/docker-1.12 commit 9a3752d
 - built docker-selinux commit 346ed1d
