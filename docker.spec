@@ -94,7 +94,7 @@ Name: %{repo}
 Epoch: 2
 %endif
 Version: 1.12.1
-Release: 24.git%{shortcommit0}%{?dist}
+Release: 25.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -116,6 +116,8 @@ Source12: %{git6}/archive/%{commit6}/runc-%{shortcommit6}.tar.gz
 Source13: %{git7}/archive/%{commit7}/containerd-%{shortcommit7}.tar.gz
 Source14: %{repo}-containerd.service
 Source15: v1.10-migrator-helper
+Source16: %{repo}-common.sh
+Source17: README-%{repo}-common
 
 %if 0%{?with_debug}
 # Build with debug
@@ -139,6 +141,8 @@ BuildRequires: pkgconfig(systemd)
 # Resolves: rhbz#1165615
 Requires: device-mapper-libs >= 1.02.90-1
 %endif
+
+Requires: %{repo}-common = %{version}-%{release}
 
 # RE: rhbz#1195804 - ensure min NVR for selinux-policy
 Requires: selinux-policy >= %{selinux_policyver}
@@ -423,6 +427,14 @@ Provides: %{repo}-io-selinux = %{epoch}:%{version}-%{release}
 %description selinux
 SELinux policy modules for use with Docker.
 
+%package common
+Summary: Common files for docker and docker-latest
+
+%description common
+This package contains the common files %{_bindir}/%{repo} which will point to
+%{_bindir}/%{repo}-current or %{_bindir}/%{repo}-latest configurable via
+%{_sysconfdir}/sysconfig/%{repo}
+
 %package vim
 Summary: vim syntax highlighting files for Docker
 Requires: %{repo} = %{epoch}:%{version}-%{release}
@@ -489,6 +501,12 @@ tar zxf %{SOURCE12}
 # untar docker-containerd
 tar zxf %{SOURCE13}
 
+# common exec script
+cp %{SOURCE16} .
+
+# common exec README
+cp %{SOURCE17} .
+
 %build
 # set up temporary build gopath, and put our directory there
 mkdir _build
@@ -546,8 +564,11 @@ popd
 install -d %{buildroot}%{_bindir}
 rm bundles/latest/dynbinary-client/*.md5 bundles/latest/dynbinary-client/*.sha256
 rm bundles/latest/dynbinary-daemon/*.md5 bundles/latest/dynbinary-daemon/*.sha256
-install -p -m 755 bundles/latest/dynbinary-client/%{repo}-%{version} %{buildroot}%{_bindir}/%{repo}
-install -p -m 755 bundles/latest/dynbinary-daemon/%{repo}d-%{version} %{buildroot}%{_bindir}/%{repo}d
+install -p -m 755 bundles/latest/dynbinary-client/%{repo}-%{version} %{buildroot}%{_bindir}/%{repo}-current
+install -p -m 755 bundles/latest/dynbinary-daemon/%{repo}d-%{version} %{buildroot}%{_bindir}/%{repo}d-current
+# TODO(runcom): docker-proxy-current doesn't make sense!!! it won't work when
+# we'll have docker = 1.12 and docker-latest 1.13 cause they may differ.
+# FIXME(runcom)
 install -p -m 755 bundles/latest/dynbinary-daemon/%{repo}-proxy-%{version} %{buildroot}%{_bindir}/%{repo}-proxy
 
 # install manpages
@@ -607,13 +628,13 @@ install -p -m 644 %{repo}-novolume-plugin.8 %{buildroot}%{_mandir}/man8
 
 # install docker-runc
 install -d %{buildroot}%{_libexecdir}/%{repo}
-install -p -m 755 runc-%{commit6}/runc %{buildroot}%{_libexecdir}/%{repo}/%{repo}-runc
+install -p -m 755 runc-%{commit6}/runc %{buildroot}%{_libexecdir}/%{repo}/%{repo}-runc-current
 
-#install docker-containerd
+#install docker-containerd-current
 install -d %{buildroot}%{_libexecdir}/%{repo}
-install -p -m 755 containerd-%{commit7}/bin/containerd %{buildroot}%{_libexecdir}/%{repo}/%{repo}-containerd
-install -p -m 755 containerd-%{commit7}/bin/containerd-shim %{buildroot}%{_libexecdir}/%{repo}/%{repo}-containerd-shim
-install -p -m 755 containerd-%{commit7}/bin/ctr %{buildroot}%{_libexecdir}/%{repo}/%{repo}-ctr
+install -p -m 755 containerd-%{commit7}/bin/containerd %{buildroot}%{_libexecdir}/%{repo}/%{repo}-containerd-current
+install -p -m 755 containerd-%{commit7}/bin/containerd-shim %{buildroot}%{_libexecdir}/%{repo}/%{repo}-containerd-shim-current
+install -p -m 755 containerd-%{commit7}/bin/ctr %{buildroot}%{_libexecdir}/%{repo}/%{repo}-ctr-current
 
 # for additional args
 install -d %{buildroot}%{_sysconfdir}/sysconfig/
@@ -671,6 +692,10 @@ install -p -m 644 %{repo}-storage-setup.1 %{buildroot}%{_mandir}/man1
 install -d %{buildroot}%{_sysconfdir}/sysconfig
 install -p -m 644 %{repo}-storage-setup-override.conf %{buildroot}%{_sysconfdir}/sysconfig/%{repo}-storage-setup
 popd
+
+# install %%{_bindir}/%{name}
+install -d %{buildroot}%{_bindir}
+install -p -m 755 %{SOURCE16} %{buildroot}%{_bindir}/%{repo}
 
 # install v1.10-migrator
 install -d %{buildroot}%{_bindir}
@@ -748,14 +773,13 @@ exit 0
 %license LICENSE LICENSE-novolume-plugin LICENSE-vim-syntax
 %doc AUTHORS CHANGELOG.md CONTRIBUTING.md MAINTAINERS NOTICE README.md 
 %doc README-novolume-plugin.md README-vim-syntax.md
-%config(noreplace) %{_sysconfdir}/sysconfig/%{repo}
-%config(noreplace) %{_sysconfdir}/sysconfig/%{repo}-network
-%config(noreplace) %{_sysconfdir}/sysconfig/%{repo}-storage
+%config(noreplace) %{_sysconfdir}/sysconfig/%{repo}-*
 %{_mandir}/man1/%{repo}*.1.gz
 %{_mandir}/man5/*.5.gz
 %{_mandir}/man8/%{repo}*.8.gz
-%{_bindir}/%{repo}
-%{_bindir}/%{repo}d
+%{_bindir}/%{repo}-current
+%{_bindir}/%{repo}d-current
+# FIXME(runcom): can be proxy-current?!?!?!
 %{_bindir}/%{repo}-proxy
 %{_unitdir}/%{repo}.service
 %{_unitdir}/%{repo}-containerd.service
@@ -806,6 +830,11 @@ exit 0
 %doc %{repo}-selinux-%{commit2}/README.md
 %{_datadir}/selinux/*
 
+%files common
+%doc README-%{repo}-common
+%{_bindir}/%{repo}
+%config(noreplace) %{_sysconfdir}/sysconfig/%{repo}
+
 %files vim
 %{_datadir}/vim/vimfiles/doc/%{repo}file.txt
 %{_datadir}/vim/vimfiles/ftdetect/%{repo}file.vim
@@ -825,6 +854,17 @@ exit 0
 %{_datadir}/rhel/secrets/rhsm
 
 %changelog
+* Sat Sep 24 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.12.1-25.git9a3752d
+- built docker @projectatomic/docker-1.12 commit 9a3752d
+- built docker-selinux commit 346ed1d
+- built d-s-s commit 194eca2
+- built docker-novolume-plugin commit c521254
+- built docker-runc @projectatomic/runc-1.12 commit f509e50
+- built docker-utils commit 
+- built docker-containerd commit 0ac3cd1
+- built docker-v1.10-migrator commit 994c35c
+- add docker-common pkg (needed for docker-latest)
+
 * Sat Sep 17 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.12.1-24.git9a3752d
 - built docker @projectatomic/docker-1.12 commit 9a3752d
 - built docker-selinux commit 346ed1d
