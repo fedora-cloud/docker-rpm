@@ -94,7 +94,7 @@ Name: %{repo}
 Epoch: 2
 %endif
 Version: 1.12.1
-Release: 26.git%{shortcommit0}%{?dist}
+Release: 27.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -142,7 +142,8 @@ BuildRequires: pkgconfig(systemd)
 Requires: device-mapper-libs >= 1.02.90-1
 %endif
 
-Requires: %{repo}-common = %{version}-%{release}
+# Resolves: #1379184 - include epoch
+Requires: %{repo}-common = %{epoch}:%{version}-%{release}
 
 # RE: rhbz#1195804 - ensure min NVR for selinux-policy
 Requires: selinux-policy >= %{selinux_policyver}
@@ -152,8 +153,8 @@ Requires: %{repo}-selinux = %{epoch}:%{version}-%{release}
 Requires: xz
 Provides: lxc-%{repo} = %{epoch}:%{version}-%{release}
 
-# Match with upstream name
-Provides: %{repo}-engine = %{version}-%{release}
+# Match with upstream name - include epoch as well
+Provides: %{repo}-engine = %{epoch}:%{version}-%{release}
 
 # needs tar to be able to run containers
 Requires: tar
@@ -854,6 +855,9 @@ exit 0
 %{_datadir}/rhel/secrets/rhsm
 
 %changelog
+* Sun Sep 25 2016 Lokesh Mandvekar <lsm5@fedoraproject.org> - 2:1.12.1-27.git9a3752d
+- Resolves: #1379184 - include epoch in docker-common requirement
+
 * Sat Sep 24 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.12.1-26.git9a3752d
 - built docker @projectatomic/docker-1.12 commit 9a3752d
 - built docker-selinux commit 346ed1d
