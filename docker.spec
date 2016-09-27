@@ -132,6 +132,8 @@ BuildRequires: device-mapper-devel
 %if 0%{?fedora}
 BuildRequires: godep
 BuildRequires: libseccomp-static >= 2.3.0
+%else %if 0%{?centos}
+BuildRequires: libseccomp-devel
 %endif
 BuildRequires: pkgconfig(audit)
 BuildRequires: btrfs-progs-devel
