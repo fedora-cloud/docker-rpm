@@ -40,9 +40,9 @@
 %global dss_libdir %{_exec_prefix}/lib/%{repo}-storage-setup
 
 # docker-selinux
-%global git2 https://github.com/projectatomic/%{repo}-selinux
+%global git2 https://github.com/projectatomic/container-selinux
 %if 0%{?fedora}
-%global commit2 346ed1d81aee0b85613635a041de2ed78d4ef6a4
+%global commit2 a9e875a7b9295ac0305c51ccda294b4b7ef593d7
 %else
 %global commit2 032bcda7b1eb6d9d75d3c0ce64d9d35cdb9c7b85
 %endif
@@ -72,7 +72,7 @@
 # Some bits borrowed from the openstack-selinux package
 %global selinuxtype targeted
 %global moduletype services
-%global modulenames %{repo}
+%global modulenames container
 
 # Usage: _format var format
 # Expand 'modulenames' into various formats as needed
@@ -94,7 +94,7 @@ Name: %{repo}
 Epoch: 2
 %endif
 Version: 1.12.1
-Release: 28.git%{shortcommit0}%{?dist}
+Release: 30.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -149,7 +149,7 @@ Requires: %{repo}-common = %{epoch}:%{version}-%{release}
 
 # RE: rhbz#1195804 - ensure min NVR for selinux-policy
 Requires: selinux-policy >= %{selinux_policyver}
-Requires: %{repo}-selinux = %{epoch}:%{version}-%{release}
+Requires: container-selinux = %{epoch}:%{version}-%{release}
 
 # Resolves: rhbz#1045220
 Requires: xz
@@ -412,9 +412,9 @@ local volumes defined. In particular, the plugin will block `docker run` with:
 
 The only thing allowed will be just bind mounts.
 
-%package selinux
+%package -n container-selinux
 URL: %{git2} 
-Summary: SELinux policies for Docker
+Summary: SELinux policies for container runtimes
 BuildRequires: selinux-policy
 BuildRequires: selinux-policy-devel
 Requires(post): selinux-policy-base >= %{selinux_policyver}
@@ -426,9 +426,11 @@ Requires(post): policycoreutils-python
 %endif
 Requires(post): libselinux-utils
 Provides: %{repo}-io-selinux = %{epoch}:%{version}-%{release}
+Obsoletes: %{repo}-selinux <= %{epoch}:%{version}-28
+Provides: %{repo}-selinux = %{epoch}:%{version}-%{release}
 
-%description selinux
-SELinux policy modules for use with Docker.
+%description -n container-selinux
+SELinux policy modules for use with container runtimes.
 
 %package common
 Summary: Common files for docker and docker-latest
@@ -489,7 +491,7 @@ cp %{SOURCE9} .
 # untar d-s-s
 tar zxf %{SOURCE1}
 
-# unpack %%{repo}-selinux
+# unpack container-selinux
 tar zxf %{SOURCE2}
 
 # untar docker-novolume-plugin
@@ -538,8 +540,8 @@ cp %{repo}-novolume-plugin-%{commit4}/LICENSE LICENSE-novolume-plugin
 cp %{repo}-novolume-plugin-%{commit4}/README.md README-novolume-plugin.md
 go-md2man -in %{repo}-novolume-plugin-%{commit4}/man/docker-novolume-plugin.8.md -out docker-novolume-plugin.8
 
-# build %%{repo}-selinux
-pushd %{repo}-selinux-%{commit2}
+# build container-selinux
+pushd container-selinux-%{commit2}
 make
 popd
 
@@ -649,8 +651,8 @@ install -p -m 644 %{SOURCE7} %{buildroot}%{_sysconfdir}/sysconfig/%{repo}-storag
 %_format MODULES $x.pp.bz2
 install -d %{buildroot}%{_datadir}/selinux/packages
 install -d -p %{buildroot}%{_datadir}/selinux/devel/include/services
-install -p -m 644 %{name}-selinux-%{commit2}/%{repo}.if %{buildroot}%{_datadir}/selinux/devel/include/services/%{repo}.if
-install -m 0644 %{repo}-selinux-%{commit2}/$MODULES %{buildroot}%{_datadir}/selinux/packages
+install -p -m 644 container-selinux-%{commit2}/container.if %{buildroot}%{_datadir}/selinux/devel/include/services
+install -m 0644 container-selinux-%{commit2}/$MODULES %{buildroot}%{_datadir}/selinux/packages
 
 %if 0%{?with_unit_test}
 install -d -m 0755 %{buildroot}%{_sharedstatedir}/%{repo}-unit-test/
@@ -735,13 +737,13 @@ ln -s %{_sysconfdir}/rhsm/ca/redhat-uep.pem %{buildroot}/%{_sysconfdir}/%{name}/
 %post
 %systemd_post %{repo}
 
-%post selinux
+%post -n container-selinux
 # Install all modules in a single transaction
 if [ $1 -eq 1 ]; then
     %{_sbindir}/setsebool -P -N virt_use_nfs=1 virt_sandbox_use_all_caps=1
 fi
 %_format MODULES %{_datadir}/selinux/packages/$x.pp.bz2
-%{_sbindir}/semodule -n -s %{selinuxtype} -i $MODULES
+%{_sbindir}/semodule -n -s %{selinuxtype} -i $MODULES -r docker 2>&1 | grep -v %{repo}
 if %{_sbindir}/selinuxenabled ; then
     %{_sbindir}/load_policy
     %relabel_files
@@ -756,9 +758,9 @@ fi
 %postun
 %systemd_postun_with_restart %{repo}
 
-%postun selinux
+%postun -n container-selinux
 if [ $1 -eq 0 ]; then
-%{_sbindir}/semodule -n -r %{modulenames} &> /dev/null || :
+%{_sbindir}/semodule -n -r %{modulenames} %{repo} &> /dev/null || :
 if %{_sbindir}/selinuxenabled ; then
 %{_sbindir}/load_policy
 %relabel_files
@@ -829,8 +831,8 @@ exit 0
 %{_unitdir}/%{repo}-novolume-plugin.service
 %{_unitdir}/%{repo}-novolume-plugin.socket
 
-%files selinux
-%doc %{repo}-selinux-%{commit2}/README.md
+%files -n container-selinux
+%doc container-selinux-%{commit2}/README.md
 %{_datadir}/selinux/*
 
 %files common
@@ -857,6 +859,13 @@ exit 0
 %{_datadir}/rhel/secrets/rhsm
 
 %changelog
+* Mon Oct 03 2016 Lokesh Mandvekar <lsm5@fedoraproject.org> - 2:1.12.1-30.git9a3752d
+- s/docker-selinux/container-selinux/g
+- built container-selinux commit a9e875a
+
+* Mon Oct 03 2016 Lokesh Mandvekar <lsm5@fedoraproject.org> - 2:1.12.1-29.git9a3752d
+- built lsm5/docker-selinux commit 5da3ac0
+
 * Tue Sep 27 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.12.1-28.git9a3752d
 - built docker @projectatomic/docker-1.12 commit 9a3752d
 - built docker-selinux commit 346ed1d
