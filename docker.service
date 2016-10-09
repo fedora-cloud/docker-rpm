@@ -16,6 +16,7 @@ ExecStart=/usr/bin/dockerd-current \
           --default-runtime=oci \
           --containerd /run/containerd.sock \
           --exec-opt native.cgroupdriver=systemd \
+          --userland-proxy-path=/usr/libexec/docker/docker-proxy-current \
           $OPTIONS \
           $DOCKER_STORAGE_OPTIONS \
           $DOCKER_NETWORK_OPTIONS \

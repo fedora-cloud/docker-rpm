@@ -28,7 +28,7 @@
 
 # docker
 %global git0 https://github.com/projectatomic/%{repo}
-%global commit0 9a3752dc6c1888d72fca61748ea6e42f23da5dcb
+%global commit0 e90aaf288d9b8bb75bdf083a9031d866900b43bd
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 # docker_branch used in %%check
 %global docker_branch docker-1.12
@@ -94,7 +94,7 @@ Name: %{repo}
 Epoch: 2
 %endif
 Version: 1.12.1
-Release: 30.git%{shortcommit0}%{?dist}
+Release: 31.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -571,10 +571,7 @@ rm bundles/latest/dynbinary-client/*.md5 bundles/latest/dynbinary-client/*.sha25
 rm bundles/latest/dynbinary-daemon/*.md5 bundles/latest/dynbinary-daemon/*.sha256
 install -p -m 755 bundles/latest/dynbinary-client/%{repo}-%{version} %{buildroot}%{_bindir}/%{repo}-current
 install -p -m 755 bundles/latest/dynbinary-daemon/%{repo}d-%{version} %{buildroot}%{_bindir}/%{repo}d-current
-# TODO(runcom): docker-proxy-current doesn't make sense!!! it won't work when
-# we'll have docker = 1.12 and docker-latest 1.13 cause they may differ.
-# FIXME(runcom)
-install -p -m 755 bundles/latest/dynbinary-daemon/%{repo}-proxy-%{version} %{buildroot}%{_bindir}/%{repo}-proxy
+install -p -m 755 bundles/latest/dynbinary-daemon/${repo}-proxy-%{version} %{buildroot}%{_libexecdir}/%{repo}/%{repo}-proxy-current
 
 # install manpages
 install -d %{buildroot}%{_mandir}/man1
@@ -784,8 +781,6 @@ exit 0
 %{_mandir}/man8/%{repo}*.8.gz
 %{_bindir}/%{repo}-current
 %{_bindir}/%{repo}d-current
-# FIXME(runcom): can be proxy-current?!?!?!
-%{_bindir}/%{repo}-proxy
 %{_unitdir}/%{repo}.service
 %{_unitdir}/%{repo}-containerd.service
 %{_datadir}/bash-completion/completions/%{repo}
@@ -804,6 +799,7 @@ exit 0
 %{_libexecdir}/%{repo}/%{repo}-containerd-current
 %{_libexecdir}/%{repo}/%{repo}-containerd-shim-current
 %{_libexecdir}/%{repo}/%{repo}-ctr-current
+%{_libexecdir}/%{repo}/%{repo}-proxy-current
 
 %if 0%{?with_devel}
 %files devel -f devel.file-list
@@ -859,6 +855,16 @@ exit 0
 %{_datadir}/rhel/secrets/rhsm
 
 %changelog
+* Sun Oct 09 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.12.1-31.gite90aaf2
+- built docker @projectatomic/docker-1.12 commit e90aaf2
+- built docker-selinux commit a9e875a
+- built d-s-s commit 194eca2
+- built docker-novolume-plugin commit c521254
+- built docker-runc @projectatomic/runc-1.12 commit f509e50
+- built docker-utils commit 
+- built docker-containerd commit 0ac3cd1
+- built docker-v1.10-migrator commit 994c35c
+
 * Mon Oct 03 2016 Lokesh Mandvekar <lsm5@fedoraproject.org> - 2:1.12.1-30.git9a3752d
 - s/docker-selinux/container-selinux/g
 - built container-selinux commit a9e875a
