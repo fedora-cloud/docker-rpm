@@ -571,6 +571,7 @@ rm bundles/latest/dynbinary-client/*.md5 bundles/latest/dynbinary-client/*.sha25
 rm bundles/latest/dynbinary-daemon/*.md5 bundles/latest/dynbinary-daemon/*.sha256
 install -p -m 755 bundles/latest/dynbinary-client/%{repo}-%{version} %{buildroot}%{_bindir}/%{repo}-current
 install -p -m 755 bundles/latest/dynbinary-daemon/%{repo}d-%{version} %{buildroot}%{_bindir}/%{repo}d-current
+install -d %{buildroot}%{_libexecdir}/%{repo}
 install -p -m 755 bundles/latest/dynbinary-daemon/%{repo}-proxy-%{version} %{buildroot}%{_libexecdir}/%{repo}/%{repo}-proxy-current
 
 # install manpages
