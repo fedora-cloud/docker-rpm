@@ -28,10 +28,10 @@
 
 # docker
 %global git0 https://github.com/projectatomic/%{repo}
-%global commit0 e90aaf288d9b8bb75bdf083a9031d866900b43bd
+%global commit0 15c82b8be1843ef8f2e7e4c1ee639e9ef622face
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 # docker_branch used in %%check
-%global docker_branch docker-1.12
+%global docker_branch docker-1.12.2
 
 # d-s-s
 %global git1 https://github.com/projectatomic/%{repo}-storage-setup/
@@ -60,12 +60,12 @@
 
 # docker-runc
 %global git6 https://github.com/projectatomic/runc/
-%global commit6 f509e5094de84a919e2e8ae316373689fb66c513
+%global commit6 06a5a249de2d3b8e5966d964d547a8000d8d050c
 %global shortcommit6 %(c=%{commit6}; echo ${c:0:7})
 
 # docker-containerd
 %global git7 https://github.com/docker/containerd
-%global commit7 0ac3cd1be170d180b2baed755e8f0da547ceb267
+%global commit7 0366d7e9693c930cf18c0f50cc16acec064e96c5
 %global shortcommit7 %(c=%{commit7}; echo ${c:0:7})
 
 # docker-selinux stuff (prefix with ds_ for version/release etc.)
@@ -93,8 +93,8 @@ Name: %{repo}
 %if 0%{?fedora} || 0%{?centos}
 Epoch: 2
 %endif
-Version: 1.12.1
-Release: 31.git%{shortcommit0}%{?dist}
+Version: 1.12.2
+Release: 1.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -856,6 +856,16 @@ exit 0
 %{_datadir}/rhel/secrets/rhsm
 
 %changelog
+* Thu Oct 13 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.12.2-1.git15c82b8
+- built docker @projectatomic/docker-1.12.2 commit 15c82b8
+- built docker-selinux commit a9e875a
+- built d-s-s commit 194eca2
+- built docker-novolume-plugin commit c521254
+- built docker-runc @projectatomic/runc-1.12.2 commit 06a5a24
+- built docker-utils commit 
+- built docker-containerd commit 0366d7e
+- built docker-v1.10-migrator commit 994c35c
+
 * Sun Oct 09 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.12.1-31.gite90aaf2
 - built docker @projectatomic/docker-1.12 commit e90aaf2
 - built docker-selinux commit a9e875a
