@@ -72,3 +72,5 @@
 /containerd-0366d7e.tar.gz
 /docker-15c82b8.tar.gz
 /runc-06a5a24.tar.gz
+/docker-selinux-9e96359.tar.gz
+/docker-storage-setup-96594f9.tar.gz
