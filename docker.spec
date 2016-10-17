@@ -84,7 +84,7 @@
 
 # Version of SELinux we were using
 %if 0%{?fedora} >= 22
-%global selinux_policyver 3.13.1-213
+%global selinux_policyver 3.13.1-220
 %else
 %global selinux_policyver 3.13.1-39
 %endif
@@ -94,7 +94,7 @@ Name: %{repo}
 Epoch: 2
 %endif
 Version: 1.12.2
-Release: 2.git%{shortcommit0}%{?dist}
+Release: 3.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -856,6 +856,16 @@ exit 0
 %{_datadir}/rhel/secrets/rhsm
 
 %changelog
+* Mon Oct 17 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.12.2-3.git15c82b8
+- built docker @projectatomic/docker-1.12 commit 15c82b8
+- built docker-selinux commit 9e96359
+- built d-s-s commit 96594f9
+- built docker-novolume-plugin commit c521254
+- built docker-runc @projectatomic/runc-1.12 commit 06a5a24
+- built docker-utils commit 
+- built docker-containerd commit 0366d7e
+- built docker-v1.10-migrator commit 994c35c
+
 * Mon Oct 17 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.12.2-2.git15c82b8
 - built docker @projectatomic/docker-1.12 commit 15c82b8
 - built docker-selinux commit 9e96359
