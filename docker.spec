@@ -27,8 +27,9 @@
 %global import_path %{provider}.%{provider_tld}/%{project}/%{repo}
 
 # docker
-%global git0 https://github.com/projectatomic/%{repo}
-%global commit0 15c82b8be1843ef8f2e7e4c1ee639e9ef622face
+# FIXME(runcom): built from https://github.com/projectatomic/docker/pull/205
+%global git0 https://github.com/runcom/%{repo}
+%global commit0 93e483676f192eb88667cd9449208003c0b8028c
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 # docker_branch used in %%check
 %global docker_branch docker-1.12.2
@@ -42,7 +43,7 @@
 # docker-selinux
 %global git2 https://github.com/projectatomic/container-selinux
 %if 0%{?fedora}
-%global commit2 9e96359b3d0ce823693334ac8cc9298e6e99b275
+%global commit2 51001dd9052288a6f2356db61bcf4a3084497366
 %else
 %global commit2 032bcda7b1eb6d9d75d3c0ce64d9d35cdb9c7b85
 %endif
@@ -94,7 +95,7 @@ Name: %{repo}
 Epoch: 2
 %endif
 Version: 1.12.2
-Release: 4.git%{shortcommit0}%{?dist}
+Release: 5.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -126,6 +127,8 @@ Source17: README-%{repo}-common
 
 BuildRequires: git
 BuildRequires: glibc-static
+BuildRequires: gpgme-devel
+BuildRequires: libassuan-devel
 BuildRequires: %{?go_compiler:compiler(go-compiler)}%{!?go_compiler:golang >= 1.6.2}
 BuildRequires: go-md2man
 BuildRequires: device-mapper-devel
@@ -143,6 +146,9 @@ BuildRequires: pkgconfig(systemd)
 # Resolves: rhbz#1165615
 Requires: device-mapper-libs >= 1.02.90-1
 %endif
+
+Requires: skopeo-containers
+Requires: gnupg
 
 # Resolves: #1379184 - include epoch
 Requires: %{repo}-common = %{epoch}:%{version}-%{release}
@@ -856,6 +862,16 @@ exit 0
 %{_datadir}/rhel/secrets/rhsm
 
 %changelog
+* Fri Oct 21 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.12.2-5.git93e4836
+- built docker @projectatomic/docker-1.12 commit 93e4836
+- built docker-selinux commit 51001dd
+- built d-s-s commit abe18de
+- built docker-novolume-plugin commit c521254
+- built docker-runc @projectatomic/runc-1.12 commit 06a5a24
+- built docker-utils commit 
+- built docker-containerd commit 0366d7e
+- built docker-v1.10-migrator commit 994c35c
+
 * Fri Oct 21 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.12.2-4.git15c82b8
 - built docker @projectatomic/docker-1.12 commit 15c82b8
 - built docker-selinux commit 9e96359
