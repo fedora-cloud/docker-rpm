@@ -28,14 +28,14 @@
 
 # docker
 %global git0 https://github.com/projectatomic/%{repo}
-%global commit0 15c82b8be1843ef8f2e7e4c1ee639e9ef622face
+%global commit0 8f1975c49713e745856f5861e9602c36ed0bcaa6
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 # docker_branch used in %%check
 %global docker_branch docker-1.12.2
 
 # d-s-s
 %global git1 https://github.com/projectatomic/%{repo}-storage-setup/
-%global commit1 abe18de71ceb56af5af52b47f06329443c44badf
+%global commit1 308c5e37223e54072a6b4be1dd8998aad7e91e65
 %global shortcommit1 %(c=%{commit1}; echo ${c:0:7})
 %global dss_libdir %{_exec_prefix}/lib/%{repo}-storage-setup
 
@@ -60,7 +60,7 @@
 
 # docker-runc
 %global git6 https://github.com/projectatomic/runc/
-%global commit6 06a5a249de2d3b8e5966d964d547a8000d8d050c
+%global commit6 fa7507b73f54fca716eef4f78d3ea2dc9307f7f9
 %global shortcommit6 %(c=%{commit6}; echo ${c:0:7})
 
 # docker-containerd
@@ -94,7 +94,7 @@ Name: %{repo}
 Epoch: 2
 %endif
 Version: 1.12.2
-Release: 3.git%{shortcommit0}%{?dist}
+Release: 4.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -852,6 +852,16 @@ exit 0
 %{_datadir}/rhel/secrets/rhsm
 
 %changelog
+* Wed Oct 26 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.12.2-4.git8f1975c
+- built docker @projectatomic/docker-1.12 commit 8f1975c
+- built docker-selinux commit 9e96359
+- built d-s-s commit 308c5e3
+- built docker-novolume-plugin commit c521254
+- built docker-runc @projectatomic/runc-1.12 commit fa7507b
+- built docker-utils commit 
+- built docker-containerd commit 0366d7e
+- built docker-v1.10-migrator commit 994c35c
+
 * Fri Oct 21 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.12.2-3.git15c82b8
 - built docker @projectatomic/docker-1.12 commit 15c82b8
 - built docker-selinux commit 9e96359
