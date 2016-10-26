@@ -1,7 +1,7 @@
 9e7690cc09625bdb34f7a9fedff270eb  containerd-0366d7e.tar.gz
-85e6f773d8121272264e5cf8c0870ad8  docker-93e4836.tar.gz
+449160d6c26b87d7b206b841d87eedc1  docker-8f1975c.tar.gz
 8877736d117aaf4b3f4f118e5a3554c1  docker-novolume-plugin-c521254.tar.gz
 0df0fff9f71091bd578734e30acd04b7  docker-selinux-51001dd.tar.gz
-6038bcde16b97e48faae7c770a0f8fc0  docker-storage-setup-abe18de.tar.gz
-e5f6226690a3a4f4801449e5a021075c  runc-06a5a24.tar.gz
+7fb67471c9481829b014ccf52c901e1e  docker-storage-setup-308c5e3.tar.gz
+1fc61837490b3c05659779f53d2f7424  runc-fa7507b.tar.gz
 1f7d112be5ba2380804762d965f9954d  v1.10-migrator-994c35c.tar.gz
