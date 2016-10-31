@@ -28,10 +28,10 @@
 
 # docker
 %global git0 https://github.com/projectatomic/%{repo}
-%global commit0 8f1975c49713e745856f5861e9602c36ed0bcaa6
+%global commit0 91ae1d15a5fee546a41c0442a4b33ad4f7a9fdf6
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 # docker_branch used in %%check
-%global docker_branch docker-1.12.2
+%global docker_branch docker-1.12.3
 
 # d-s-s
 %global git1 https://github.com/projectatomic/%{repo}-storage-setup/
@@ -60,12 +60,12 @@
 
 # docker-runc
 %global git6 https://github.com/projectatomic/runc/
-%global commit6 fa7507b73f54fca716eef4f78d3ea2dc9307f7f9
+%global commit6 aa860715c2e8ff4ab736a0168907ea975bf28f0e
 %global shortcommit6 %(c=%{commit6}; echo ${c:0:7})
 
 # docker-containerd
 %global git7 https://github.com/docker/containerd
-%global commit7 0366d7e9693c930cf18c0f50cc16acec064e96c5
+%global commit7 b818e749726ba18e430bb825396c85408dfaf2a4
 %global shortcommit7 %(c=%{commit7}; echo ${c:0:7})
 
 # docker-selinux stuff (prefix with ds_ for version/release etc.)
@@ -93,8 +93,8 @@ Name: %{repo}
 %if 0%{?fedora} || 0%{?centos}
 Epoch: 2
 %endif
-Version: 1.12.2
-Release: 5.git%{shortcommit0}%{?dist}
+Version: 1.12.3
+Release: 2.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -857,6 +857,16 @@ exit 0
 %{_datadir}/rhel/secrets/rhsm
 
 %changelog
+* Mon Oct 31 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.12.3-2.git91ae1d1
+- built docker @projectatomic/docker-1.12 commit 91ae1d1
+- built docker-selinux commit 9e96359
+- built d-s-s commit 308c5e3
+- built docker-novolume-plugin commit c521254
+- built docker-runc @projectatomic/runc-1.12 commit aa86071
+- built docker-utils commit 
+- built docker-containerd commit b818e74
+- built docker-v1.10-migrator commit 994c35c
+
 * Wed Oct 26 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.12.2-5.git8f1975c
 - built docker @projectatomic/docker-1.12 commit 8f1975c
 - built docker-selinux commit 9e96359
