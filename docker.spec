@@ -35,7 +35,7 @@
 
 # d-s-s
 %global git1 https://github.com/projectatomic/%{repo}-storage-setup/
-%global commit1 308c5e37223e54072a6b4be1dd8998aad7e91e65
+%global commit1 ba0dcf3f02bee36f188164517911b20f8798a160
 %global shortcommit1 %(c=%{commit1}; echo ${c:0:7})
 %global dss_libdir %{_exec_prefix}/lib/%{repo}-storage-setup
 
@@ -94,7 +94,7 @@ Name: %{repo}
 Epoch: 2
 %endif
 Version: 1.12.3
-Release: 2.git%{shortcommit0}%{?dist}
+Release: 3.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -684,17 +684,7 @@ install -dp %{buildroot}%{_sysconfdir}/%{repo}
 
 # install d-s-s
 pushd %{repo}-storage-setup-%{commit1}
-install -d %{buildroot}%{_bindir}
-install -p -m 755 %{repo}-storage-setup.sh %{buildroot}%{_bindir}/%{repo}-storage-setup
-install -d %{buildroot}%{_unitdir}
-install -p -m 644 %{repo}-storage-setup.service %{buildroot}%{_unitdir}
-install -d %{buildroot}%{dss_libdir}
-install -p -m 644 %{repo}-storage-setup.conf %{buildroot}%{dss_libdir}/%{repo}-storage-setup
-install -p -m 755 libdss.sh %{buildroot}%{dss_libdir}
-install -d %{buildroot}%{_mandir}/man1
-install -p -m 644 %{repo}-storage-setup.1 %{buildroot}%{_mandir}/man1
-install -d %{buildroot}%{_sysconfdir}/sysconfig
-install -p -m 644 %{repo}-storage-setup-override.conf %{buildroot}%{_sysconfdir}/sysconfig/%{repo}-storage-setup
+make install DESTDIR=%{buildroot}
 popd
 
 # install %%{_bindir}/%{name}
@@ -857,6 +847,16 @@ exit 0
 %{_datadir}/rhel/secrets/rhsm
 
 %changelog
+* Wed Nov 02 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.12.3-3.git91ae1d1
+- built docker @projectatomic/docker-1.12 commit 91ae1d1
+- built docker-selinux commit 9e96359
+- built d-s-s commit ba0dcf3
+- built docker-novolume-plugin commit c521254
+- built docker-runc @projectatomic/runc-1.12 commit aa86071
+- built docker-utils commit 
+- built docker-containerd commit b818e74
+- built docker-v1.10-migrator commit 994c35c
+
 * Mon Oct 31 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.12.3-2.git91ae1d1
 - built docker @projectatomic/docker-1.12 commit 91ae1d1
 - built docker-selinux commit 9e96359
