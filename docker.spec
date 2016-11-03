@@ -35,7 +35,7 @@
 
 # d-s-s
 %global git1 https://github.com/projectatomic/%{repo}-storage-setup/
-%global commit1 ba0dcf3f02bee36f188164517911b20f8798a160
+%global commit1 c9faba1908b8e77f7c7c443f26e3b3cb1450d1a0
 %global shortcommit1 %(c=%{commit1}; echo ${c:0:7})
 %global dss_libdir %{_exec_prefix}/lib/%{repo}-storage-setup
 
@@ -94,7 +94,7 @@ Name: %{repo}
 Epoch: 2
 %endif
 Version: 1.12.3
-Release: 3.git%{shortcommit0}%{?dist}
+Release: 4.git%{shortcommit0}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
 URL: https://%{provider}.%{provider_tld}/projectatomic/%{repo}
@@ -107,7 +107,6 @@ Source2: %{git2}/archive/%{commit2}/%{repo}-selinux-%{shortcommit2}.tar.gz
 Source4: %{git4}/archive/%{commit4}/%{repo}-novolume-plugin-%{shortcommit4}.tar.gz
 Source5: %{repo}.service
 Source6: %{repo}.sysconfig
-Source7: %{repo}-storage.sysconfig
 Source8: %{repo}-logrotate.sh
 Source9: README.%{repo}-logrotate
 Source10: %{repo}-network.sysconfig
@@ -647,7 +646,6 @@ install -p -m 755 containerd-%{commit7}/bin/ctr %{buildroot}%{_libexecdir}/%{rep
 install -d %{buildroot}%{_sysconfdir}/sysconfig/
 install -p -m 644 %{SOURCE6} %{buildroot}%{_sysconfdir}/sysconfig/%{repo}
 install -p -m 644 %{SOURCE10} %{buildroot}%{_sysconfdir}/sysconfig/%{repo}-network
-install -p -m 644 %{SOURCE7} %{buildroot}%{_sysconfdir}/sysconfig/%{repo}-storage
 
 # install policy modules
 %_format MODULES $x.pp.bz2
@@ -847,6 +845,16 @@ exit 0
 %{_datadir}/rhel/secrets/rhsm
 
 %changelog
+* Thu Nov 03 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.12.3-4.git91ae1d1
+- built docker @projectatomic/docker-1.12 commit 91ae1d1
+- built docker-selinux commit 9e96359
+- built d-s-s commit c9faba1
+- built docker-novolume-plugin commit c521254
+- built docker-runc @projectatomic/runc-1.12 commit aa86071
+- built docker-utils commit 
+- built docker-containerd commit b818e74
+- built docker-v1.10-migrator commit 994c35c
+
 * Wed Nov 02 2016 Antonio Murdaca <runcom@fedoraproject.org> - 2:1.12.3-3.git91ae1d1
 - built docker @projectatomic/docker-1.12 commit 91ae1d1
 - built docker-selinux commit 9e96359
